@@ -2,9 +2,19 @@ package com.aat.datastore;
 
 import com.googlecode.objectify.annotation.Subclass;
 
+/**
+ * Represents a Tutor User. Extends the User class. Tutor users have a secret pin.
+ */
 @Subclass(index=true)
-public class Tutor {
+public class Tutor extends User {
   private String pin;
+
+  /**
+   * Constructor with all relevant information
+   */
+  public Tutor(String email, String password) {
+    super(email, password);
+  }
 
   /**
    * Getters and Setters

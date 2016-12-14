@@ -4,23 +4,19 @@ import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
+/**
+ * Represents a User. Users have an email and a password. Known subclasses are Students and Tutors.
+ */
 @Entity
-public class User {
+public abstract class User {
   @Id private Long id;
   private String email;
   private String password;
 
   /**
-   * Default Constructor
-   */
-  public User() {
-  }
-
-  /**
    * Constructor with all relevant information
    */
   public User(String email, String password) {
-    this();
     this.email = email;
     this.password = password;
   }
@@ -32,4 +28,5 @@ public class User {
   public void setEmail(String email) { this.email = email; }
   public String getPassword() { return password; }
   public void setPassword(String password) { this.password = password; }
+  public Long getId() { return id; }
 }

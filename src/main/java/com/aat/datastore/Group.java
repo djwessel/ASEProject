@@ -8,17 +8,14 @@ import com.googlecode.objectify.annotation.Parent;
 
 import java.security.InvalidParameterException;
 
+/**
+ * Represents a Group. Groups are children to Courses and parents to AttendanceRecords.
+ */
 @Entity
 public class Group {
   @Parent Key<Course> course;
   @Id private Long id;
   private String name;
-
-  /**
-   * Default Constructor
-   */
-  public Group() {
-  }
 
   /**
    * Constructor with all relevant information
@@ -27,7 +24,7 @@ public class Group {
     if (courseId == null)
       throw new InvalidParameterException("Group's Parent courseId must not be null");
     else
-      course = Key.create(Course.class, courseId);  // Creating the Ancestor key
+      course = Key.create(Course.class, courseId);  // Creating the Parent key
     
     this.name = name;
   }
@@ -35,11 +32,7 @@ public class Group {
   /**
    * Getters and Setters
    */
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  } 
+  public String getName() { return name; }
+  public void setName(String name) { this.name = name; } 
+  public Long getId() { return id; }
 }

@@ -7,9 +7,15 @@ import com.googlecode.objectify.annotation.Parent;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Load;
 
+import java.security.InvalidParameterException;
+
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Represents AttendanceRecord. AttendanceRecords are children to a Group and contain attendance and presentation information for a given student.
+ */
 @Entity
 public class AttendanceRecord {
   @Parent Key<Group> group;
@@ -20,27 +26,21 @@ public class AttendanceRecord {
   private ArrayList<Date> presentationList;
 
   /**
-   * Default Constructor
-   */
-  public AttendanceRecord() {
-    attendanceList = new ArrayList<Date>();
-    presentationList = new ArrayList<Date>();
-  }
-
-  /**
    * Constructor with all relevant information
    */
-  public AttendanceRecord(String groupId, String studentId) {
-    this();
+  public AttendanceRecord(Long groupId, Long studentId) {
     if (groupId == null)
       throw new InvalidParameterException("AttendanceRecord's Parent groupId must not be null");
     else
-      group = Key.create(Group.class, groupId);  // Creating the Ancestor key
+      group = Key.create(Group.class, groupId);  // Creating the Parent key
 
     if (studentId == null)
       throw new InvalidParameterException("AttendanceRecord's studentId must not be null");
     else
-      user = Ref.create(studentId);
+      student = Ref.create(Key.create(Student.class, studentId));
+
+    attendanceList = new ArrayList<Date>();
+    presentationList = new ArrayList<Date>();
   }
 
   /**
