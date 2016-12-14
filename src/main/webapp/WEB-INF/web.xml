@@ -4,4 +4,19 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  
+    <servlet>
+      <servlet-name>RestletServlet</servlet-name>
+      <servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
+      <init-param>
+         <param-name>org.restlet.application</param-name>
+	 <param-value>com.aat.restlet.AATApplication</param-value>
+      </init-param>
+    </servlet>
+
+    <servlet-mapping>
+      <servlet-name>RestletServlet</servlet-name>
+      <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+
 </web-app>
