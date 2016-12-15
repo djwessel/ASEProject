@@ -13,6 +13,10 @@ public class Course {
   private int reqAtten;
   private int reqPresent;
 
+  public Course() {
+
+  }
+
   /**
    * Constructor with all relevant information
    */

@@ -16,6 +16,10 @@ import java.util.ArrayList;
 public class Student extends User {
   @Index private ArrayList<Ref<AttendanceRecord>> groups;
 
+  public Student() {
+    
+  }
+
   /**
    * Constructor with all relevant information
    */

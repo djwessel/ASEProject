@@ -25,6 +25,10 @@ public class AttendanceRecord {
   private ArrayList<Date> attendanceList;
   private ArrayList<Date> presentationList;
 
+  public AttendanceRecord() {
+
+  }
+
   /**
    * Constructor with all relevant information
    */

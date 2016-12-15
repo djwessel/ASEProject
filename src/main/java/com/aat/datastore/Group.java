@@ -17,6 +17,10 @@ public class Group {
   @Id private Long id;
   private String name;
 
+  public Group() {
+
+  }
+
   /**
    * Constructor with all relevant information
    */

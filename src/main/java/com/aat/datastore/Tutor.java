@@ -9,6 +9,10 @@ import com.googlecode.objectify.annotation.Subclass;
 public class Tutor extends User {
   private String pin;
 
+  public Tutor() {
+    
+  }
+
   /**
    * Constructor with all relevant information
    */
