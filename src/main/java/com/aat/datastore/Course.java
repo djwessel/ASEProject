@@ -8,7 +8,7 @@ import com.googlecode.objectify.annotation.Id;
  */
 @Entity
 public class Course {
-  @Id private String courseId;
+  @Id private Long courseId;
   private String title;
   private int reqAtten;
   private int reqPresent;
@@ -20,8 +20,7 @@ public class Course {
   /**
    * Constructor with all relevant information
    */
-  public Course(String courseId, String title, int reqAtten, int reqPresent) {
-    this.courseId = courseId;
+  public Course(String title, int reqAtten, int reqPresent) {
     this.title = title;
     this.reqAtten = reqAtten;
     this.reqPresent = reqPresent;

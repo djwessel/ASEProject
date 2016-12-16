@@ -10,7 +10,7 @@ public class Tutor extends User {
   private String pin;
 
   public Tutor() {
-    
+    super();
   }
 
   /**
