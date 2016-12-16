@@ -11,7 +11,8 @@ public class AATApplication extends Application {
 	public Restlet createInboundRoot() {
 		Router router = new Router(getContext());
         
-		router.attach("/course/{course_id}/group/{group_name}", GroupResource.class);
+		router.attach("/course/{course_id}/group", GroupResource.class);
+		router.attach("/course/{course_id}/group/{group_id}", GroupResource.class);
 
         return router;
 	}

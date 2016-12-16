@@ -1,5 +1,6 @@
 package com.aat.restlet;
 
+import org.restlet.data.Form;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
@@ -10,56 +11,102 @@ import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Key;
 import com.aat.datastore.Course;
 import com.aat.datastore.Group;
+import com.aat.utils.Constants;;
 
 public class GroupResource extends ServerResource {
-	private final static String noGroupMsg = "Group does not exist";
-	
 
 	@Post
-	public void create(String courseID, String groupName)
+	public void create()
 	{
+		String courseID = retrieveAttribute(Constants.courseID);
+		assert(courseID != null);
+		String groupName = retrieveQueryParameter("name");
+		assert(groupName != null);
+		
 		Group group = new Group(courseID, groupName);
 		ObjectifyService.ofy().save().entity(group).now();
 	}
 	
 	@Put
-	public void update(String courseID, String groupID, String newName)
+	public void update()
 	{
+		String courseID = retrieveAttribute(Constants.courseID);
+		assert(courseID != null);
+		
+		String groupID = retrieveAttribute(Constants.groupId);
+		assert(groupID != null);
+		
+		String newName = retrieveQueryParameter("name");
+		assert(newName != null);
+		
 		Group group = retrieveGroup(courseID, groupID);
-		if (group == null) {
-			throw new RuntimeException(noGroupMsg);
-		}
+		assert(group != null);
+		
 		group.setName(newName);
 		ObjectifyService.ofy().save().entity(group).now();
 	}
 	
 	@Get
-	public Group retrieve(String courseID, String groupID)
+	public Group retrieve()
 	{
+		String courseID = retrieveAttribute(Constants.courseID);
+		assert(courseID != null);
+		
+		String groupID = retrieveAttribute(Constants.groupId);
+		assert(groupID != null);
+		
 		Group group = retrieveGroup(courseID, groupID);
-		if (group == null) {
-			throw new RuntimeException(noGroupMsg);
-		}
+		assert(group != null);
+		
 		return group;
 	}
 	
 	@Delete
-	public void remove(String courseID, String groupID)
+	public void remove()
 	{
+		String courseID = retrieveAttribute(Constants.courseID);
+		assert(courseID != null);
+		
+		String groupID = retrieveAttribute(Constants.groupId);
+		assert(groupID != null);
+
 		Group group = retrieveGroup(courseID, groupID);
-		if (group == null)  {
-			throw new RuntimeException(noGroupMsg);
-		}
+		assert(group != null);
+		
 		ObjectifyService.ofy().delete().entity(group);
 	}
 	
 	private Group retrieveGroup(String courseID, String groupID) {
 		Key<Course> course = Key.create(Course.class, courseID);
-		return ObjectifyService.ofy()
+		Group group = ObjectifyService.ofy()
 				.load()
 				.type(Group.class)
 				.parent(course)
 				.id(Long.parseLong(groupID, 10))
 				.now();
+		if (group == null) {
+			throw new RuntimeException(Constants.noGroupMsg);
+		}
+		return group;
+	}
+	
+	private String retrieveAttribute(String attrName) {
+		String attrValue = getAttribute(attrName);
+		if (attrValue == null) {
+			throw new RuntimeException(Constants.incorrectRequestFormat);
+		}
+		return attrValue;
+	}
+	
+	private String retrieveQueryParameter(String paramName) {
+		Form queryParams = getQuery();
+		if (queryParams == null) {
+			throw new RuntimeException(Constants.incorrectRequestFormat);
+		}
+		String paramValue = queryParams.getFirstValue(paramName);
+		if (paramName == null) {
+			throw new RuntimeException(Constants.incorrectRequestFormat);
+		}
+		return paramValue;
 	}
 }
