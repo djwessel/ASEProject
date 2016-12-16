@@ -16,8 +16,9 @@ public class Tutor extends User {
   /**
    * Constructor with all relevant information
    */
-  public Tutor(String email, String password) {
-    super(email, password);
+  public Tutor(String email, String password, String first, String last, String pin) {
+    super(email, password, first, last);
+    this.pin = pin;
   }
 
   /**
