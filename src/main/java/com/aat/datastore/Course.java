@@ -20,12 +20,11 @@ public class Course {
   /**
    * Constructor with all relevant information
    */
-  public Course(String courseId, String title, int reqAtten, int reqPresent) {
-    this.courseId = courseId;
-    this.title = title;
-    this.reqAtten = reqAtten;
-    this.reqPresent = reqPresent;
-  }
+  public Course(String title, int reqAtten, int reqPresent) {
+	    this.title = title;
+	    this.reqAtten = reqAtten;
+	    this.reqPresent = reqPresent;
+	  }
 
   /**
    * Getters and Setters

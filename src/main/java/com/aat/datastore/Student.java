@@ -17,7 +17,6 @@ public class Student extends User {
   @Index private ArrayList<Ref<AttendanceRecord>> groups;
 
   public Student() {
-    
   }
 
   /**

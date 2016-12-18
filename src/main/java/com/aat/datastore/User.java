@@ -13,6 +13,11 @@ public abstract class User {
   private String email;
   private String password;
 
+  public User()
+  {
+	  
+  }
+  
   /**
    * Constructor with all relevant information
    */

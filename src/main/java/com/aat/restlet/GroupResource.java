@@ -18,7 +18,7 @@ public class GroupResource extends ServerResource {
 	@Post
 	public void create(String courseID, String groupName)
 	{
-		Group group = new Group(courseID, groupName);
+		Group group = new Group(getAttribute("course_id"), getAttribute("group_name"));
 		ObjectifyService.ofy().save().entity(group).now();
 	}
 	
