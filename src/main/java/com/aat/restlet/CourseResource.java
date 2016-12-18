@@ -36,7 +36,7 @@ public class CourseResource extends ServerResource{
    public void update(){
 	   String courseId = getAttribute("courseID");
 	   Course course = retrieveCourse(courseId);
-	   ObjectifyService.ofy().delete().entity(course);
+	   ObjectifyService.ofy().delete().entity(course); //delete??
 	}
    
   
