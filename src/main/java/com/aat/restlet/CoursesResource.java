@@ -11,11 +11,11 @@ public class CoursesResource extends ServerResource{
 
 	@Get
 	public List<Course> retrieve(){
-		List<Course> Courses =  ObjectifyService.ofy()
+		List<Course> courses =  ObjectifyService.ofy()
 				.load()
 				.type(Course.class)
 				.list();
-		return  Courses;
+		return  courses;
 	}
 		
 	

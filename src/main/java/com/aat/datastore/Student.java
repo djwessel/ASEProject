@@ -17,13 +17,14 @@ public class Student extends User {
   @Index private ArrayList<Ref<AttendanceRecord>> groups;
 
   public Student() {
+    super();
   }
 
   /**
    * Constructor with all relevant information
    */
-  public Student(String email, String password) {
-    super(email, password);
+  public Student(String email, String password, String first, String last) {
+    super(email, password, first, last);
     groups = new ArrayList<Ref<AttendanceRecord>>();
   }
 

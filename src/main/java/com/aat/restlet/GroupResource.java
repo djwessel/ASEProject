@@ -6,10 +6,10 @@ import org.restlet.resource.Post;
 import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 
-import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.Key;
 import com.aat.datastore.Course;
 import com.aat.datastore.Group;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.ObjectifyService;
 
 public class GroupResource extends ServerResource {
 	private final static String noGroupMsg = "Group does not exist";
