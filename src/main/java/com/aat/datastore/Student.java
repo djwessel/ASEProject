@@ -14,23 +14,22 @@ import java.util.ArrayList;
  */
 @Subclass(index=true)
 public class Student extends User {
-  @Index private ArrayList<Ref<AttendanceRecord>> groups;
+	@Index private List<Ref<AttendanceRecord>> groups = new ArrayList<Ref<AttendanceRecord>>();
 
-  public Student() {
-    super();
-  }
+	public Student() {
+		super();
+	}
 
-  /**
-   * Constructor with all relevant information
-   */
-  public Student(String email, String password, String first, String last) {
-    super(email, password, first, last);
-    groups = new ArrayList<Ref<AttendanceRecord>>();
-  }
+	/**
+	 * Constructor with all relevant information
+	 */
+	public Student(String email, String password, String first, String last) {
+		super(email, password, first, last);
+	}
 
-  /**
-   * Getters and Setters
-   */
-  public List<Ref<AttendanceRecord>> getGroups() { return groups; }
-  public void addGroup(String attendanceRecordId) { groups.add(Ref.create(Key.create(AttendanceRecord.class, attendanceRecordId))); }
+	/**
+	 * Getters and Setters
+	 */
+	public List<Ref<AttendanceRecord>> getGroups() { return groups; }
+	public void addGroup(Long attendanceRecordId) { groups.add(Ref.create(Key.create(AttendanceRecord.class, attendanceRecordId))); }
 }
