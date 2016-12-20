@@ -10,6 +10,7 @@ import com.googlecode.objectify.ObjectifyService;
 import com.aat.datastore.User;
 import com.aat.datastore.Tutor;
 import com.aat.datastore.Student;
+import com.aat.utils.ResourceUtil;
 
 public class UserCreateResource extends ServerResource {
 	
