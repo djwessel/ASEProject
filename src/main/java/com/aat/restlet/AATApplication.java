@@ -12,6 +12,7 @@ public class AATApplication extends Application {
 		Router router = new Router(getContext());
         
 		router.attach("/course/{course_id}/group/{group_name}", GroupResource.class);
+		router.attach("/user", UserCreateResource.class);
 
         return router;
 	}
