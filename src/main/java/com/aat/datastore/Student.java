@@ -4,6 +4,7 @@ import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;
+import com.googlecode.objectify.annotation.Load;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  */
 @Subclass(index=true)
 public class Student extends User {
-	@Index private List<Ref<AttendanceRecord>> groups = new ArrayList<Ref<AttendanceRecord>>();
+	@Load @Index private List<Ref<AttendanceRecord>> groups = new ArrayList<Ref<AttendanceRecord>>();
 
 	public Student() {
 		super();
@@ -31,5 +32,5 @@ public class Student extends User {
 	 * Getters and Setters
 	 */
 	public List<Ref<AttendanceRecord>> getGroups() { return groups; }
-	public void addGroup(Long attendanceRecordId) { groups.add(Ref.create(Key.create(AttendanceRecord.class, attendanceRecordId))); }
+	public void addGroup(AttendanceRecord ar) { groups.add(Ref.create(Key.create(ar))); }
 }

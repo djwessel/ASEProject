@@ -13,8 +13,10 @@ public class AATApplication extends Application {
         
 		router.attach("/course/{course_id}/group/{group_name}", GroupResource.class);
 		router.attach("/user", UserCreateResource.class);
+		router.attach("/course/{course_id}/group/{group_id}/attendance", AttendanceResource.class);
+		router.attach("/course/{course_id}/group/{group_id}/attendance/{attendance_id}", AttendanceResource.class);
 
-        return router;
+		return router;
 	}
 
 }
