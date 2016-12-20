@@ -7,23 +7,23 @@ import com.googlecode.objectify.annotation.Subclass;
  */
 @Subclass(index=true)
 public class Tutor extends User {
-  private String pin;
+	private String pin;
 
-  public Tutor() {
-    super();
-  }
+	public Tutor() {
+		super();
+	}
 
-  /**
-   * Constructor with all relevant information
-   */
-  public Tutor(String email, String password, String first, String last, String pin) {
-    super(email, password, first, last);
-    this.pin = pin;
-  }
+	/**
+	 * Constructor with all relevant information
+	 */
+	public Tutor(String email, String password, String first, String last, String pin) {
+		super(email, password, first, last);
+		this.pin = pin;
+	}
 
-  /**
-   * Getters and Setters
-   */
-  public String getPin() { return pin; }
-  public void setPin(String pin) {this.pin = pin; }
+	/**
+	 * Getters and Setters
+	 */
+	public String getPin() { return pin; }
+	public void setPin(String pin) {this.pin = pin; }
 }
