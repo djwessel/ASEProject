@@ -24,9 +24,9 @@ public class CourseResource extends ServerResource{
    public void create(){
 	   Form params = getQuery();
 	  		
-	   String courseTitle =ResourceUtil.getParam(params,"courseName",true);
-	   int reqAtten = Integer.parseInt(ResourceUtil.getParam(params,"attendNum",true));
-	   int reqPresent = Integer.parseInt(ResourceUtil.getParam(params,"presentNum",true));
+	   String courseTitle =ResourceUtil.getParam(params,"title",true);
+	   int reqAtten = Integer.parseInt(ResourceUtil.getParam(params,"reqAtten",true));
+	   int reqPresent = Integer.parseInt(ResourceUtil.getParam(params,"reqPresent",true));
 	   
 	   Course course = new Course(courseTitle,reqAtten,reqPresent);	
 	   ObjectifyService.ofy().save().entity(course).now();
@@ -36,6 +36,23 @@ public class CourseResource extends ServerResource{
    public void update(){
 	   String courseId = getAttribute("courseID");
 	   Course course = retrieveCourse(courseId);
+	   
+	   Form params = getQuery();
+	   String courseTitle =ResourceUtil.getParam(params,"title",false);
+	   String reqAttendance = ResourceUtil.getParam(params,"reqAtten",false);
+	   
+	   int reqAtten;
+	   if (reqAttendance.length()>0){
+		    reqAtten = Integer.parseInt(reqAttendance);
+		    course.setReqAtten(reqAtten);
+	   }
+	   int reqPresent;
+	   String reqPresentations= ResourceUtil.getParam(params,"reqPresent",false); 
+	   if (reqPresentations.length()>0){
+		   reqPresent = Integer.parseInt(reqPresentations);
+		   course.setReqPresent(reqPresent);
+	   }
+	   course.setTitle(courseTitle);
 	   ObjectifyService.ofy().save().entity(course);
 	}
     
