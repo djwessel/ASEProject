@@ -25,7 +25,7 @@ public class GroupResource extends ServerResource {
 		String groupName = ResourceUtil.getParam(getQuery(), "name", true);
 		assert(groupName != null);
 		
-		Group group = new Group(Long.parseLong(courseID), groupName);
+		Group group = new Group(Long.parseLong(courseID, 10), groupName);
 		ObjectifyService.ofy().save().entity(group).now();
 	}
 	
@@ -79,8 +79,8 @@ public class GroupResource extends ServerResource {
 		ObjectifyService.ofy().delete().entity(group);
 	}
 	
-	private Group retrieveGroup(Long courseID, String groupID) {
-		Key<Course> course = Key.create(Course.class, courseID);
+	private Group retrieveGroup(String courseID, String groupID) {
+		Key<Course> course = Key.create(Course.class, Long.parseLong(courseID, 10));
 		Group group = ObjectifyService.ofy()
 				.load()
 				.type(Group.class)
