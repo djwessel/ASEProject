@@ -16,7 +16,9 @@ import com.aat.utils.ResourceUtil;;
 public class GroupResource extends ServerResource {
 
 	@Post
+
 	public void create()
+
 	{
 		String courseID = retrieveAttribute(Constants.courseID);
 		assert(courseID != null);
@@ -28,6 +30,7 @@ public class GroupResource extends ServerResource {
 	}
 	
 	@Put
+
 	public void update()
 	{
 		String courseID = retrieveAttribute(Constants.courseID);
@@ -76,7 +79,7 @@ public class GroupResource extends ServerResource {
 		ObjectifyService.ofy().delete().entity(group);
 	}
 	
-	private Group retrieveGroup(String courseID, String groupID) {
+	private Group retrieveGroup(Long courseID, String groupID) {
 		Key<Course> course = Key.create(Course.class, courseID);
 		Group group = ObjectifyService.ofy()
 				.load()
