@@ -1,33 +1,21 @@
 package com.aat.restlet;
 
-import org.restlet.data.Form;
-import org.restlet.resource.Delete;
-import org.restlet.resource.Get;
 import org.restlet.resource.Post;
-import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 
 import com.aat.datastore.User;
 import com.googlecode.objectify.ObjectifyService;
 
 public class UserLogin extends ServerResource{
-	
-	private final static String LOGIN = "login";
-	private final static String LOGOUT = "logout";
-	
-	@Get
-	   public String retrieve(){
-		   String userEmail = getAttribute("email");
-		   User user = retrieveUser(userEmail);
-		   return user.getPassword();
-	   }
+		private final static String LOGIN = "login";
+		private final static String LOGOUT = "logout";
 	
 	@Post
 	   public String passwordCheck(){
-		   //String userEmail = getAttribute("email");
-		   String userPassword = getAttribute("password");
+		   String userEmail = getAttribute("email");
+		   String userInputPassword = getAttribute("password");
 		   UserLogin user=new UserLogin();
-		   if(userPassword.equals(user.retrieve())){
+		   if(userInputPassword.equals(user.retrievePassword(userEmail))){
 			   return LOGIN;
 		   }
 		   else{
@@ -47,7 +35,16 @@ public class UserLogin extends ServerResource{
 				   .id(Long.parseLong(email)).now();	   	   
 		   return user;
 	   } 
-	   
-	   
-	   
+
+	/**
+	    * @param String email
+	    * @return user's password for checking
+	    * Retrieves user's password by email.
+	    * */
+		private String retrievePassword(String email){
+		   String userEmail = email;
+		   User user = retrieveUser(userEmail);
+		   return user.getPassword();
+	   }   
+	
 }
