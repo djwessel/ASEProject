@@ -16,6 +16,7 @@ public class UserCreateResource extends ServerResource {
 	
 	@Post
 	public Representation create() {
+		// TODO: add check to see if username already taken?
 		Form params = getQuery();
 		String type = ResourceUtil.getParam(params, "type", true);
 		String email = ResourceUtil.getParam(params, "email", true);

@@ -18,8 +18,8 @@ import java.util.Date;
  */
 @Entity
 public class AttendanceRecord {
-	@Parent Key<Group> group;
-	@Id public Long id;
+	@Parent private Key<Group> group;
+	@Id private Long id;
 
 	@Load private Ref<Student> student;
 	private ArrayList<Date> attendanceList = new ArrayList<Date>();
@@ -47,15 +47,9 @@ public class AttendanceRecord {
 	/**
 	 * Getters and Setters
 	 */
-	public List<Date> getAttendance() {
-		return attendanceList;
-	}
-
-	public List<Date> getPresentation() {
-		return presentationList;
-	}
-
-	public Student getStudent() {
-		return student.get();
-	}
+	public List<Date> getAttendance() { return attendanceList; }
+	public List<Date> getPresentation() { return presentationList; }
+	public Student getStudent() { return student.get(); }
+	public Long getId() { return id; }
+	public Key<Group> getParent() { return group; }
 }
