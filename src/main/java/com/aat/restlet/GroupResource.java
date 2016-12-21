@@ -1,6 +1,5 @@
 package com.aat.restlet;
 
-import org.restlet.data.Form;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
@@ -11,7 +10,8 @@ import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Key;
 import com.aat.datastore.Course;
 import com.aat.datastore.Group;
-import com.aat.utils.Constants;;
+import com.aat.utils.Constants;
+import com.aat.utils.ResourceUtil;;
 
 public class GroupResource extends ServerResource {
 
@@ -20,10 +20,10 @@ public class GroupResource extends ServerResource {
 	{
 		String courseID = retrieveAttribute(Constants.courseID);
 		assert(courseID != null);
-		String groupName = retrieveQueryParameter("name");
+		String groupName = ResourceUtil.getParam(getQuery(), "name", true);
 		assert(groupName != null);
 		
-		Group group = new Group(courseID, groupName);
+		Group group = new Group(Long.parseLong(courseID), groupName);
 		ObjectifyService.ofy().save().entity(group).now();
 	}
 	
@@ -36,7 +36,7 @@ public class GroupResource extends ServerResource {
 		String groupID = retrieveAttribute(Constants.groupId);
 		assert(groupID != null);
 		
-		String newName = retrieveQueryParameter("name");
+		String newName = ResourceUtil.getParam(getQuery(), "name", true);
 		assert(newName != null);
 		
 		Group group = retrieveGroup(courseID, groupID);
@@ -96,17 +96,5 @@ public class GroupResource extends ServerResource {
 			throw new RuntimeException(Constants.incorrectRequestFormat);
 		}
 		return attrValue;
-	}
-	
-	private String retrieveQueryParameter(String paramName) {
-		Form queryParams = getQuery();
-		if (queryParams == null) {
-			throw new RuntimeException(Constants.incorrectRequestFormat);
-		}
-		String paramValue = queryParams.getFirstValue(paramName);
-		if (paramName == null) {
-			throw new RuntimeException(Constants.incorrectRequestFormat);
-		}
-		return paramValue;
 	}
 }
