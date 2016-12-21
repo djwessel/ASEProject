@@ -16,14 +16,14 @@ public class GroupResource extends ServerResource {
 	
 
 	@Post
-	public void create(String courseID, String groupName)
+	public void create(Long courseID, String groupName)
 	{
 		Group group = new Group(courseID, groupName);
 		ObjectifyService.ofy().save().entity(group).now();
 	}
 	
 	@Put
-	public void update(String courseID, String groupID, String newName)
+	public void update(Long courseID, String groupID, String newName)
 	{
 		Group group = retrieveGroup(courseID, groupID);
 		if (group == null) {
@@ -34,7 +34,7 @@ public class GroupResource extends ServerResource {
 	}
 	
 	@Get
-	public Group retrieve(String courseID, String groupID)
+	public Group retrieve(Long courseID, String groupID)
 	{
 		Group group = retrieveGroup(courseID, groupID);
 		if (group == null) {
@@ -44,7 +44,7 @@ public class GroupResource extends ServerResource {
 	}
 	
 	@Delete
-	public void remove(String courseID, String groupID)
+	public void remove(Long courseID, String groupID)
 	{
 		Group group = retrieveGroup(courseID, groupID);
 		if (group == null)  {
@@ -53,7 +53,7 @@ public class GroupResource extends ServerResource {
 		ObjectifyService.ofy().delete().entity(group);
 	}
 	
-	private Group retrieveGroup(String courseID, String groupID) {
+	private Group retrieveGroup(Long courseID, String groupID) {
 		Key<Course> course = Key.create(Course.class, courseID);
 		return ObjectifyService.ofy()
 				.load()
