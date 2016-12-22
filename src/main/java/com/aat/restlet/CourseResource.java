@@ -8,29 +8,22 @@ import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 
 import com.aat.datastore.Course;
+import com.aat.utils.ResourceUtil;
 import com.googlecode.objectify.ObjectifyService;
 
 public class CourseResource extends ServerResource{
 		
    @Get
-   public String retrieve(){
+   public Course retrieve(){
 	   String courseId = getAttribute("courseID");
 	   Course course = retrieveCourse(courseId);
-	   
-	   return course.getTitle();
+	   return course;
    }
    
    @Post
    public void create(){
-	   //Form queryParams = getQuery();
-	  		
-	   //String courseTitle = queryParams.getFirstValue("courseName");
-	   //int reqAtten = Integer.parseInt(queryParams.getFirstValue("attendNum"));
-	   //int reqPresent = Integer.parseInt(queryParams.getFirstValue("presentNum"));
-	   
-	   //Course course = new Course(courseTitle,reqAtten,reqPresent);	
-	   //ObjectifyService.ofy().save().entity(course).now();
 	   Form params = getQuery();
+	  		
 	   String courseTitle =ResourceUtil.getParam(params,"title",true);
 	   int reqAtten = Integer.parseInt(ResourceUtil.getParam(params,"reqAtten",true));
 	   int reqPresent = Integer.parseInt(ResourceUtil.getParam(params,"reqPresent",true));
@@ -43,11 +36,26 @@ public class CourseResource extends ServerResource{
    public void update(){
 	   String courseId = getAttribute("courseID");
 	   Course course = retrieveCourse(courseId);
-	   ObjectifyService.ofy().delete().entity(course);
+	   
+	   Form params = getQuery();
+	   String courseTitle =ResourceUtil.getParam(params,"title",false);
+	   String reqAttendance = ResourceUtil.getParam(params,"reqAtten",false);
+	   
+	   int reqAtten;
+	   if (reqAttendance.length()>0){
+		    reqAtten = Integer.parseInt(reqAttendance);
+		    course.setReqAtten(reqAtten);
+	   }
+	   int reqPresent;
+	   String reqPresentations= ResourceUtil.getParam(params,"reqPresent",false); 
+	   if (reqPresentations.length()>0){
+		   reqPresent = Integer.parseInt(reqPresentations);
+		   course.setReqPresent(reqPresent);
+	   }
+	   course.setTitle(courseTitle);
+	   ObjectifyService.ofy().save().entity(course);
 	}
-   
-  
-   
+    
    @Delete
    public void remove(){
 	   String courseId = getAttribute("courseID");
@@ -65,7 +73,7 @@ public class CourseResource extends ServerResource{
 			   .load()
 			   .type(Course.class)
 			   .id(Long.parseLong(courseId)).now();
-	   	   
+	   	
 	   return course;
    } 
 }

@@ -15,16 +15,16 @@ import java.lang.UnsupportedOperationException;
  **/
 public class OfyHelper implements ServletContextListener {
 
-  public void contextInitialized(ServletContextEvent event) {
-    ObjectifyService.register(Course.class);
-    ObjectifyService.register(Group.class);
-    ObjectifyService.register(AttendanceRecord.class);
-    ObjectifyService.register(User.class);
-    ObjectifyService.register(Student.class);
-    ObjectifyService.register(Tutor.class);
-  }
+	public void contextInitialized(ServletContextEvent event) {
+		ObjectifyService.register(Course.class);
+		ObjectifyService.register(Group.class);
+		ObjectifyService.register(AttendanceRecord.class);
+		ObjectifyService.register(User.class);
+		ObjectifyService.register(Student.class);
+		ObjectifyService.register(Tutor.class);
+	}
 
-  public void contextDestroyed(ServletContextEvent event) {
-    throw new UnsupportedOperationException("App Engine does not currently invoke this method");
-  }
+	public void contextDestroyed(ServletContextEvent event) {
+		throw new UnsupportedOperationException("App Engine does not currently invoke this method");
+	}
 }

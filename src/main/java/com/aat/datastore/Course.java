@@ -8,32 +8,31 @@ import com.googlecode.objectify.annotation.Id;
  */
 @Entity
 public class Course {
-  @Id private long courseId;
-  private String title;
-  private int reqAtten;
-  private int reqPresent;
+	@Id private Long id;
+	private String title;
+	private int reqAtten;
+	private int reqPresent;
 
-  public Course() {
+	public Course() {
+	}
 
-  }
+	/**
+	 * Constructor with all relevant information
+	 */
+	public Course(String title, int reqAtten, int reqPresent) {
+		this.title = title;
+		this.reqAtten = reqAtten;
+		this.reqPresent = reqPresent;
+	}
 
-  /**
-   * Constructor with all relevant information
-   */
-  public Course(String title, int reqAtten, int reqPresent) {
-	    this.title = title;
-	    this.reqAtten = reqAtten;
-	    this.reqPresent = reqPresent;
-	  }
-
-  /**
-   * Getters and Setters
-   */
-  public String getTitle() { return title; }
-  public void setTitle(String title) { this.title = title; }
-  public int getReqAtten() { return reqAtten; }
-  public void setReqAtten(int reqAtten) { this.reqAtten = reqAtten; }
-  public int getReqPresent() { return reqPresent; }
-  public void setReqPresent(int reqPresent) { this.reqPresent = reqPresent; }
-  public long getId() { return courseId; }
+	/**
+	 * Getters and Setters
+	 */
+	public String getTitle() { return title; }
+	public void setTitle(String title) { this.title = title; }
+	public int getReqAtten() { return reqAtten; }
+	public void setReqAtten(int reqAtten) { this.reqAtten = reqAtten; }
+	public int getReqPresent() { return reqPresent; }
+	public void setReqPresent(int reqPresent) { this.reqPresent = reqPresent; }
+	public Long getId() { return id; }
 }
