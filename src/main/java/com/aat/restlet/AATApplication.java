@@ -10,14 +10,13 @@ public class AATApplication extends Application {
 	@Override
 	public Restlet createInboundRoot() {
 		Router router = new Router(getContext());
-        
-		//router.attach("/course/{course_id}/group/{group_name}", GroupResource.class);//add a group to a course
-		//router.attach("/course/{course_id}/group/{group_id}/newgroupname/{newname}", GroupResource.class);
-		//router.attach("/course", CoursesResource.class);//view all the courses
-		//router.attach("/course/{courseID}/groups", GroupsResource.class);//view all groups in a course
-		//router.attach("/course?name={courseName}&attend={attendNum}&present={presentNum}",CourseResource.class);//add a course		
-		router.attach("/user/{email}/password/{password}",UserLogin.class);
-		//router.attach("/user", UserCreateResource.class);
+
+		router.attach("/course/{course_id}/group/{group_name}", GroupResource.class);
+		router.attach("/courses", CoursesResource.class);
+		router.attach("/course/{courseID}/groups", GroupsResource.class);
+		router.attach("/course",CourseResource.class);		
+		router.attach("/user/{email}/id/{id}/password/{password}",UserLogin.class);
+		router.attach("/user", UserCreateResource.class);
 		
         return router;
 	}

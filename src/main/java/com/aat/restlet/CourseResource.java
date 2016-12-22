@@ -22,11 +22,18 @@ public class CourseResource extends ServerResource{
    
    @Post
    public void create(){
-	   Form queryParams = getQuery();
+	   //Form queryParams = getQuery();
 	  		
-	   String courseTitle = queryParams.getFirstValue("courseName");
-	   int reqAtten = Integer.parseInt(queryParams.getFirstValue("attendNum"));
-	   int reqPresent = Integer.parseInt(queryParams.getFirstValue("presentNum"));
+	   //String courseTitle = queryParams.getFirstValue("courseName");
+	   //int reqAtten = Integer.parseInt(queryParams.getFirstValue("attendNum"));
+	   //int reqPresent = Integer.parseInt(queryParams.getFirstValue("presentNum"));
+	   
+	   //Course course = new Course(courseTitle,reqAtten,reqPresent);	
+	   //ObjectifyService.ofy().save().entity(course).now();
+	   Form params = getQuery();
+	   String courseTitle =ResourceUtil.getParam(params,"title",true);
+	   int reqAtten = Integer.parseInt(ResourceUtil.getParam(params,"reqAtten",true));
+	   int reqPresent = Integer.parseInt(ResourceUtil.getParam(params,"reqPresent",true));
 	   
 	   Course course = new Course(courseTitle,reqAtten,reqPresent);	
 	   ObjectifyService.ofy().save().entity(course).now();

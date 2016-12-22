@@ -8,7 +8,7 @@ import com.googlecode.objectify.annotation.Id;
  */
 @Entity
 public class Course {
-  @Id private String courseId;
+  @Id private long courseId;
   private String title;
   private int reqAtten;
   private int reqPresent;
@@ -35,5 +35,5 @@ public class Course {
   public void setReqAtten(int reqAtten) { this.reqAtten = reqAtten; }
   public int getReqPresent() { return reqPresent; }
   public void setReqPresent(int reqPresent) { this.reqPresent = reqPresent; }
-  public String getId() { return courseId; }
+  public long getId() { return courseId; }
 }
