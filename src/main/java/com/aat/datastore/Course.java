@@ -14,7 +14,6 @@ public class Course {
 	private int reqPresent;
 
 	public Course() {
-
 	}
 
 	/**

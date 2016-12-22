@@ -38,5 +38,4 @@ public class UserCreateResource extends ServerResource {
 		ObjectifyService.ofy().save().entity(u).now();
 		return new StringRepresentation("Success");
 	}
-	
 }

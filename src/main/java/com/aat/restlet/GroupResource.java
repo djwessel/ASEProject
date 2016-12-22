@@ -6,19 +6,17 @@ import org.restlet.resource.Post;
 import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 
-import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.Key;
 import com.aat.datastore.Course;
 import com.aat.datastore.Group;
 import com.aat.utils.Constants;
-import com.aat.utils.ResourceUtil;;
+import com.aat.utils.ResourceUtil;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.ObjectifyService;;
 
 public class GroupResource extends ServerResource {
 
 	@Post
-
 	public void create()
-
 	{
 		String courseID = retrieveAttribute(Constants.courseID);
 		assert(courseID != null);
@@ -30,7 +28,6 @@ public class GroupResource extends ServerResource {
 	}
 	
 	@Put
-
 	public void update()
 	{
 		String courseID = retrieveAttribute(Constants.courseID);

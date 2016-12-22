@@ -10,7 +10,7 @@ public class AATApplication extends Application {
 	@Override
 	public Restlet createInboundRoot() {
 		Router router = new Router(getContext());
-        
+
 		router.attach("/course/{course_id}/group", GroupResource.class);
 		router.attach("/course/{course_id}/group/{group_id}", GroupResource.class);
 		router.attach("/user", UserCreateResource.class);
@@ -21,7 +21,6 @@ public class AATApplication extends Application {
 		router.attach("/course/{course_id}/group/{group_id}/attendance/{attendance_id}", AttendanceResource.class);
 
 		return router;
-
 	}
 
 }
