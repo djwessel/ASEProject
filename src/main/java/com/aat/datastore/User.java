@@ -1,8 +1,8 @@
 package com.aat.datastore;
 
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 /**
  * Represents a User. Users have an email and a password. Known subclasses are Students and Tutors.
@@ -10,7 +10,8 @@ import com.googlecode.objectify.annotation.Id;
 @Entity
 public abstract class User {
 	@Id private Long id;
-	private String email;
+	@Index private String email;
+	@Index private String token;
 	private String password;
 	private String first;
 	private String last;
@@ -41,4 +42,6 @@ public abstract class User {
 	public String getPassword() { return password; }
 	public void setPassword(String password) { this.password = password; }
 	public Long getId() { return id; }
+	public String getToken() { return token; }
+	public void setToken(String token) { this.token = token; }
 }
