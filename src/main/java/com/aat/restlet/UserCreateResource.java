@@ -3,6 +3,8 @@ package com.aat.restlet;
 import org.restlet.resource.Post;
 import org.restlet.data.Form;
 import org.restlet.resource.ServerResource;
+import org.restlet.resource.ResourceException;
+import org.restlet.Response;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 
@@ -15,9 +17,9 @@ import com.aat.utils.ResourceUtil;
 public class UserCreateResource extends ServerResource {
 	
 	@Post
-	public Representation create() {
+	public Representation create(Representation entity) {
 		// TODO: add check to see if username already taken?
-		Form params = getQuery();
+		Form params = new Form(entity);
 		String type = ResourceUtil.getParam(params, "type", true);
 		String email = ResourceUtil.getParam(params, "email", true);
 		String password = ResourceUtil.getParam(params, "password", true);
@@ -33,9 +35,10 @@ public class UserCreateResource extends ServerResource {
 			u = new Tutor(email, password, first, last, pin);
 		}
 		else {
-			return new StringRepresentation("Incorrect User type");
+			throw new ResourceException(404, "Incorrect parameter", "User is incorrect", null);
 		}
 		ObjectifyService.ofy().save().entity(u).now();
+
 		return new StringRepresentation("Success");
 	}
 	
