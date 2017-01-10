@@ -10,5 +10,7 @@ public class Constants {
 	// Exception messages
 	public final static String noGroupMsg = "Group does not exist";
 	public final static String incorrectRequestFormat = "Incorrect request format.";
+	public final static String missingParam = "Missing required parameter: ";
+	public final static String missingAttribute = "Missing required attribute: ";
 
 }

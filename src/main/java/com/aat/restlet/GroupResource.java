@@ -16,11 +16,10 @@ import com.aat.utils.ResourceUtil;;
 public class GroupResource extends ServerResource {
 
 	@Post
-
 	public void create()
-
 	{
-		String courseID = retrieveAttribute(Constants.courseID);
+		String courseID = getAttribute(Constants.courseID);
+		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
 		assert(courseID != null);
 		String groupName = ResourceUtil.getParam(getQuery(), "name", true);
 		assert(groupName != null);
@@ -30,13 +29,14 @@ public class GroupResource extends ServerResource {
 	}
 	
 	@Put
-
 	public void update()
 	{
-		String courseID = retrieveAttribute(Constants.courseID);
+		String courseID = getAttribute(Constants.courseID);
+		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
 		assert(courseID != null);
 		
-		String groupID = retrieveAttribute(Constants.groupId);
+		String groupID = getAttribute(Constants.groupId);
+		ResourceUtil.checkAttributeValue(Constants.groupId, groupID, true);
 		assert(groupID != null);
 		
 		String newName = ResourceUtil.getParam(getQuery(), "name", true);
@@ -52,10 +52,12 @@ public class GroupResource extends ServerResource {
 	@Get
 	public Group retrieve()
 	{
-		String courseID = retrieveAttribute(Constants.courseID);
+		String courseID = getAttribute(Constants.courseID);
+		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
 		assert(courseID != null);
 		
-		String groupID = retrieveAttribute(Constants.groupId);
+		String groupID = getAttribute(Constants.groupId);
+		ResourceUtil.checkAttributeValue(Constants.groupId, groupID, true);
 		assert(groupID != null);
 		
 		Group group = retrieveGroup(courseID, groupID);
@@ -67,12 +69,14 @@ public class GroupResource extends ServerResource {
 	@Delete
 	public void remove()
 	{
-		String courseID = retrieveAttribute(Constants.courseID);
+		String courseID = getAttribute(Constants.courseID);
+		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
 		assert(courseID != null);
 		
-		String groupID = retrieveAttribute(Constants.groupId);
+		String groupID = getAttribute(Constants.groupId);
+		ResourceUtil.checkAttributeValue(Constants.groupId, groupID, true);
 		assert(groupID != null);
-
+		
 		Group group = retrieveGroup(courseID, groupID);
 		assert(group != null);
 		
@@ -93,11 +97,4 @@ public class GroupResource extends ServerResource {
 		return group;
 	}
 	
-	private String retrieveAttribute(String attrName) {
-		String attrValue = getAttribute(attrName);
-		if (attrValue == null) {
-			throw new RuntimeException(Constants.incorrectRequestFormat);
-		}
-		return attrValue;
-	}
 }

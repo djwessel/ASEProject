@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">AAT</string>
+    <string name="app_full_name">Automatic Attendence Tool</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="username_hint">User name</string>
+    <string name="password_hint">Password</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign up</string>
+    <string name="title_activity_course">CourseActivity</string>
+    <string name="title_activity_signin">SigninActivity</string>
+
+</resources>
