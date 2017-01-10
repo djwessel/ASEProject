@@ -25,6 +25,7 @@
   <div id="groups">Loading groups...</div>
 
   <form id="groupCreate">
+    Create New Group<br>
     Group Name: <input type="text" name="name"><br>
     <input type="submit" value="Create New Group">
   </form>  
