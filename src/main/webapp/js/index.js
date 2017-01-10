@@ -1,17 +1,20 @@
 $(document).ready(function() {
-  $('#userSignup').submit(function() {
-    $.post('/rest/user', $(this).serialize()).done(function(data) {
+  $('#courseCreate').submit(function() {
+    $.post('/rest/course', $(this).serialize()).done(function(data) {
       console.log("success", data);
-      window.location = '/success.jsp';
+      window.location.reload();
     }).fail(function(xhr) {
       console.log("fail", xhr);
-      alert("Sign up failed");
+      alert("Unable to create course");
     });
+
     return false;
   });
 
-  $.get('/rest/course/6016527627190272', function(data) {
+  $.get('/rest/courses', function(data) {
     console.log(data);
+    data.forEach(function(course) {
+      var cDiv = $('<a href="/course.jsp?courseId=' + course.id + '" class="course">' + course.title + '</a>').appendTo($('#courses'));
+    });
   });
-
 });

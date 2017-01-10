@@ -22,9 +22,10 @@ import com.aat.utils.ResourceUtil;
 public class AttendanceResource extends ServerResource {
 	
 	@Post
-	public Representation create() {
+	public Representation create(Representation entity) {
 		// Get input parameters
-		Form params = getQuery();
+		//Form params = getQuery();
+		Form params = new Form(entity);
 		Long userId = Long.parseLong(ResourceUtil.getParam(params, "user", true), 10);
 		Long courseId = Long.parseLong(getAttribute("course_id"), 10);
 		Long groupId = Long.parseLong(getAttribute("group_id"), 10);
