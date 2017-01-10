@@ -21,7 +21,7 @@ public class AttendanceRecord {
 	@Parent private Key<Group> group;
 	@Id private Long id;
 
-	@Load private Ref<Student> student;
+	private Ref<Student> student;
 	private ArrayList<Date> attendanceList = new ArrayList<Date>();
 	private ArrayList<Date> presentationList = new ArrayList<Date>();
 

@@ -4,6 +4,8 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Represents a User. Users have an email and a password. Known subclasses are Students and Tutors.
  */
@@ -11,8 +13,8 @@ import com.googlecode.objectify.annotation.Index;
 public abstract class User {
 	@Id private Long id;
 	@Index private String email;
-	@Index private String token;
-	private String password;
+	@JsonIgnore @Index private String token;
+	@JsonIgnore private String password;
 	private String first;
 	private String last;
 

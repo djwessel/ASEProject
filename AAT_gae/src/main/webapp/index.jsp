@@ -12,6 +12,7 @@
   <%@include file="login.jsp"%>
   <div id="courses"></div>
   <form id="courseCreate">
+    Create New Course<br>
     Title: <input type="text" name="title"><br>
     Required Attendance count: <input type="number" name="reqAtten"><br>
     Required Presentation count: <input type="number" name="reqPresent"><br>

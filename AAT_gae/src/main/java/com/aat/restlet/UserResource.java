@@ -1,6 +1,7 @@
 package com.aat.restlet;
 
 import org.restlet.resource.Post;
+import org.restlet.resource.Get;
 import org.restlet.data.Form;
 import org.restlet.resource.ServerResource;
 import org.restlet.resource.ResourceException;
@@ -13,8 +14,9 @@ import com.aat.datastore.User;
 import com.aat.datastore.Tutor;
 import com.aat.datastore.Student;
 import com.aat.utils.ResourceUtil;
+import com.aat.utils.Constants;
 
-public class UserCreateResource extends ServerResource {
+public class UserResource extends ServerResource {
 	
 	@Post
 	public Representation create(Representation entity) {
@@ -41,5 +43,21 @@ public class UserCreateResource extends ServerResource {
 
 		return new StringRepresentation("Success");
 	}
-	
+
+	@Get
+	public User retrieve()
+	{
+		String userId = getAttribute(Constants.userId);
+		User u = getUser(userId);
+
+		return u;
+	}
+
+	private User getUser(String userId) {
+		User u = ObjectifyService.ofy().load().type(User.class).id(Long.parseLong(userId, 10)).now();
+		if (u == null) {
+			throw new ResourceException(404, "Not found", "Cannot find User with given id", null);
+		}
+		return u;
+	}
 }
