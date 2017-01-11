@@ -15,7 +15,7 @@ public class CourseResource extends ServerResource{
 		
    @Get
    public Course retrieve(){
-	   String courseId = getAttribute("courseID");
+	   String courseId = getAttribute("course_id");
 	   Course course = retrieveCourse(courseId);
 	   return course;
    }
@@ -34,7 +34,7 @@ public class CourseResource extends ServerResource{
    
    @Put
    public void update(){
-	   String courseId = getAttribute("courseID");
+	   String courseId = getAttribute("course_id");
 	   Course course = retrieveCourse(courseId);
 	   
 	   Form params = getQuery();
@@ -58,7 +58,7 @@ public class CourseResource extends ServerResource{
     
    @Delete
    public void remove(){
-	   String courseId = getAttribute("courseID");
+	   String courseId = getAttribute("course_id");
 	   Course course = retrieveCourse(courseId);
 	   ObjectifyService.ofy().delete().entity(course);
 	}

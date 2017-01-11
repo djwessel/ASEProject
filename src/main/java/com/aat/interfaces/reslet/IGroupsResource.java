@@ -1,4 +1,4 @@
-	package com.aat.restlet;
+	package com.aat.interfaces.reslet;
 
 import java.util.List;
 

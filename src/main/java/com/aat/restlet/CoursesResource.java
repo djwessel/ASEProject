@@ -5,9 +5,10 @@ import java.util.List;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 import com.aat.datastore.Course;
+import com.aat.interfaces.reslet.ICoursesResource;
 import com.googlecode.objectify.ObjectifyService;
 
-public class CoursesResource extends ServerResource{
+public class CoursesResource extends ServerResource implements ICoursesResource{
 
 	@Get
 	public List<Course> retrieve(){
