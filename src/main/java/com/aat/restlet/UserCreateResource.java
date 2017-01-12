@@ -20,6 +20,7 @@ public class UserCreateResource extends ServerResource {
 	public Representation create(Representation entity) {
 		// TODO: add check to see if username already taken?
 		Form params = new Form(entity);
+		//Form params = getQuery();
 		String type = ResourceUtil.getParam(params, "type", true);
 		String email = ResourceUtil.getParam(params, "email", true);
 		String password = ResourceUtil.getParam(params, "password", true);

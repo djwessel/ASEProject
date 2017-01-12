@@ -18,7 +18,7 @@ public class UserLogin extends ServerResource {
 	private final static String LOGIN = "login successfully";
 	
 	@Post
-	public String login(Representation entity) {
+	public Long login(Representation entity) {
 		Form params = new Form(entity);
 		//Form params = getQuery();
 		String email = ResourceUtil.getParam(params, "email", true);
@@ -39,7 +39,7 @@ public class UserLogin extends ServerResource {
 			// Set Request cookies to session token
 			getResponse().getCookieSettings().add(new CookieSetting(0, "sessionToken", token));
 			// Finish request
-	   		return LOGIN;
+	   		return u.getId();
 		}
 	}
 	
