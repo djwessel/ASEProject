@@ -15,7 +15,7 @@ public class GroupsResource extends ServerResource implements IGroupsResource{
 	@Get
 	public List<Group> retrieve(){
 		String courseId = getAttribute("courseID");
-		Key<Course> course = Key.create(Course.class,courseId);
+		Key<Course> course = Key.create(Course.class,Long.parseLong(courseId));
 		List<Group> groups =  ObjectifyService.ofy()
 				.load()
 				.type(Group.class)
