@@ -9,13 +9,15 @@ import com.googlecode.objectify.annotation.Load;
 import java.util.List;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Represents a Student User. Extends the User class. Students have a list 
  * of AttendanceRecords, one for each Tutorial Group they have signed up for.
  */
 @Subclass(index=true)
 public class Student extends User {
-	@Load @Index private List<Ref<AttendanceRecord>> groups = new ArrayList<Ref<AttendanceRecord>>();
+	@JsonIgnore @Load @Index private List<Ref<AttendanceRecord>> groups = new ArrayList<Ref<AttendanceRecord>>();
 
 	public Student() {
 		super();

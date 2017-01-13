@@ -4,6 +4,9 @@ import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
+import com.aat.restlet.GroupsResource;
+import com.aat.utils.Constants;
+
 
 public class AATApplication extends Application {
 	
@@ -13,7 +16,6 @@ public class AATApplication extends Application {
         
 		router.attach("/course/{course_id}/group", GroupResource.class);
 		router.attach("/course/{course_id}/group/{group_id}", GroupResource.class);
-		router.attach("/user", UserCreateResource.class);
 		router.attach("/course", CourseResource.class);
 		router.attach("/course/{course_id}", CourseResource.class);
 		router.attach("/course/{course_id}/groups", GroupsResource.class);
@@ -24,6 +26,8 @@ public class AATApplication extends Application {
 		router.attach("/courses", CoursesResource.class);
 		router.attach("/user/login", UserLogin.class);
 		router.attach("/user/{id}/logout", UserLogout.class);
+		router.attach("/user", UserResource.class);
+		router.attach("/user/{" + Constants.userId + "}", UserResource.class);
 
 
 		return router;

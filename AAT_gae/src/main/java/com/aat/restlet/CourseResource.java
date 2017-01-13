@@ -6,6 +6,8 @@ import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
+import org.restlet.resource.ResourceException;
+import org.restlet.representation.Representation;
 
 import com.aat.datastore.Course;
 import com.aat.utils.ResourceUtil;
@@ -21,8 +23,8 @@ public class CourseResource extends ServerResource{
    }
    
    @Post
-   public void create(){
-	   Form params = getQuery();
+   public void create(Representation entity){
+	   Form params = new Form(entity);
 	  		
 	   String courseTitle =ResourceUtil.getParam(params,"title",true);
 	   int reqAtten = Integer.parseInt(ResourceUtil.getParam(params,"reqAtten",true));
@@ -73,7 +75,9 @@ public class CourseResource extends ServerResource{
 			   .load()
 			   .type(Course.class)
 			   .id(Long.parseLong(courseId)).now();
-	   	
+
+	   if (course == null)
+		throw new ResourceException(404, "Not found", "Cannot find course with id: " + courseId, null);
 	   return course;
    } 
 }
