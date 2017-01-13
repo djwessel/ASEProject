@@ -17,31 +17,65 @@ import com.aat.datastore.Course;
 import com.aat.datastore.Group;
 import com.ase.aat_android.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
+import org.restlet.resource.ResourceException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import utils.Constants;
 
 public class CourseActivity extends ListActivity {
 
-    private class RetrieveGroupsTask extends BaseAsyncTask<Long, Boolean, Boolean> {
+    private class RetrieveGroupsTask extends BaseAsyncTask<Course, Boolean, Boolean> {
 
         public RetrieveGroupsTask(Activity activity) {
             super(activity);
         }
 
         @Override
-        protected Boolean doInBackground(Long... params) {
+        protected Boolean doInBackground(Course... params) {
             StringBuilder urlBuilder = new StringBuilder(Constants.AATUrl);
             urlBuilder.append("course/");
-            urlBuilder.append(params[0]);
+            urlBuilder.append("5659313586569216");
+            //urlBuilder.append(params[0].getId());
             urlBuilder.append("/groups");
             ClientResource groupsRetrieveRes = new ClientResource(urlBuilder.toString());
-            // TODO: should get group list from representation
-            Representation result = groupsRetrieveRes.get();
-            return (result != null);
+            String result;
+            try {
+                result = groupsRetrieveRes.get().getText();
+                if (result == null) {
+                    return false;
+                }
+                parseGroups(result);
+            } catch (ResourceException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return (true);
+        }
+
+        private void parseGroups(String result) throws JSONException {
+            JSONArray jsonGroups = new JSONArray(result);
+            System.out.println(jsonGroups.length());
+            for (int i = 0; i < jsonGroups.length(); ++i) {
+                JSONObject groupObj = jsonGroups.getJSONObject(i);
+                groupIDs.add(Long.parseLong(groupObj.getString("id")));
+                Long courseID = Long.parseLong("5659313586569216");
+                String name = groupObj.getString("name");
+                groups.add(new Group(courseID, name));
+            }
+            System.out.println(groups.size());
         }
 
         @Override
@@ -155,17 +189,23 @@ public class CourseActivity extends ListActivity {
 
     private Course course;
     private ArrayList<Group> groups;
+    // TODO: id's should be able to be passed to group ctor
+    private ArrayList<Long> groupIDs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
 
+        groups = new ArrayList<Group>();
+        groupIDs = new ArrayList<Long>();
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             course = (Course) extras.get("course");
         } else {
-            throw new RuntimeException("No course information");
+            course = new Course("ASE", 15, 2);
+            //throw new RuntimeException("No course information");
         }
         TextView courseNameTextView = (TextView) findViewById(R.id.coursename_textview);
         courseNameTextView.setText(course.getTitle());
@@ -176,7 +216,7 @@ public class CourseActivity extends ListActivity {
     }
 
     private void retrieveCourseGroups() {
-        new RetrieveGroupsTask(CourseActivity.this).execute(course.getId());
+        new RetrieveGroupsTask(CourseActivity.this).execute(course);
     }
 
 }

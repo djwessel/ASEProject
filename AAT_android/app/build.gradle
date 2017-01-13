@@ -41,4 +41,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'org.restlet.jse:org.restlet:2.3.2'
     compile files('/home/anahitik/ASE/ASEProject/AAT_android/libs/aat_datastore.jar')
+    compile 'com.google.android.gms:play-services:10.0.1'
 }
