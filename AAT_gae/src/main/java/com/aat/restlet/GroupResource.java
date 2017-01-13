@@ -5,6 +5,8 @@ import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
+import org.restlet.data.Form;
+import org.restlet.representation.Representation;
 
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Key;
@@ -16,12 +18,12 @@ import com.aat.utils.ResourceUtil;;
 public class GroupResource extends ServerResource {
 
 	@Post
-	public void create()
+	public void create(Representation entity)
 	{
 		String courseID = getAttribute(Constants.courseID);
 		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
 		assert(courseID != null);
-		String groupName = ResourceUtil.getParam(getQuery(), "name", true);
+		String groupName = ResourceUtil.getParam(new Form(entity), "name", true);
 		assert(groupName != null);
 		
 		Group group = new Group(Long.parseLong(courseID, 10), groupName);

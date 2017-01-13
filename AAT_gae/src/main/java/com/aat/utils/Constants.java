@@ -6,6 +6,7 @@ public class Constants {
 	public final static String courseID = "course_id";
 	public final static String group = "group";
 	public final static String groupId = "group_id";
+	public final static String userId = "user_id";
 	
 	// Exception messages
 	public final static String noGroupMsg = "Group does not exist";

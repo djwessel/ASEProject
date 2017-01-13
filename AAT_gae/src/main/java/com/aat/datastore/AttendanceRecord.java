@@ -13,15 +13,19 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 /**
  * Represents AttendanceRecord. AttendanceRecords are children to a Group and contain attendance and presentation information for a given student.
  */
 @Entity
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class AttendanceRecord {
 	@Parent private Key<Group> group;
 	@Id private Long id;
 
-	@Load private Ref<Student> student;
+	private Ref<Student> student;
 	private ArrayList<Date> attendanceList = new ArrayList<Date>();
 	private ArrayList<Date> presentationList = new ArrayList<Date>();
 
