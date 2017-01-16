@@ -28,7 +28,7 @@ public class AATApplication extends Application {
 		router.attach("/user/{id}/logout", UserLogout.class);
 		router.attach("/user", UserResource.class);
 		router.attach("/user/{" + Constants.userId + "}", UserResource.class);
-
+		router.attach("/user/{" + Constants.userId + "}/attendances", GroupsAttendancesResource.class);
 
 		return router;
 
