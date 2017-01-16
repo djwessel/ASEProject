@@ -20,69 +20,68 @@ import com.ase.aat_android.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import utils.Constants;
+import com.ase.aat_android.utils.Constants;
 
 public class CourseActivity extends ListActivity {
 
-    private class RetrieveGroupsTask extends BaseAsyncTask<Course, Boolean, Boolean> {
+    private class RetrieveGroupsTask extends BaseAsyncTask<Long, Boolean, ArrayList<Group>> {
 
         public RetrieveGroupsTask(Activity activity) {
             super(activity);
         }
 
         @Override
-        protected Boolean doInBackground(Course... params) {
+        protected ArrayList<Group> doInBackground(Long... params) {
+            String url = getGroupsRetrievingUrl(params[0]);
+            ClientResource groupsRetrieveRes = new ClientResource(url);
+            try {
+                // TODO: change to use Groups interface. Will get groups list.
+                groupsRetrieveRes.get();
+            } catch (ResourceException e) {
+                e.printStackTrace();
+                return null;
+            }
+            return new ArrayList<Group>();
+        }
+
+
+        @Override
+        protected void onPostExecute(ArrayList<Group> groups) {
+            super.onPostExecute(groups);
+            GroupListAdapter adapter = (GroupListAdapter) getListAdapter();
+            adapter.updateGroups(groups);
+        }
+
+        private String getGroupsRetrievingUrl(Long courseID) {
             StringBuilder urlBuilder = new StringBuilder(Constants.AATUrl);
             urlBuilder.append("course/");
             urlBuilder.append("5659313586569216");
-            //urlBuilder.append(params[0].getId());
+            //urlBuilder.append(courseID);
             urlBuilder.append("/groups");
-            ClientResource groupsRetrieveRes = new ClientResource(urlBuilder.toString());
-            String result;
-            try {
-                result = groupsRetrieveRes.get().getText();
-                if (result == null) {
-                    return false;
-                }
-                parseGroups(result);
-            } catch (ResourceException e) {
-                e.printStackTrace();
-                return false;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return false;
-            }
-            return (true);
+            return urlBuilder.toString();
         }
 
-        private void parseGroups(String result) throws JSONException {
+        // TODO: remove this function when changed to use Groups Interface
+        /*private ArrayList<Group> parseGroups(String result) throws JSONException {
             JSONArray jsonGroups = new JSONArray(result);
             System.out.println(jsonGroups.length());
             for (int i = 0; i < jsonGroups.length(); ++i) {
                 JSONObject groupObj = jsonGroups.getJSONObject(i);
+                //TODO: won't need groupIDs if receive groups list
                 groupIDs.add(Long.parseLong(groupObj.getString("id")));
                 Long courseID = Long.parseLong("5659313586569216");
                 String name = groupObj.getString("name");
                 groups.add(new Group(courseID, name));
             }
             System.out.println(groups.size());
-        }
+        }*/
 
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            getListAdapter().notifyAll();
-        }
     }
 
     private class GroupListAdapter extends BaseAdapter {
@@ -130,9 +129,20 @@ public class CourseActivity extends ListActivity {
         }
 
         private LayoutInflater inflater;
+        private ArrayList<Group> groups;
+        // TODO: id's should be able to be passed to group ctor
+        private ArrayList<Long> groupIDs;
 
         public GroupListAdapter(Context context) {
+            groups = new ArrayList<Group>();
+            groupIDs = new ArrayList<Long>();
+
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        public void updateGroups(ArrayList<Group> newGroups) {
+            groups = newGroups;
+            notifyDataSetChanged();
         }
 
         @Override
@@ -187,36 +197,50 @@ public class CourseActivity extends ListActivity {
     }
 
 
+    private TextView courseNameTextView;
+    private TextView requiredAttendancesTextView;
+    private TextView requiredPresentationsTextView;
+
+    private Long courseID;
     private Course course;
-    private ArrayList<Group> groups;
-    // TODO: id's should be able to be passed to group ctor
-    private ArrayList<Long> groupIDs;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
 
-        groups = new ArrayList<Group>();
-        groupIDs = new ArrayList<Long>();
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            course = (Course) extras.get("course");
-        } else {
-            course = new Course("ASE", 15, 2);
-            //throw new RuntimeException("No course information");
-        }
-        TextView courseNameTextView = (TextView) findViewById(R.id.coursename_textview);
-        courseNameTextView.setText(course.getTitle());
-
+        retrieveCourseFromExtras();
+        updateTextViews();
         retrieveCourseGroups();
 
         setListAdapter(new GroupListAdapter(getApplicationContext()));
     }
 
+    private void updateTextViews() {
+        courseNameTextView = (TextView) findViewById(R.id.coursename_textview);
+        courseNameTextView.setText(course.getTitle());
+        requiredAttendancesTextView = (TextView) findViewById(R.id.req_attendancenum_textview);
+        requiredAttendancesTextView.setText("Required Attendances: " + course.getReqAtten());
+        requiredPresentationsTextView = (TextView) findViewById(R.id.req_presentnum_textview);
+        requiredPresentationsTextView.setText("Required Presentations: " + course.getReqPresent());
+    }
+
+    private void retrieveCourseFromExtras() {
+        Bundle extras = getIntent().getExtras();
+        if (extras == null) {
+            course = new Course("ASE", 15, 2);
+            return;
+            //throw new RuntimeException("No course information");
+        }
+        ArrayList<String> courseData = extras.getStringArrayList(Constants.courseKey);
+        courseID = Long.parseLong(courseData.get(0));
+        course = new Course(courseData.get(1), Integer.parseInt(courseData.get(2)), Integer.parseInt(courseData.get(3)));
+    }
+
     private void retrieveCourseGroups() {
-        new RetrieveGroupsTask(CourseActivity.this).execute(course);
+        // If course object is passed to this activity, will do just course.getId();
+        new RetrieveGroupsTask(CourseActivity.this).execute(courseID);
     }
 
 }

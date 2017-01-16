@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.ase.aat_android.utils.Constants;
+
 /**
  * Created by anahitik on 09.01.17.
  */
@@ -17,7 +19,7 @@ public abstract class BaseAsyncTask<Params, Progress, Result> extends AsyncTask<
     private String loadingMessage;
 
     public BaseAsyncTask(Activity activity) {
-        loadingMessage = "Loading";
+        loadingMessage = Constants.loading;
         initializeProgressBar(activity);
     }
 

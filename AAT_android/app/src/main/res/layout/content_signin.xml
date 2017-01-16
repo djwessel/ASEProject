@@ -17,7 +17,7 @@
         android:gravity="center_horizontal"
         android:paddingTop="15dp"
         android:text="@string/app_full_name"
-        android:textSize="20dp"
+        android:textSize="@dimen/text_view_text_size"
         android:id="@+id/app_name_text_view"/>
 
     <LinearLayout
@@ -30,33 +30,35 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
             android:hint="@string/username_hint"
             android:id="@+id/login_username_edittext"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
             android:hint="@string/password_hint"
             android:id="@+id/login_password_edittext"
             android:inputType="textPassword"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
             android:text="@string/login"
-            android:textSize="15dp"
+            android:textSize="@dimen/button_text_size"
+            android:textAlignment="center"
             android:id="@+id/login_button"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
             android:text="@string/signup"
-            android:textSize="15dp"
+            android:textSize="@dimen/button_text_size"
+            android:textAlignment="center"
             android:id="@+id/signup_button"/>
     </LinearLayout>
 

@@ -1,12 +1,23 @@
 <resources>
     <string name="app_name">AAT</string>
     <string name="app_full_name">Automatic Attendence Tool</string>
-    <string name="title_activity_welcome">WelcomeActivity</string>
-    <string name="username_hint">User name</string>
-    <string name="password_hint">Password</string>
+    <string name="title_activity_course">Course</string>
+    <string name="title_activity_signin">Signin</string>
+    <string name="title_activity_signup">Signup</string>
+    <string name="title_activity_courses">CoursesActivity</string>
+
     <string name="login">Login</string>
     <string name="signup">Sign up</string>
-    <string name="title_activity_course">CourseActivity</string>
-    <string name="title_activity_signin">SigninActivity</string>
+    <string name="username_hint">User name</string>
+    <string name="password_hint">Password</string>
+    <string name="firstname_hint">First Name</string>
+    <string name="lastname_hint">Last Name</string>
+    <string name="email_hint">Email</string>
+    <string name="student_type">Student</string>
+    <string name="title_activity_user">UserActivity</string>
+    <string name="profile_item">Profile</string>
+    <string name="courses_item">Courses</string>
+    <string name="logout_item">Logout</string>
+
 
 </resources>

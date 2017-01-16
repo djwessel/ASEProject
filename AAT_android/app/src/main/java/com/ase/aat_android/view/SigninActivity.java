@@ -1,7 +1,7 @@
 package com.ase.aat_android.view;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,45 +17,40 @@ import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
-import org.restlet.representation.Representation;
-import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
-import utils.Constants;
+import com.ase.aat_android.utils.Constants;
 
 
 public class SigninActivity extends AppCompatActivity {
-    private class SigninTask extends BaseAsyncTask<String, Boolean, Boolean> {
+    private class SigninTask extends BaseAsyncTask<String, Boolean, Long> {
 
         private ProgressBar loadingBar;
 
         public  SigninTask(Activity activity) throws URISyntaxException {
-            super(activity, "Login...");
+            super(activity, Constants.loginLoad);
         }
 
         @Override
-        protected Boolean doInBackground(String... params) {
-            ClientResource loginRes = new ClientResource(Method.POST, Constants.AATUrl + "user/login");
+        protected Long doInBackground(String... params) {
+            ClientResource loginRes = new ClientResource(Method.POST, Constants.AATUrl + Constants.loginResourceEndpoint);
             Form loginForm = createLoginForm(params[0], params[1]);
-            System.out.println(loginRes.toString());
-            System.out.println(loginForm.toString());
-            String result;
+            Long result;
             try {
-                result = loginRes.post(loginForm, MediaType.ALL).getText();
+                result = Long.parseLong(loginRes.post(loginForm, MediaType.ALL).getText(), 10);
                 System.out.println(result);
             } catch (ResourceException e) {
                 System.out.println(e.getMessage());
-                return false;
+                return null;
             } catch (IOException e) {
-                System.out.println(e.getMessage());
-                return false;
+                e.printStackTrace();
+                return null;
             }
-            return (result == Constants.loginSucceed);
+            return result;
         }
 
         private Form createLoginForm(String username, String password) {
@@ -66,12 +61,10 @@ public class SigninActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Boolean res) {
+        protected void onPostExecute(Long res) {
             super.onPostExecute(res);
-            if (res) {
-                Toast.makeText(getApplicationContext(), "Succeeded to login", Toast.LENGTH_LONG).show();
-                //TODO: pass User as an argument
-                openUserActivity();
+            if (res != null) {
+                openUserActivity(res);
             } else {
                 Toast.makeText(getApplicationContext(), "Failed to login", Toast.LENGTH_LONG).show();
             }
@@ -132,14 +125,17 @@ public class SigninActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: move to signup activity
+                Intent intent = new Intent(SigninActivity.this, SignupActivity.class);
+                startActivity(intent);
             }
         });
     }
 
-    // TODO: pass User as an argument to this function
-    private void openUserActivity() {
-
+    private void openUserActivity(Long userID) {
+        Intent intent = new Intent(SigninActivity.this, UserActivity.class);
+        // TODO: set actual id
+        intent.putExtra(Constants.userIdKey, userID);
+        startActivity(intent);
     }
 
 
