@@ -10,6 +10,7 @@ import org.restlet.resource.ResourceException;
 import org.restlet.representation.Representation;
 
 import com.aat.datastore.Course;
+import com.aat.datastore.Tutor;
 import com.aat.utils.ResourceUtil;
 import com.googlecode.objectify.ObjectifyService;
 
@@ -24,6 +25,8 @@ public class CourseResource extends ServerResource{
    
    @Post
    public void create(Representation entity){
+		// Check if of type Tutor
+		ResourceUtil.checkTokenPermissions(this, Tutor.class);
 	   Form params = new Form(entity);
 	  		
 	   String courseTitle =ResourceUtil.getParam(params,"title",true);
@@ -36,6 +39,8 @@ public class CourseResource extends ServerResource{
    
    @Put
    public void update(){
+		// Check if of type Tutor
+		ResourceUtil.checkTokenPermissions(this, Tutor.class);
 	   String courseId = getAttribute("courseID");
 	   Course course = retrieveCourse(courseId);
 	   
@@ -60,6 +65,8 @@ public class CourseResource extends ServerResource{
     
    @Delete
    public void remove(){
+		// Check if of type Tutor
+		ResourceUtil.checkTokenPermissions(this, Tutor.class);
 	   String courseId = getAttribute("courseID");
 	   Course course = retrieveCourse(courseId);
 	   ObjectifyService.ofy().delete().entity(course);

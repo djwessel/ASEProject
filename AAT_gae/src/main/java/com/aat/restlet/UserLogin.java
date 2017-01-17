@@ -36,7 +36,7 @@ public class UserLogin extends ServerResource {
 			u.setToken(token);
 			ObjectifyService.ofy().save().entity(u);
 			// Set Request cookies to session token
-			getResponse().getCookieSettings().add(new CookieSetting(0, "sessionToken", token));
+			getResponse().getCookieSettings().add(new CookieSetting(0, "sessionToken", token, "/", null));
 			// Finish request
 	   		return u.getId();
 		}

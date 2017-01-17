@@ -20,6 +20,8 @@ public class GroupResource extends ServerResource {
 	@Post
 	public void create(Representation entity)
 	{
+		// Check if of type Tutor
+		ResourceUtil.checkTokenPermissions(this, Tutor.class);
 		String courseID = getAttribute(Constants.courseID);
 		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
 		assert(courseID != null);
@@ -33,6 +35,8 @@ public class GroupResource extends ServerResource {
 	@Put
 	public void update()
 	{
+		// Check if of type Tutor
+		ResourceUtil.checkTokenPermissions(this, Tutor.class);
 		String courseID = getAttribute(Constants.courseID);
 		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
 		assert(courseID != null);
@@ -71,6 +75,8 @@ public class GroupResource extends ServerResource {
 	@Delete
 	public void remove()
 	{
+		// Check if of type Tutor
+		ResourceUtil.checkTokenPermissions(this, Tutor.class);
 		String courseID = getAttribute(Constants.courseID);
 		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
 		assert(courseID != null);

@@ -19,16 +19,23 @@ import com.aat.datastore.Group;
 import com.aat.datastore.Course;
 import com.aat.utils.ResourceUtil;
 
+import java.util.List;
+
 public class AttendanceResource extends ServerResource {
 	
 	@Post
 	public Representation create(Representation entity) {
+		// Check if of type Student
+		ResourceUtil.checkTokenPermissions(this, Student.class);
+
 		// Get input parameters
-		//Form params = getQuery();
 		Form params = new Form(entity);
 		Long userId = Long.parseLong(ResourceUtil.getParam(params, "user", true), 10);
 		Long courseId = Long.parseLong(getAttribute("course_id"), 10);
 		Long groupId = Long.parseLong(getAttribute("group_id"), 10);
+
+		// Check if token coresponds to userid
+		ResourceUtil.checkToken(this, userId);
 
 		// Throws a ClassCastException if userId isnt of type Student
 		Student s = ObjectifyService.ofy()
@@ -55,7 +62,7 @@ public class AttendanceResource extends ServerResource {
 		}
 
 		// Create new AttendanceRecord and add to Students list of AttendanceRecords
-		AttendanceRecord ar = new AttendanceRecord(groupId, userId);
+		AttendanceRecord ar = new AttendanceRecord(courseId, groupId, userId);
 		ObjectifyService.ofy().save().entity(ar).now();
 		s.addGroup(ar);
 		ObjectifyService.ofy().save().entity(s).now();
@@ -69,13 +76,14 @@ public class AttendanceResource extends ServerResource {
 	}
 
 	@Get
-	public AttendanceResource retrieve() {
+	public AttendanceRecord retrieve() {
 		// TODO: Implement
+		
 		return null;
 	}
 
 	@Delete
-	public void deltete() {
+	public void remove() {
 		// TODO: Implement
 	}
 }
