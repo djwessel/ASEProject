@@ -9,6 +9,15 @@ import org.restlet.Request;
 import com.aat.datastore.User;
 import com.googlecode.objectify.ObjectifyService;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.KeySpec;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+
+import java.util.Date;
+
 public class ResourceUtil {
 	public static String getParam(Form params, String key, boolean required) {
 		String val = params.getFirstValue(key, true, "");
@@ -35,22 +44,42 @@ public class ResourceUtil {
 		if (token == null) {
 			throw new ResourceException(401, "Not logged in", "You are not logged in", null);
 		}
-		return ObjectifyService.ofy().load().type(User.class).filter("token", token).first().now();
+		User user = ObjectifyService.ofy().load().type(User.class).filter("token", token).first().now();
+		if (user == null || user.getTimeout().before(new Date())) {
+			throw new ResourceException(401, "Not logged in", "You are not logged in", null);
+		}
+		return user;
 	}
 
 	public static void checkToken(Resource r, Long userId) {
 		User check = getUserByToken(r);
 
-		if (check == null || !check.getId().equals(userId)) {
+		if (!check.getId().equals(userId)) {
 			throw new ResourceException(403, "Incorrect Permissions", "You do not have access to given resource", null);
 		}
+		// TODO: update timeout on cookie and in user?
 	}
 
 	public static void checkTokenPermissions(Resource r, Class userType) {
 		User check = getUserByToken(r);
 
-		if (check == null || !userType.isInstance(check)) {
+		if (!userType.isInstance(check)) {
 			throw new ResourceException(403, "Incorrect Permissions", "You do not have access to given resource", null);
+		}
+		// TODO: update timeout on cookie and in user?
+	}
+
+	public static byte[] hash(String password, byte[] salt) {
+		try {
+			KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+			SecretKeyFactory f = SecretKeyFactory.getInstance(Constants.ALGORITHM);
+			return f.generateSecret(spec).getEncoded();
+		}
+		catch (NoSuchAlgorithmException ex) {
+			throw new IllegalStateException("Missing algorithm: " + Constants.ALGORITHM, ex);
+		}
+		catch (InvalidKeySpecException ex) {
+			throw new IllegalStateException("Invalid SecretKeyFactory", ex);
 		}
 	}
 

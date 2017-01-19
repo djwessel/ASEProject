@@ -14,4 +14,8 @@ public class Constants {
 	public final static String missingParam = "Missing required parameter: ";
 	public final static String missingAttribute = "Missing required attribute: ";
 
+	// Authentication
+	public final static boolean ON_HTTPS = false;		// Set to true on deployment
+	public final static int TIMEOUT_SECONDS = 3600;
+	public final static String ALGORITHM = "PBKDF2WithHmacSHA1";
 }

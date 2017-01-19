@@ -26,8 +26,8 @@ public class Student extends User {
 	/**
 	 * Constructor with all relevant information
 	 */
-	public Student(String email, String password, String first, String last) {
-		super(email, password, first, last);
+	public Student(String email, String password, String salt, String first, String last) {
+		super(email, password, salt, first, last);
 	}
 
 	/**

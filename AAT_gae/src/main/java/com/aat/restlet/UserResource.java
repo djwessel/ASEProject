@@ -10,6 +10,7 @@ import org.restlet.resource.ResourceException;
 import org.restlet.Response;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
+import org.restlet.engine.util.Base64;
 
 import com.googlecode.objectify.ObjectifyService;
 import com.aat.datastore.User;
@@ -17,6 +18,8 @@ import com.aat.datastore.Tutor;
 import com.aat.datastore.Student;
 import com.aat.utils.ResourceUtil;
 import com.aat.utils.Constants;
+
+import java.security.SecureRandom;
 
 public class UserResource extends ServerResource {
 	
@@ -30,13 +33,23 @@ public class UserResource extends ServerResource {
 		String first = ResourceUtil.getParam(params, "first", true);
 		String last = ResourceUtil.getParam(params, "last", true);
 
+		// Create Salt
+		SecureRandom random = new SecureRandom();
+		byte bytes[] = new byte[16];
+		random.nextBytes(bytes);
+		// Encrypt password
+		byte[] hash = ResourceUtil.hash(password, bytes);
+		Base64 enc = new Base64();
+		String salt = enc.encode(bytes, false);;
+		password = enc.encode(hash, false);
+
 		User u;
 		if (type.equals("student")) {
-			u = new Student(email, password, first, last);
+			u = new Student(email, password, salt, first, last);
 		}
 		else if (type.equals("tutor")) {
 			String pin = ResourceUtil.getParam(params, "pin", true);
-			u = new Tutor(email, password, first, last, pin);
+			u = new Tutor(email, password, salt, first, last, pin);
 		}
 		else {
 			throw new ResourceException(404, "Incorrect parameter", "User typw is incorrect", null);
