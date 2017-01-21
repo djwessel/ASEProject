@@ -8,6 +8,7 @@ import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 import org.restlet.resource.ResourceException;
 import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
 
 import com.aat.datastore.Course;
 import com.aat.utils.ResourceUtil;
@@ -23,7 +24,7 @@ public class CourseResource extends ServerResource{
    }
    
    @Post
-   public void create(Representation entity){
+   public Representation create(Representation entity){
 	   Form params = new Form(entity);
 	  		
 	   String courseTitle =ResourceUtil.getParam(params,"title",true);
@@ -32,6 +33,8 @@ public class CourseResource extends ServerResource{
 	   
 	   Course course = new Course(courseTitle,reqAtten,reqPresent);	
 	   ObjectifyService.ofy().save().entity(course).now();
+	   
+	   return new StringRepresentation(course.getId().toString());
 	}
    
    @Put

@@ -21,7 +21,7 @@ import com.googlecode.objectify.Ref;
 
 
 /**
- * Creates a token base	d on Student id, group id and the date of first the day(Sunday) of the current week. 
+ * Creates a token base	on Student id, group id and the date of first the day(Sunday) of the current week. 
  * */
 public class QRCodeResource extends ServerResource {
 	
@@ -37,13 +37,15 @@ public class QRCodeResource extends ServerResource {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		String date = dateFormat.format(calendar.getTime());
 		
-		HashMap<String,String> token = getTokens(userID, groupID, date);
+		AttendanceRecord attendance = getAttendance(userID, groupID);
+		HashMap<String,String> token = attendance.getAttendaceToken();
 		
 		if (token.get(date) == null){
 			SecureRandom random = new SecureRandom();
 			byte bytes[] = new byte[20];
 			random.nextBytes(bytes);
 			token.put(date, bytes.toString());
+			saveTokens(token, attendance);
 		}
 		
 		sBufferToken.append(userID);
@@ -57,28 +59,35 @@ public class QRCodeResource extends ServerResource {
 		return new StringRepresentation(sBufferToken.toString());
 	}
 	
+	
 	/**
-	 * Search for a token already assigned to some date in case this exist
-	 * returns the map of tokens 
+	 * Update record of tokens for an attendance
 	 * */
-	private HashMap<String,String> getTokens(String userId,String groupId,String date){
-		HashMap<String,String> tokens = null;
+	private void saveTokens(HashMap<String,String> tokens, AttendanceRecord attendance){
+		attendance.setAttendaceToken(tokens);
+		ObjectifyService.ofy().save().entity(attendance).now();
+	}
+	
+	/**
+	 * Get attendance record for a specific group for a student
+	 * */
+	private AttendanceRecord getAttendance (String userId, String groupId ){
+		AttendanceRecord attendanceRecord = null;
 		Student student = (Student) ObjectifyService.ofy()
 				.load()
 				.type(User.class)
 				.id(Long.parseLong(userId, 10))	
 				.now();
 		
-		List<Ref<AttendanceRecord>> refAttendances = student.getGroups();
+		List<Ref<AttendanceRecord>> refAttendances =  student.getGroups();
 		for (Ref<AttendanceRecord> refAttendance : refAttendances){	
 			long parentId = refAttendance.getValue().getParent().getId();
 			if (Long.parseLong(groupId, 10)==parentId){
-				tokens=refAttendance.getValue().getAttendaceToken();
+				attendanceRecord = refAttendance.getValue();
 				break;
 			}
 		}
-		
-		return tokens;
+		return attendanceRecord;
 	}
 	
 

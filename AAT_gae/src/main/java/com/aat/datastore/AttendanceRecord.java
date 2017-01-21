@@ -57,4 +57,5 @@ public class AttendanceRecord {
 	public Long getId() { return id; }
 	public Key<Group> getParent() { return group; }
 	public HashMap<String, String> getAttendaceToken(){return attendaceToken; }
+	public void setAttendaceToken(HashMap<String, String> tokens) {this.attendaceToken = tokens;}
 }

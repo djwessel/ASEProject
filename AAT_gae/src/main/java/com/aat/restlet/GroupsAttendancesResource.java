@@ -1,6 +1,5 @@
 package com.aat.restlet;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Ref;
 
 public class GroupsAttendancesResource extends ServerResource implements IGroupsAttendancesResource{
-	@Get
+	@Get	
 	public HashMap <String,Group> retrieve() {
 		HashMap <String,Group> courseGropus = new HashMap<>(); 
 		String userId = getAttribute(Constants.userId);
@@ -29,7 +28,7 @@ public class GroupsAttendancesResource extends ServerResource implements IGroups
 						.id(Long.parseLong(userId, 10))	
 						.now();
 		List<Ref<AttendanceRecord>> refAttendances = student.getGroups();
-		List<Group> groups = new ArrayList<>();
+		
 		for (Ref<AttendanceRecord> refAttendance : refAttendances){	
 			Key<Group> keygroup = refAttendance.getValue().getParent();
 			
@@ -37,7 +36,7 @@ public class GroupsAttendancesResource extends ServerResource implements IGroups
 			Course course = ObjectifyService.ofy().load().key(group.getParent()).now();
 			
 			courseGropus.put(course.getTitle(), group);
-			groups.add(group);
+			
 		}	
 		
 		return courseGropus;
