@@ -15,6 +15,7 @@ import org.restlet.resource.ServerResource;
 import com.aat.datastore.AttendanceRecord;
 import com.aat.datastore.Student;
 import com.aat.datastore.User;
+import com.aat.utils.ResourceUtil;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Ref;
 
@@ -28,8 +29,11 @@ public class QRCodeResource extends ServerResource {
 	@Get
 	public Representation retrieve(){
 							
-		String userID = getAttribute("user_id");
-		String groupID = getAttribute("group_id");
+		Long userID = Long.parseLong(getAttribute("user_id"), 10);
+		Long groupID = Long.parseLong(getAttribute("group_id"), 10);
+		// Check if session token matches userID
+		ResourceUtil.checkToken(this, userID);
+
 		StringBuffer sBufferToken = new StringBuffer();
 		Calendar calendar = GregorianCalendar.getInstance();
 		calendar.setFirstDayOfWeek(Calendar.SUNDAY);;
@@ -71,18 +75,18 @@ public class QRCodeResource extends ServerResource {
 	/**
 	 * Get attendance record for a specific group for a student
 	 * */
-	private AttendanceRecord getAttendance (String userId, String groupId ){
+	private AttendanceRecord getAttendance (Long userId, Long groupId ){
 		AttendanceRecord attendanceRecord = null;
 		Student student = (Student) ObjectifyService.ofy()
 				.load()
 				.type(User.class)
-				.id(Long.parseLong(userId, 10))	
+				.id(userId)	
 				.now();
 		
 		List<Ref<AttendanceRecord>> refAttendances =  student.getGroups();
 		for (Ref<AttendanceRecord> refAttendance : refAttendances){	
 			long parentId = refAttendance.getValue().getParent().getId();
-			if (Long.parseLong(groupId, 10)==parentId){
+			if (groupId == parentId){
 				attendanceRecord = refAttendance.getValue();
 				break;
 			}
