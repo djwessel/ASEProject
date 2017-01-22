@@ -56,7 +56,7 @@ public class UserResource extends ServerResource {
 		}
 		ObjectifyService.ofy().save().entity(u).now();
 
-		return new StringRepresentation("Success");
+		return new StringRepresentation(u.getId().toString());
 	}
 
 	@Get

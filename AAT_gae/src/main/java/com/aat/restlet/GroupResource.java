@@ -7,6 +7,7 @@ import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 import org.restlet.data.Form;
 import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
 
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Key;
@@ -19,7 +20,7 @@ import com.aat.utils.ResourceUtil;;
 public class GroupResource extends ServerResource {
 
 	@Post
-	public void create(Representation entity)
+	public Representation create(Representation entity)
 	{
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
@@ -31,6 +32,8 @@ public class GroupResource extends ServerResource {
 		
 		Group group = new Group(Long.parseLong(courseID, 10), groupName);
 		ObjectifyService.ofy().save().entity(group).now();
+		
+		return new StringRepresentation(group.getId().toString());
 	}
 	
 	@Put

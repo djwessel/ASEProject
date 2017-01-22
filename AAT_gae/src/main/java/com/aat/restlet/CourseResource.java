@@ -8,6 +8,7 @@ import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 import org.restlet.resource.ResourceException;
 import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
 
 import com.aat.datastore.Course;
 import com.aat.datastore.Tutor;
@@ -18,13 +19,13 @@ public class CourseResource extends ServerResource{
 		
    @Get
    public Course retrieve(){
-	   String courseId = getAttribute("courseID");
+	   String courseId = getAttribute("course_id");
 	   Course course = retrieveCourse(courseId);
 	   return course;
    }
    
    @Post
-   public void create(Representation entity){
+   public Representation create(Representation entity){
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
 	   Form params = new Form(entity);
@@ -35,13 +36,15 @@ public class CourseResource extends ServerResource{
 	   
 	   Course course = new Course(courseTitle,reqAtten,reqPresent);	
 	   ObjectifyService.ofy().save().entity(course).now();
+	   
+	   return new StringRepresentation(course.getId().toString());
 	}
    
    @Put
    public void update(){
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
-	   String courseId = getAttribute("courseID");
+	   String courseId = getAttribute("course_id");
 	   Course course = retrieveCourse(courseId);
 	   
 	   Form params = getQuery();
@@ -67,7 +70,7 @@ public class CourseResource extends ServerResource{
    public void remove(){
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
-	   String courseId = getAttribute("courseID");
+	   String courseId = getAttribute("course_id");
 	   Course course = retrieveCourse(courseId);
 	   ObjectifyService.ofy().delete().entity(course);
 	}
