@@ -7,6 +7,7 @@ import org.restlet.resource.ServerResource;
 
 import com.aat.datastore.Course;
 import com.aat.datastore.Group;
+import com.aat.interfaces.restlet.IGroupsResource;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 
@@ -14,8 +15,10 @@ public class GroupsResource extends ServerResource implements IGroupsResource{
 
 	@Get
 	public List<Group> retrieve(){
-		String courseId = getAttribute("courseID");
-		Key<Course> course = Key.create(Course.class, Long.parseLong(courseId));
+
+		String courseId = getAttribute("course_id");
+		Key<Course> course = Key.create(Course.class,Long.parseLong(courseId, 10));
+		
 		List<Group> groups =  ObjectifyService.ofy()
 				.load()
 				.type(Group.class)
