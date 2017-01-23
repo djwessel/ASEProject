@@ -11,26 +11,39 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.aat.datastore.ILongResource;
+import com.aat.datastore.User;
 import com.ase.aat_android.R;
 
+import org.restlet.Response;
+import org.restlet.data.CookieSetting;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
+import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
+import org.restlet.util.Series;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URISyntaxException;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 import com.ase.aat_android.utils.Constants;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class SigninActivity extends AppCompatActivity {
     private class SigninTask extends BaseAsyncTask<String, Boolean, Long> {
-
-        private ProgressBar loadingBar;
-
         public  SigninTask(Activity activity) throws URISyntaxException {
             super(activity, Constants.loginLoad);
         }
@@ -38,10 +51,13 @@ public class SigninActivity extends AppCompatActivity {
         @Override
         protected Long doInBackground(String... params) {
             ClientResource loginRes = new ClientResource(Method.POST, Constants.AATUrl + Constants.loginResourceEndpoint);
+            loginRes.setRequestEntityBuffering(true);
+            loginRes.setResponseEntityBuffering(true);
             Form loginForm = createLoginForm(params[0], params[1]);
             Long result;
             try {
-                result = Long.parseLong(loginRes.post(loginForm, MediaType.ALL).getText(), 10);
+                ObjectMapper mapper = new ObjectMapper();
+                result = mapper.convertValue(loginRes.post(loginForm, MediaType.ALL).getText(), Long.class);
                 System.out.println(result);
             } catch (ResourceException e) {
                 System.out.println(e.getMessage());

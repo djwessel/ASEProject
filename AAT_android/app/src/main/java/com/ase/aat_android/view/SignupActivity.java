@@ -16,10 +16,12 @@ import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
+import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
 import com.ase.aat_android.utils.Constants;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
@@ -33,13 +35,17 @@ public class SignupActivity extends AppCompatActivity {
 
         @Override
         protected Long doInBackground(String... params) {
-            ClientResource loginRes = new ClientResource(Method.POST, Constants.AATUrl + Constants.signupnResourceEndpoint);
+            ClientResource signupRes = new ClientResource(Method.POST, Constants.AATUrl + Constants.signupnResourceEndpoint);
+            signupRes.setRequestEntityBuffering(true);
+            signupRes.setResponseEntityBuffering(true);
             Form signupForm = createSignupForm(params[0], params[1], params[2], params[3]);
-            System.out.println(loginRes.toString());
+            System.out.println(signupRes.toString());
             System.out.println(signupForm.toString());
             Long userID;
             try {
-                userID = Long.parseLong(loginRes.post(signupForm, MediaType.ALL).getText(), 10);
+                ObjectMapper mapper = new ObjectMapper();
+                userID = mapper.convertValue(signupRes.post(signupForm, MediaType.ALL).getText(), Long.class);
+                //userID = loginRes.post(signupForm, Long.class);
                 System.out.println(userID);
             } catch (ResourceException e) {
                 System.out.println(e.getMessage());
