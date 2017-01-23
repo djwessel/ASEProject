@@ -24,6 +24,10 @@ repositories {
     mavenCentral()
     maven {
         url "http://maven.restlet.org"
+
+    }
+    flatDir {
+        dirs 'libs'
     }
 }
 
@@ -36,5 +40,13 @@ dependencies {
     compile 'com.android.support:design:25.1.0'
     testCompile 'junit:junit:4.12'
 
-    compile group: 'org.restlet.jse', name: 'org.restlet', version: '2.3.2'
+    compile group: 'org.restlet.gae', name: 'org.restlet', version: '2.3.7'
+    compile 'com.google.zxing:core:3.2.1'
+    compile (
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.3.2'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.3.2'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.3.2']
+    )
+    compile files("libs/com.aat.interfaces.restlet.jar")
+    compile files('libs/com.aat.datastore.jar')
 }

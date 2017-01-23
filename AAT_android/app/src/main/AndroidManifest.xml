@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SigninActivity"
+            android:name="com.aat.activities.SigninActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,9 +21,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CourseActivity"
+            android:name="com.aat.activities.CourseActivity"
             android:label="@string/title_activity_course"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name="com.aat.activities.AttendancesActivity"
+            android:label="@string/title_activity_attendances"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name="com.aat.activities.QRCodeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

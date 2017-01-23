@@ -1,5 +1,6 @@
-package com.ase.aat_android;
+package com.aat.activities;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,13 +11,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
-import org.restlet.data.Parameter;
+
+import com.ase.aat_android.R;
+
 import org.restlet.resource.ClientResource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-
 
 
 public class SigninActivity extends AppCompatActivity {
@@ -116,7 +117,8 @@ public class SigninActivity extends AppCompatActivity {
 
     // TODO: pass User as an argument to this function
     private void openUserActivity() {
-
+        Intent intent = new Intent(this, AttendancesActivity.class);
+        startActivity(intent);
     }
 
 

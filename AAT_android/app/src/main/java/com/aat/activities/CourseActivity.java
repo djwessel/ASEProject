@@ -1,4 +1,4 @@
-package com.ase.aat_android;
+package com.aat.activities;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -14,6 +14,8 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ase.aat_android.R;
 
 import org.w3c.dom.Text;
 
