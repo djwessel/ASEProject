@@ -1,5 +1,6 @@
 package com.aat.datastore;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -38,4 +39,11 @@ public class Group {
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
 	public Long getId() { return id; }
+	@JsonIgnore
+	public Key<Course> getParent(){return course;}
+
+	@Override
+	public String toString() {
+		return name;
+	}
 }

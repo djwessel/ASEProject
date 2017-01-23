@@ -55,7 +55,7 @@ public class AttendanceResource extends ServerResource {
 		}
 
 		// Create new AttendanceRecord and add to Students list of AttendanceRecords
-		AttendanceRecord ar = new AttendanceRecord(groupId, userId);
+		AttendanceRecord ar = new AttendanceRecord(groupId, courseId,userId);
 		ObjectifyService.ofy().save().entity(ar).now();
 		s.addGroup(ar);
 		ObjectifyService.ofy().save().entity(s).now();
