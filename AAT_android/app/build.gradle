@@ -17,6 +17,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/license'
+        exclude 'META-INF/dependencies'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/maven/com.belerweb/pinyin4j/pom.xml'
+        exclude 'META-INF/maven/com.belerweb/pinyin4j/pom.properties'
+        exclude 'META-INF/services/org.restlet.engine.converter.ConverterHel‌​per'
+        exclude 'org/restlet/service/accept.properties'
+        exclude 'org/restlet/service/accept-encoding.properties'
+        exclude 'org/restlet/Component.xsd'
+        exclude 'org/restlet/data/agent.properties'
+        exclude 'META-INF/ASL2.0'
+    }
+
 }
 
 repositories {
@@ -39,7 +62,25 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
     testCompile 'junit:junit:4.12'
-    compile 'org.restlet.jse:org.restlet:2.3.2'
+    compile 'org.restlet.android:org.restlet:2.3.7'
     compile files('/home/anahitik/ASE/ASEProject/AAT_android/libs/aat_datastore.jar')
     compile 'com.google.android.gms:play-services:10.0.1'
+/*    compile ('org.restlet.android:org.restlet.ext.jackson:2.3.7') {
+        exclude module: 'java'
+        exclude module: 'javax'
+    }*/
+
+    compile (
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.3.7'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.3.7'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.3.7']
+    )
+/*    compile('com.fasterxml:jackson-xml-databind:0.6.2'){
+        exclude module: 'stax'
+        exclude module: 'stax-api'
+        exclude module: 'xpp3'
+        exclude class: 'java.*'
+        exclude class: 'javax.*'
+    }*/
 }
+
