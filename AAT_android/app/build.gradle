@@ -65,22 +65,11 @@ dependencies {
     compile 'org.restlet.android:org.restlet:2.3.7'
     compile files('/home/anahitik/ASE/ASEProject/AAT_android/libs/aat_datastore.jar')
     compile 'com.google.android.gms:play-services:10.0.1'
-/*    compile ('org.restlet.android:org.restlet.ext.jackson:2.3.7') {
-        exclude module: 'java'
-        exclude module: 'javax'
-    }*/
 
     compile (
-            [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.3.7'],
-            [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.3.7'],
-            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.3.7']
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.3.2'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.3.2'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.3.2']
     )
-/*    compile('com.fasterxml:jackson-xml-databind:0.6.2'){
-        exclude module: 'stax'
-        exclude module: 'stax-api'
-        exclude module: 'xpp3'
-        exclude class: 'java.*'
-        exclude class: 'javax.*'
-    }*/
 }
 
