@@ -13,13 +13,14 @@ import org.restlet.representation.StringRepresentation;
 import com.aat.datastore.Course;
 import com.aat.datastore.Tutor;
 import com.aat.utils.ResourceUtil;
+import com.aat.utils.Constants;
 import com.googlecode.objectify.ObjectifyService;
 
 public class CourseResource extends ServerResource{
 		
    @Get
    public Course retrieve(){
-	   String courseId = getAttribute("course_id");
+	   String courseId = getAttribute(Constants.courseId);
 	   Course course = retrieveCourse(courseId);
 	   return course;
    }
@@ -44,7 +45,7 @@ public class CourseResource extends ServerResource{
    public void update(){
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
-	   String courseId = getAttribute("course_id");
+	   String courseId = getAttribute(Constants.courseId);
 	   Course course = retrieveCourse(courseId);
 	   
 	   Form params = getQuery();
@@ -70,7 +71,7 @@ public class CourseResource extends ServerResource{
    public void remove(){
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
-	   String courseId = getAttribute("course_id");
+	   String courseId = getAttribute(Constants.courseId);
 	   Course course = retrieveCourse(courseId);
 	   ObjectifyService.ofy().delete().entity(course);
 	}

@@ -18,6 +18,7 @@ import com.aat.datastore.Student;
 import com.aat.datastore.Group;
 import com.aat.datastore.Course;
 import com.aat.utils.ResourceUtil;
+import com.aat.utils.Constants;
 
 import java.util.List;
 
@@ -31,8 +32,8 @@ public class AttendanceResource extends ServerResource {
 		// Get input parameters
 		Form params = new Form(entity);
 		Long userId = Long.parseLong(ResourceUtil.getParam(params, "user", true), 10);
-		Long courseId = Long.parseLong(getAttribute("course_id"), 10);
-		Long groupId = Long.parseLong(getAttribute("group_id"), 10);
+		Long courseId = Long.parseLong(getAttribute(Constants.courseId), 10);
+		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
 
 		// Check if token coresponds to userid
 		ResourceUtil.checkToken(this, userId);

@@ -24,13 +24,13 @@ public class GroupResource extends ServerResource {
 	{
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
-		String courseID = getAttribute(Constants.courseID);
-		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
-		assert(courseID != null);
+		String courseId = getAttribute(Constants.courseId);
+		ResourceUtil.checkAttributeValue(Constants.courseId, courseId, true);
+		assert(courseId != null);
 		String groupName = ResourceUtil.getParam(new Form(entity), "name", true);
 		assert(groupName != null);
 		
-		Group group = new Group(Long.parseLong(courseID, 10), groupName);
+		Group group = new Group(Long.parseLong(courseId, 10), groupName);
 		ObjectifyService.ofy().save().entity(group).now();
 		
 		return new StringRepresentation(group.getId().toString());
@@ -41,18 +41,18 @@ public class GroupResource extends ServerResource {
 	{
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
-		String courseID = getAttribute(Constants.courseID);
-		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
-		assert(courseID != null);
+		String courseId = getAttribute(Constants.courseId);
+		ResourceUtil.checkAttributeValue(Constants.courseId, courseId, true);
+		assert(courseId != null);
 		
-		String groupID = getAttribute(Constants.groupId);
-		ResourceUtil.checkAttributeValue(Constants.groupId, groupID, true);
-		assert(groupID != null);
+		String groupId = getAttribute(Constants.groupId);
+		ResourceUtil.checkAttributeValue(Constants.groupId, groupId, true);
+		assert(groupId != null);
 		
 		String newName = ResourceUtil.getParam(getQuery(), "name", true);
 		assert(newName != null);
 		
-		Group group = retrieveGroup(courseID, groupID);
+		Group group = retrieveGroup(courseId, groupId);
 		assert(group != null);
 		
 		group.setName(newName);
@@ -62,15 +62,15 @@ public class GroupResource extends ServerResource {
 	@Get
 	public Group retrieve()
 	{
-		String courseID = getAttribute(Constants.courseID);
-		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
-		assert(courseID != null);
+		String courseId = getAttribute(Constants.courseId);
+		ResourceUtil.checkAttributeValue(Constants.courseId, courseId, true);
+		assert(courseId != null);
 		
-		String groupID = getAttribute(Constants.groupId);
-		ResourceUtil.checkAttributeValue(Constants.groupId, groupID, true);
-		assert(groupID != null);
+		String groupId = getAttribute(Constants.groupId);
+		ResourceUtil.checkAttributeValue(Constants.groupId, groupId, true);
+		assert(groupId != null);
 		
-		Group group = retrieveGroup(courseID, groupID);
+		Group group = retrieveGroup(courseId, groupId);
 		assert(group != null);
 		
 		return group;
@@ -81,27 +81,27 @@ public class GroupResource extends ServerResource {
 	{
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
-		String courseID = getAttribute(Constants.courseID);
-		ResourceUtil.checkAttributeValue(Constants.courseID, courseID, true);
-		assert(courseID != null);
+		String courseId = getAttribute(Constants.courseId);
+		ResourceUtil.checkAttributeValue(Constants.courseId, courseId, true);
+		assert(courseId != null);
 		
-		String groupID = getAttribute(Constants.groupId);
-		ResourceUtil.checkAttributeValue(Constants.groupId, groupID, true);
-		assert(groupID != null);
+		String groupId = getAttribute(Constants.groupId);
+		ResourceUtil.checkAttributeValue(Constants.groupId, groupId, true);
+		assert(groupId != null);
 		
-		Group group = retrieveGroup(courseID, groupID);
+		Group group = retrieveGroup(courseId, groupId);
 		assert(group != null);
 		
 		ObjectifyService.ofy().delete().entity(group);
 	}
 	
-	private Group retrieveGroup(String courseID, String groupID) {
-		Key<Course> course = Key.create(Course.class, Long.parseLong(courseID, 10));
+	private Group retrieveGroup(String courseId, String groupId) {
+		Key<Course> course = Key.create(Course.class, Long.parseLong(courseId, 10));
 		Group group = ObjectifyService.ofy()
 				.load()
 				.type(Group.class)
 				.parent(course)
-				.id(Long.parseLong(groupID, 10))
+				.id(Long.parseLong(groupId, 10))
 				.now();
 		if (group == null) {
 			throw new RuntimeException(Constants.noGroupMsg);

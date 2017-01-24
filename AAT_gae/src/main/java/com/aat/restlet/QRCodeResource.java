@@ -16,6 +16,7 @@ import com.aat.datastore.AttendanceRecord;
 import com.aat.datastore.Student;
 import com.aat.datastore.User;
 import com.aat.utils.ResourceUtil;
+import com.aat.utils.Constants;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Ref;
 
@@ -29,8 +30,8 @@ public class QRCodeResource extends ServerResource {
 	@Get
 	public Representation retrieve(){
 							
-		Long userID = Long.parseLong(getAttribute("user_id"), 10);
-		Long groupID = Long.parseLong(getAttribute("group_id"), 10);
+		Long userID = Long.parseLong(getAttribute(Constants.userId), 10);
+		Long groupID = Long.parseLong(getAttribute(Constants.groupId), 10);
 		// Check if session token matches userID
 		ResourceUtil.checkToken(this, userID);
 
