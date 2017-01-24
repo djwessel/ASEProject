@@ -16,6 +16,7 @@ import com.aat.datastore.User;
 import com.ase.aat_android.R;
 
 import org.restlet.Response;
+import org.restlet.data.Cookie;
 import org.restlet.data.CookieSetting;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
@@ -58,6 +59,7 @@ public class SigninActivity extends AppCompatActivity {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 result = mapper.convertValue(loginRes.post(loginForm, MediaType.ALL).getText(), Long.class);
+                com.ase.aat_android.data.User.updateSessionToken(loginRes.getResponse().getCookieSettings().getFirst("sessionToken"));
                 System.out.println(result);
             } catch (ResourceException e) {
                 System.out.println(e.getMessage());

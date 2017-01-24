@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.aat.datastore.Student;
 import com.ase.aat_android.data.User;
 import com.ase.aat_android.R;
 
@@ -16,9 +17,11 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Protocol;
 import org.restlet.engine.adapter.HttpRequest;
+import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 
 import com.ase.aat_android.utils.Constants;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -33,24 +36,25 @@ public class UserActivity extends ExpandableListActivity {
 
         @Override
         protected com.aat.datastore.User doInBackground(Long... params) {
-            ClientResource retrieveRes = new ClientResource(Constants.AATUrl + Constants.userRetrieveResourceEndpoint);
+            StringBuilder builder = new StringBuilder(Constants.AATUrl);
+            builder.append(Constants.userRetrieveResourceEndpoint);
+            builder.append("/");
+            builder.append(params[0]);
+            String url = builder.toString();
+            ClientResource retrieveRes = new ClientResource(Method.GET, builder.toString());
             retrieveRes.setResponseEntityBuffering(true);
-            //retrieveRes.setRequestEntityBuffering(true);
-            retrieveRes.setAttribute(Constants.userIdAttribute, params[0].toString());
+            retrieveRes.setRequestEntityBuffering(true);
+            //retrieveRes.setAttribute(Constants.userIdAttribute, params[0]);
+            retrieveRes.accept(MediaType.APPLICATION_ALL_JSON);
 
-            System.out.println(params[0].toString());
-
-            System.out.println(retrieveRes.toString());
             ObjectMapper mapper = new ObjectMapper();
-            com.aat.datastore.User user = null;
+            Student user = null;
             try {
-                String str = retrieveRes.get().getText();
-               // String resStr = retrieveRes.get(MediaType.ALL).getText();
-               // user = mapper.convertValue(resStr, com.aat.datastore.User.class);
-           } catch (IOException e) {
+                retrieveRes.getRequest().getCookies().add(0, User.getSessionToken());
+                user = mapper.readValue(retrieveRes.get().getText(), new TypeReference<Student>(){});
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            /*com.aat.datastore.User user = retrieveRes.get(com.aat.datastore.User.class);*/
             return user;
         }
 
