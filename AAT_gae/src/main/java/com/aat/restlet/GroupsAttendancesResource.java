@@ -13,6 +13,7 @@ import com.aat.datastore.Student;
 import com.aat.datastore.User;
 import com.aat.interfaces.restlet.IGroupsAttendancesResource;
 import com.aat.utils.Constants;
+import com.aat.utils.ResourceUtil;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Ref;
@@ -21,11 +22,13 @@ public class GroupsAttendancesResource extends ServerResource implements IGroups
 	@Get	
 	public HashMap <String,Group> retrieve() {
 		HashMap <String,Group> courseGropus = new HashMap<>(); 
-		String userId = getAttribute(Constants.userId);
+		Long userId = Long.parseLong(getAttribute(Constants.userId), 10);
+		// Check if session token matches userId
+		ResourceUtil.checkToken(this, userId);
 		Student student = (Student) ObjectifyService.ofy()
 						.load()
 						.type(User.class)
-						.id(Long.parseLong(userId, 10))	
+						.id(userId)	
 						.now();
 		List<Ref<AttendanceRecord>> refAttendances = student.getGroups();
 		

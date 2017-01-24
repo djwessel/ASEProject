@@ -10,6 +10,7 @@ import com.aat.datastore.User;
 import com.googlecode.objectify.ObjectifyService;
 
 import com.aat.utils.ResourceUtil;
+import com.aat.utils.Constants;
 
 import java.security.SecureRandom;
 
@@ -18,7 +19,7 @@ public class UserLogout extends ServerResource {
 	
 	@Delete
 	public String logout() {
-		User u = retrieveUser(getAttribute("id"));
+		User u = retrieveUser(getAttribute(Constants.userId));
 		if (u == null) {
 			throw new ResourceException(404, "Not found", "User does not exist", null);
 		}
