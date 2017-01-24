@@ -19,11 +19,14 @@ public class AATApplication extends Application {
 	@Override
 	public Restlet createInboundRoot() {
 		// Change the Jackson converter to use the ObjectifyJacksonModule mapper
+		// Following the Customizing the JacksonConverter of Reslet blog
+		// http://restlet.com/blog/2016/03/23/customizing-the-jackson-converter-of-restlet-framework/
 		List<ConverterHelper> converters = Engine.getInstance().getRegisteredConverters();
 		JacksonConverter jc = null;
 		for (ConverterHelper converter: converters) {
 			if (converter instanceof JacksonConverter) {
 				jc = (JacksonConverter) converter;
+				break;
 			}
 		}
 		if (jc != null) {
@@ -31,6 +34,7 @@ public class AATApplication extends Application {
 			converters.add(new ObjectifyJacksonConverter());
 		}
 
+		// Set up router
 		Router router = new Router(getContext());
         
 		router.attach("/course/{" + Constants.courseId + "}/group", GroupResource.class);

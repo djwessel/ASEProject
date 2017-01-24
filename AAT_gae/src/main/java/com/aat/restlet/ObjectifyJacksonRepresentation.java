@@ -1,3 +1,5 @@
+// Following the Customizing the JacksonConverter of Reslet blog
+// http://restlet.com/blog/2016/03/23/customizing-the-jackson-converter-of-restlet-framework/
 package com.aat.restlet;
 
 import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
