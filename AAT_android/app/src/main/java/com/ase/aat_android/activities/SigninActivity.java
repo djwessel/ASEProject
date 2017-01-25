@@ -1,4 +1,4 @@
-package com.ase.aat_android.view;
+package com.ase.aat_android.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,38 +8,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.aat.datastore.ILongResource;
-import com.aat.datastore.User;
 import com.ase.aat_android.R;
 
-import org.restlet.Response;
-import org.restlet.data.Cookie;
-import org.restlet.data.CookieSetting;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
-import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
-import org.restlet.util.Series;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.net.URISyntaxException;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
-import com.ase.aat_android.utils.Constants;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.ase.aat_android.data.SessionData;
+import com.ase.aat_android.util.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -59,7 +43,7 @@ public class SigninActivity extends AppCompatActivity {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 result = mapper.convertValue(loginRes.post(loginForm, MediaType.ALL).getText(), Long.class);
-                com.ase.aat_android.data.User.updateSessionToken(loginRes.getResponse().getCookieSettings().getFirst("sessionToken"));
+                SessionData.updateSessionToken(loginRes.getResponse().getCookieSettings().getFirst("sessionToken"));
                 System.out.println(result);
             } catch (ResourceException e) {
                 System.out.println(e.getMessage());

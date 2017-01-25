@@ -1,4 +1,4 @@
-package com.ase.aat_android.view;
+package com.ase.aat_android.activities;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -17,16 +17,12 @@ import com.aat.datastore.Course;
 import com.aat.datastore.Group;
 import com.ase.aat_android.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import com.ase.aat_android.utils.Constants;
+import com.ase.aat_android.util.Constants;
 
 public class CourseActivity extends ListActivity {
 

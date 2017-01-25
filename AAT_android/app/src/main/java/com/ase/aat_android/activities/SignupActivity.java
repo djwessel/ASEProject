@@ -1,4 +1,4 @@
-package com.ase.aat_android.view;
+package com.ase.aat_android.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,11 +16,10 @@ import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
-import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
-import com.ase.aat_android.utils.Constants;
+import com.ase.aat_android.util.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -35,7 +34,7 @@ public class SignupActivity extends AppCompatActivity {
 
         @Override
         protected Long doInBackground(String... params) {
-            ClientResource signupRes = new ClientResource(Method.POST, Constants.AATUrl + Constants.signupnResourceEndpoint);
+            ClientResource signupRes = new ClientResource(Method.POST, Constants.AATUrl + Constants.userResourceEndpoint);
             signupRes.setRequestEntityBuffering(true);
             signupRes.setResponseEntityBuffering(true);
             Form signupForm = createSignupForm(params[0], params[1], params[2], params[3]);

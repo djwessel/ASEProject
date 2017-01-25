@@ -1,14 +1,12 @@
-package com.ase.aat_android.view;
+package com.ase.aat_android.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
-import com.ase.aat_android.utils.Constants;
+import com.ase.aat_android.util.Constants;
+
+import org.restlet.resource.ClientResource;
 
 /**
  * Created by anahitik on 09.01.17.
