@@ -9,10 +9,10 @@
     <string name="title_activity_course">CourseActivity</string>
     <string name="title_activity_signin">SigninActivity</string>
     <string name="logout">Logout</string>
-    <string name="courses">view Courses</string>
+    <string name="courses">View Courses</string>
     <string name="attendances">View Attendances</string>
     <string name="action_requestQR">Request QR</string>
-    <string name="title_activity_attendances">Your Attendences</string>
-    <string name="text_no_attendences">You are not register for any course</string>
+    <string name="title_activity_attendances">Your Attendances</string>
+    <string name="text_no_attendences">You are not register for any courses</string>
 
 </resources>

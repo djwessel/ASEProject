@@ -1,4 +1,4 @@
-package com.aat.activities;
+package com.ase.aat_android.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,13 +13,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.aat.datastore.Group;
-import com.aat.interfaces.restlet.IGroupsAttendancesResource;
-import com.aat.util.EnpointUtil;
-import com.aat.util.EnpointsURL;
 import com.ase.aat_android.R;
-import com.aat.util.HashMapAdapter;
+import com.ase.aat_android.data.SessionData;
+import com.ase.aat_android.util.EndpointUtil;
+import com.ase.aat_android.util.EndpointsURL;
+import com.ase.aat_android.util.HashMapAdapter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,8 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AttendancesActivity extends AppCompatActivity {
-    String userId = "5722646637445120";
-    private String url = EnpointsURL.HTTP_ADDRESS+EnpointsURL.REQUEST_GROUPS_STUDENT;
+    String userId = SessionData.getUser().getId().toString();
+    private String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_GROUPS_STUDENT;
     TextView content;
     ListView list;
 
@@ -44,8 +43,11 @@ public class AttendancesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_attendances);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        url = EnpointUtil.solveUrl(url,"user_id",userId);
-        new RequestAttendancesGroups().execute(url,"" , null);
+
+        Intent intent = getIntent();
+        String userId = intent.getStringExtra("user_id");
+        url = EndpointUtil.solveUrl(url,"user_id",userId);
+        new RequestAttendancesGroups().execute(url,null , null);
 
     }
 
@@ -98,7 +100,7 @@ public class AttendancesActivity extends AppCompatActivity {
                 resource.setRequestEntityBuffering(true);
                 resource.accept(MediaType.APPLICATION_JSON);
                 groups= mapper.readValue(resource.get().getText(), new TypeReference<HashMap<String,Object>>(){});
-                
+
             } catch (ResourceException e) {
                 e.printStackTrace();
             } catch (IOException e) {

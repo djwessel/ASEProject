@@ -1,4 +1,4 @@
-package com.aat.util;
+package com.ase.aat_android.util;
 
 import android.view.LayoutInflater;
 import android.view.View;

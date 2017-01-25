@@ -17,6 +17,28 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/license'
+        exclude 'META-INF/dependencies'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/maven/com.belerweb/pinyin4j/pom.xml'
+        exclude 'META-INF/maven/com.belerweb/pinyin4j/pom.properties'
+        exclude 'META-INF/services/org.restlet.engine.converter.ConverterHel‌per'
+        exclude 'org/restlet/service/accept.properties'
+        exclude 'org/restlet/service/accept-encoding.properties'
+        exclude 'org/restlet/Component.xsd'
+        exclude 'org/restlet/data/agent.properties'
+        exclude 'META-INF/ASL2.0'
+    }
 }
 
 repositories {

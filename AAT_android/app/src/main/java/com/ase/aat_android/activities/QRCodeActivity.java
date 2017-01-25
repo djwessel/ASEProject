@@ -1,4 +1,4 @@
-package com.aat.activities;
+package com.ase.aat_android.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,9 +14,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.aat.util.EnpointUtil;
-import com.aat.util.EnpointsURL;
 import com.ase.aat_android.R;
+import com.ase.aat_android.data.SessionData;
+import com.ase.aat_android.util.EndpointUtil;
+import com.ase.aat_android.util.EndpointsURL;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -35,8 +36,7 @@ import java.util.concurrent.ExecutionException;
 public class QRCodeActivity extends AppCompatActivity {
 
     private TextView displayTextView;
-    String userId="5722646637445120";
-    private String url = EnpointsURL.HTTP_ADDRESS+EnpointsURL.REQUEST_QR_CODE;
+    private String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_QR_CODE;
     private ImageView imageView;
     private Bitmap bitmap ;
     private ProgressBar loadingBar;
@@ -55,9 +55,10 @@ public class QRCodeActivity extends AppCompatActivity {
         String groupName = intent.getStringExtra("selected_group_name");
         String groupId = intent.getStringExtra("selected_group_id");
         String courseName = intent.getStringExtra("selected_course_name");
+        String userId = SessionData.getUser().getId().toString();
 
-        url = EnpointUtil.solveUrl(url,"user_id",userId);
-        url = EnpointUtil.solveUrl(url,"group_id",groupId);
+        url = EndpointUtil.solveUrl(url,"user_id",userId);
+        url = EndpointUtil.solveUrl(url,"group_id",groupId);
         displayTextView.setText("You have signed up for the course "+courseName +
                                 " and its correspondient group: "+groupName+"."+
                                 " To register your attendance for this week request your QR code.");
@@ -105,7 +106,7 @@ public class QRCodeActivity extends AppCompatActivity {
      * @Param String data
      * @Return Bitmap
      * */
-    public Bitmap TextToImageEncode (String data) {
+    private Bitmap textToImageEncode(String data) {
 
         Map<EncodeHintType, Object> hintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
         hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
@@ -166,7 +167,7 @@ public class QRCodeActivity extends AppCompatActivity {
 
         protected void onPostExecute(String result) {
             loadingBar.setVisibility(View.GONE);
-            bitmap = TextToImageEncode(result);
+            bitmap = textToImageEncode(result);
             imageView.setImageBitmap(bitmap);
         }
 

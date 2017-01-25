@@ -1,4 +1,4 @@
-package com.aat.activities;
+package com.ase.aat_android.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;

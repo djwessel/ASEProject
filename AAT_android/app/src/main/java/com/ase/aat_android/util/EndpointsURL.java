@@ -1,10 +1,10 @@
-package com.aat.util;
+package com.ase.aat_android.util;
 
 /**
  * Created by Yesika on 1/21/2017.
  */
 
-public class EnpointsURL {
+public class EndpointsURL {
 
     /* Address server where application is deployed */
     public final static String HTTP_ADDRESS="http://skillful-hope-148521.appspot.com";
