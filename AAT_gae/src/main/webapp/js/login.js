@@ -35,14 +35,28 @@ $(document).ready(function() {
   if (Cookies.get('user')) {
     $.get('/rest/user/' + Cookies.get('user')).done(function(data) {
       console.log(data);
-      $('#userWelcome').text('Welcome: ' + data.firstName + ' ' + data.lastName);
+      $('#userWelcome').text('Signed in as ' + data.firstName + ' ' + data.lastName);
     });
     $('#logout').show();
   }
   else {
-    $('#userSignup').show();
-    $('#userLogin').show();
+    $('#loginModalBtn').show().click(function() {
+      $('#modalBtns').show();
+      $('#userSignup').hide();
+      $('#userLogin').hide();
+    });
   }
+
+  $('#newUserBtn').click(function() { 
+    $(this).parent().hide();
+    $('#loginModalLabel').text('New User');
+    $('#userSignup').show();
+  });
+  $('#existUserBtn').click(function() { 
+    $(this).parent().hide();
+    $('#loginModalLabel').text('Existing User');
+    $('#userLogin').show();
+  });
 });
 
 function login(data) {

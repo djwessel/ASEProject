@@ -4,30 +4,54 @@
     response.sendError(404);
   }
 
-/*  String groupId = request.getParameter("groupId");
-  if (groupId == "") {
-    response.sendError(404);
-  }*/
+  Cookie[] cookies = request.getCookies();
+  String userType = "";
+  if (cookies != null) {
+    for (Cookie cookie: cookies) {
+      if (cookie.getName().equals("userType")) {
+        userType = cookie.getValue().toLowerCase();
+      }
+    }
+  }
 %>
-<!doctype html>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
-  <script src="js/util.js"></script>
-  <script src="js/js.cookie.js"></script>
-  <script src="js/course.js"></script>
-<body>
-  <%@include file="login.jsp"%>
-  <h1 id="title">Loading course title...</h1>
-  <div id="courseInfo">Loading course info...</div>
-  <div id="groups">Loading groups...</div>
+<t:page>
+  <jsp:attribute name="head">
+    <script src="js/course.js"></script>
 
-  <form id="groupCreate">
-    Create New Group<br>
-    Group Name: <input type="text" name="name"><br>
-    <input type="submit" value="Create New Group">
-  </form>  
-</body>
-</html>
+    <link rel="stylesheet" type="text/css" href="/css/course.css">
+  </jsp:attribute>
+  <jsp:attribute name="breadcrumbs">
+    <li><a href="/">Home</a></li>
+    <li class="active">Course</li>
+  </jsp:attribute>
+  <jsp:body>
+    <h1 id="title">Loading course title...</h1>
+    <div id="courseInfo">Loading course info...</div>
+    <h3>Groups</h3>
+    <div id="groups" class="row">Loading groups...</div>
+
+    <button id="createGroupBtn" class="btn btn-default" style="display: none;">Create New Group</button>
+    <form id="groupCreate" class="form-horizontal" style="display: none;">
+      <div class="form-group">
+        <label for="inputName" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-10">
+          <input name="name" type="text" class="form-control" id="inputName" placeholder="Group Name">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <input type="submit" class="btn btn-primary" value="Create New Group">
+        </div>
+      </div>
+    </form>  
+  </jsp:body>
+</t:page>
+  <%
+    if (userType.equals("tutor")) {
+  %>
+  <%
+    }
+  %>

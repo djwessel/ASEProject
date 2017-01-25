@@ -15,8 +15,8 @@ $(document).ready(function() {
     var groupsDiv = $('#groups').empty();
     data.forEach(function(group) {
       var groupDiv = $('<div class="group">' + group.name + '</div>').appendTo(groupsDiv);
-      if (Cookies.get('user')) {
-        $('<button>Signup</button>').click(function() {
+      if (Cookies.get('user') && Cookies.get('userType') === 'student') {
+        $('<button class="btn btn-default">Signup</button>').click(function() {
           $.post('/rest/course/' + courseId + '/group/' + group.id + '/attendance', {user: Cookies.get('user')}, function() {
             alert('success');
           }).fail(function() {
@@ -41,4 +41,13 @@ $(document).ready(function() {
 
     return false;
   });
+
+  if (Cookies.get('user')) {
+    if (Cookies.get("userType") === "tutor") {
+      $('#createGroupBtn').show().click(function() {
+        $(this).hide();
+        $('#groupCreate').show();
+      })
+    }
+  }
 });
