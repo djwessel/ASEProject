@@ -1,16 +1,12 @@
+import qrtools
 
-from  SimpleCV import Color,Camera,Display
-
-cam = Camera()  #starts the camera
- 
-img = cam.getImage() #gets image from the camera
-barcode = img.findBarcode() #finds barcode data from image
-while(barcode is None):
-	print "Scanning"
-	img = cam.getImage() #gets image from the camera
-	barcode = img.findBarcode() #finds barcode data from image
-			
-barcode = barcode[0]
-result = str(barcode.data)
-print result	 #prints result of barcode in python shell
+def scan():
+	print("Start scanning")
+	qr = qrtools.QR()
+	while (True) :
+		print("scanning...")
+		qr.decode_webcam()
+		if (qr.data != u'NULL') :
+			break
+	return qr.data
 
