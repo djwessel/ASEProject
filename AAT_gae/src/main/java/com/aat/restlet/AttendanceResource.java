@@ -39,7 +39,6 @@ public class AttendanceResource extends ServerResource {
 		Long userId = Long.parseLong(ResourceUtil.getParam(params, "user", true), 10);
 		Long courseId = Long.parseLong(getAttribute(Constants.courseId), 10);
 		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
-
 		// Check if token coresponds to userid
 		ResourceUtil.checkToken(this, userId);
 
@@ -105,20 +104,14 @@ public class AttendanceResource extends ServerResource {
 				else if (flagMode.equals("P")){
 						dates = attendance.getPresentation();
 				}
-				else{
-					throw new ResourceException(409, "Conflict", "Invalid flag.", null);
-				}
 				
 				if (!dates.contains(date)){
 					dates.add(date);
-				}else{
-					throw new ResourceException(409, "Conflict", "The student already has an attendance record for this week", null);
+					ObjectifyService.ofy().save().entity(attendance).now();
 				}
-				
-				ObjectifyService.ofy().save().entity(attendance).now();
 			
 			} catch (ParseException e) {
-				throw new ResourceException(409, "Conflict", "Date of week is not valid.", null);
+				throw new ResourceException(409, "Conflict", "Date format of the week is not valid.", null);
 			}
 			
 		}else{
