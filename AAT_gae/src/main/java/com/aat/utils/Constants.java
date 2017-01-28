@@ -8,6 +8,11 @@ public class Constants {
 	public final static String groupId = "group_id";
 	public final static String userId = "user_id";
 	public final static String attendanceId = "attendance_id";
+	public final static String dateWeek = "date_week";
+	public final static String flagMode = "flag_mode";
+	public final static String token = "token";
+	public final static char modeAttendance = 'A';
+	public final static char modePresentation = 'P';
 	
 	// Exception messages
 	public final static String noGroupMsg = "Group does not exist";

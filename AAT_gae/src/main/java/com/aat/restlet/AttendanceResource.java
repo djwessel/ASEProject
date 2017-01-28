@@ -1,30 +1,35 @@
 package com.aat.restlet;
 
-import org.restlet.resource.Post;
-import org.restlet.resource.Put;
-import org.restlet.resource.Get;
-import org.restlet.resource.Delete;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import org.restlet.data.Form;
-import org.restlet.resource.ServerResource;
-import org.restlet.resource.ResourceException;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
+import org.restlet.resource.Delete;
+import org.restlet.resource.Get;
+import org.restlet.resource.Post;
+import org.restlet.resource.Put;
+import org.restlet.resource.ResourceException;
+import org.restlet.resource.ServerResource;
 
-import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Ref;
 import com.aat.datastore.AttendanceRecord;
-import com.aat.datastore.Student;
-import com.aat.datastore.Group;
 import com.aat.datastore.Course;
-import com.aat.utils.ResourceUtil;
+import com.aat.datastore.Group;
+import com.aat.datastore.Student;
+import com.aat.datastore.Tutor;
+import com.aat.datastore.User;
 import com.aat.utils.Constants;
-
-import java.util.List;
+import com.aat.utils.ResourceUtil;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.Ref;
 
 public class AttendanceResource extends ServerResource {
 	
-	@Post
+	@Post	
 	public Representation create(Representation entity) {
 		// Check if of type Student
 		ResourceUtil.checkTokenPermissions(this, Student.class);
@@ -34,7 +39,6 @@ public class AttendanceResource extends ServerResource {
 		Long userId = Long.parseLong(ResourceUtil.getParam(params, "user", true), 10);
 		Long courseId = Long.parseLong(getAttribute(Constants.courseId), 10);
 		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
-
 		// Check if token coresponds to userid
 		ResourceUtil.checkToken(this, userId);
 
@@ -72,8 +76,49 @@ public class AttendanceResource extends ServerResource {
 	}
 
 	@Put
-	public void update() {
-		// TODO: Implement
+	public String update(Representation entity) {
+		
+		// Check if of type Tutor
+		ResourceUtil.checkTokenPermissions(this, Tutor.class);
+		
+		// Get input parameters
+		Form params = new Form(entity);
+		Long studentId = Long.parseLong(getAttribute(Constants.userId), 10);
+		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
+		String flagMode = ResourceUtil.getParam(params, Constants.flagMode, true);
+		String dateWeek = ResourceUtil.getParam(params, Constants.dateWeek, true);
+		String token = ResourceUtil.getParam(params, Constants.token, true);
+		
+		Date date;
+		AttendanceRecord attendance = retrieveAttendanceRecord(studentId,groupId);
+		String storedToken = attendance.getAttendaceToken().get(dateWeek);
+		
+		if (storedToken!=null && storedToken.equals(token)){
+			List <Date> dates = null;
+			try {
+				date = new SimpleDateFormat("dd-MM-yyyy").parse(dateWeek);
+				
+				if (flagMode.equals("A")){
+						dates = attendance.getAttendance();
+				}
+				else if (flagMode.equals("P")){
+						dates = attendance.getPresentation();
+				}
+				
+				if (!dates.contains(date)){
+					dates.add(date);
+					ObjectifyService.ofy().save().entity(attendance).now();
+				}
+			
+			} catch (ParseException e) {
+				throw new ResourceException(409, "Conflict", "Date format of the week is not valid.", null);
+			}
+			
+		}else{
+			throw new ResourceException(409, "Conflict", "Invalid token", null);
+		}
+		
+		return attendance.getId().toString();
 	}
 
 	@Get
@@ -86,5 +131,27 @@ public class AttendanceResource extends ServerResource {
 	@Delete
 	public void remove() {
 		// TODO: Implement
+	}
+	
+	/**
+	 * Get attendance record for a specific group for a student
+	 * */
+	private AttendanceRecord retrieveAttendanceRecord(Long userId, Long groupId){
+		AttendanceRecord attendanceRecord = null;
+		Student student = (Student) ObjectifyService.ofy()
+				.load()
+				.type(User.class)
+				.id(userId)	
+				.now();
+		
+		List<Ref<AttendanceRecord>> refAttendances =  student.getGroups();
+		for (Ref<AttendanceRecord> refAttendance : refAttendances){	
+			long parentId = refAttendance.getValue().getParent().getId();
+			if (groupId == parentId){
+				attendanceRecord = refAttendance.getValue();
+				break;
+			}
+		}
+		return attendanceRecord;
 	}
 }

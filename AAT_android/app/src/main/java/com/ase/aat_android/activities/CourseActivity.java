@@ -1,25 +1,20 @@
-package com.ase.aat_android;
+package com.ase.aat_android.activities;
 
 import android.app.ListActivity;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.ase.aat_android.R;
 
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CourseActivity extends ListActivity {
 

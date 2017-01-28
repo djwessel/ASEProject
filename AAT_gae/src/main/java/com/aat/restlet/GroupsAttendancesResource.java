@@ -21,7 +21,7 @@ import com.googlecode.objectify.Ref;
 public class GroupsAttendancesResource extends ServerResource implements IGroupsAttendancesResource{
 	@Get	
 	public HashMap <String,Group> retrieve() {
-		HashMap <String,Group> courseGropus = new HashMap<>(); 
+		HashMap <String,Group> courseGropus = new HashMap<String, Group>(); 
 		Long userId = Long.parseLong(getAttribute(Constants.userId), 10);
 		// Check if session token matches userId
 		ResourceUtil.checkToken(this, userId);
