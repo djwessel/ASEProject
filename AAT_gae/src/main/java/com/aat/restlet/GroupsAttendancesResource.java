@@ -33,13 +33,15 @@ public class GroupsAttendancesResource extends ServerResource implements IGroups
 		List<Ref<AttendanceRecord>> refAttendances = student.getGroups();
 		
 		for (Ref<AttendanceRecord> refAttendance : refAttendances){	
-			Key<Group> keygroup = refAttendance.getValue().getParent();
+			AttendanceRecord ar = refAttendance.get();
+			if (ar != null) {
+				Key<Group> keygroup = ar.getParent();
 			
-			Group group=ObjectifyService.ofy().load().key(keygroup).now();
-			Course course = ObjectifyService.ofy().load().key(group.getParent()).now();
+				Group group = ObjectifyService.ofy().load().key(keygroup).now();
+				Course course = ObjectifyService.ofy().load().key(group.getParent()).now();
 			
-			courseGropus.put(course.getTitle(), group);
-			
+				courseGropus.put(course.getTitle(), group);
+			}
 		}	
 		
 		return courseGropus;
