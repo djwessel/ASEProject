@@ -123,8 +123,17 @@ public class AttendanceResource extends ServerResource {
 
 	@Get
 	public AttendanceRecord retrieve() {
-		// TODO: Implement
-		
+		String userId = getAttribute(Constants.userId);	
+		String groupId = getAttribute(Constants.groupId);	
+		Student s = ObjectifyService.ofy()
+				.load()
+				.type(Student.class)
+				.id(Long.parseLong(userId, 10))
+				.now();
+		for (Ref<AttendanceRecord> ref: s.getGroups()) {
+			if (groupId.equals(ref.get().getParent().getId())) {
+				return ref.getValue();
+			}
 		return null;
 	}
 
