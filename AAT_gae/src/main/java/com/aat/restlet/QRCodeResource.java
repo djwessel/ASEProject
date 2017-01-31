@@ -10,6 +10,7 @@ import java.util.List;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
+import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
 import com.aat.datastore.AttendanceRecord;
@@ -27,8 +28,8 @@ import com.googlecode.objectify.Ref;
  * */
 public class QRCodeResource extends ServerResource {
 	
-	@Get
-	public Representation retrieve(){
+	@Post
+	public Representation create(){
 							
 		Long userID = Long.parseLong(getAttribute(Constants.userId), 10);
 		Long groupID = Long.parseLong(getAttribute(Constants.groupId), 10);

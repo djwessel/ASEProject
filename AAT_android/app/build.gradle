@@ -32,14 +32,13 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/maven/com.belerweb/pinyin4j/pom.xml'
         exclude 'META-INF/maven/com.belerweb/pinyin4j/pom.properties'
-        exclude 'META-INF/services/org.restlet.engine.converter.ConverterHel‌​per'
+        exclude 'META-INF/services/org.restlet.engine.converter.ConverterHel‌per'
         exclude 'org/restlet/service/accept.properties'
         exclude 'org/restlet/service/accept-encoding.properties'
         exclude 'org/restlet/Component.xsd'
         exclude 'org/restlet/data/agent.properties'
         exclude 'META-INF/ASL2.0'
     }
-
 }
 
 repositories {
@@ -47,6 +46,10 @@ repositories {
     mavenCentral()
     maven {
         url "http://maven.restlet.org"
+
+    }
+    flatDir {
+        dirs 'libs'
     }
 
     flatDir {
@@ -63,13 +66,17 @@ dependencies {
     compile 'com.android.support:design:25.1.0'
     testCompile 'junit:junit:4.12'
     compile 'org.restlet.android:org.restlet:2.3.7'
-    compile files('/home/anahitik/ASE/ASEProject/AAT_android/libs/aat_datastore.jar')
     compile 'com.google.android.gms:play-services:10.0.1'
 
+    compile group: 'org.restlet.gae', name: 'org.restlet', version: '2.3.7'
+    compile 'com.google.zxing:core:3.2.1'
     compile (
             [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.3.2'],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.3.2'],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.3.2']
     )
+    compile files('/home/anahitik/ASE/ASEProject/AAT_android/libs/aat_datastore.jar')
+    compile files("libs/com.aat.interfaces.restlet.jar")
+    compile files('libs/com.aat.datastore.jar')
 }
 

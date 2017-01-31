@@ -1,6 +1,5 @@
 package com.ase.aat_android.data;
 
-import org.restlet.Context;
 import org.restlet.data.Cookie;
 
 /**
