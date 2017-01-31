@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="/css/page.css">
 
@@ -61,29 +62,37 @@
                 <button id="newUserBtn" class="btn btn-default btn-block">New User</button>
                 <button id="existUserBtn" class="btn btn-default btn-block">Existing User</button>
               </div>
-              <form id="userSignup" class="form-horizontal" style="display: none;">
+              <form id="userSignup" class="form-horizontal" style="display: none;" data-toggle="validator">
                 <div class="form-group">
                   <label for="inputEmail1" class="col-sm-2 control-label">Email</label>
                   <div class="col-sm-10">
-                    <input name="email" type="email" class="form-control" id="inputEmail1" placeholder="Email">
+                    <input name="email" type="email" class="form-control" id="inputEmail1" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" data-error="Invalid email format" required>
+                    <div class="help-block with-errors"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
-                  <div class="col-sm-10">
-                    <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="Password">
+                  <div class="col-sm-5">
+                    <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                    <div class="help-block">Minimum of 8 characters, at least 1 lower case, at least 1 upper case and at least 1 number.</div>
+                  </div>
+                  <div class="col-sm-5">
+                    <input type="password" class="form-control" id="inputPasswordConfirm" data-match="#inputPassword3" data-match-error="These dont match" placeholder="Confirm" required>
+                    <div class="help-block with-errors"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="inputFirst" class="col-sm-2 control-label">First Name</label>
                   <div class="col-sm-10">
-                    <input name="first" type="first" class="form-control" id="inputFirst" placeholder="First Name">
+                    <input name="first" type="first" class="form-control" id="inputFirst" placeholder="First Name" required>
+                    <div class="help-block with-errors"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="inputLast" class="col-sm-2 control-label">Last Name</label>
                   <div class="col-sm-10">
-                    <input name="last" type="text" class="form-control" id="inputLast" placeholder="Last Name">
+                    <input name="last" type="text" class="form-control" id="inputLast" placeholder="Last Name" required>
+                    <div class="help-block with-errors"></div>
                   </div>
                 </div>
                 <input type="hidden" name="type" value="Student">
@@ -93,17 +102,19 @@
                   </div>
                 </div>
               </form>
-              <form id="userLogin" class="form-horizontal" style="display: none;">
+              <form id="userLogin" class="form-horizontal" style="display: none;"  data-toggle="validator">
                 <div class="form-group">
                   <label for="inputEmail2" class="col-sm-2 control-label">Email</label>
                   <div class="col-sm-10">
-                    <input name="email" type="email" class="form-control" id="inputEmail2" placeholder="Email">
+                    <input name="email" type="email" class="form-control" id="inputEmail2" placeholder="Email" required>
+                    <div class="help-block with-errors"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
                   <div class="col-sm-10">
-                    <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="Password">
+                    <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="Password" required>
+                    <div class="help-block with-errors"></div>
                   </div>
                 </div>
                 <div class="form-group">

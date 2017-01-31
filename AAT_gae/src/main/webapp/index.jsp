@@ -27,23 +27,26 @@
     <h3>All courses</h3>
     <div id="courses" class="row"></div>
     <button id="createCourseBtn" class="btn btn-default" style="display: none;">Create New Course</button>
-    <form id="courseCreate" class="form-horizontal" style="display: none;">
+    <form id="courseCreate" class="form-horizontal" style="display: none;" data-toggle="validator">
       <div class="form-group">
         <label for="inputTitle" class="col-sm-2 control-label">Title</label>
         <div class="col-sm-10">
-          <input name="title" type="text" class="form-control" id="inputTitle" placeholder="Course title">
+          <input name="title" type="text" class="form-control" id="inputTitle" placeholder="Course title" required>
+          <div class="help-block with-errors"></div>
         </div>
       </div>
       <div class="form-group">
         <label for="inputAtten" class="col-sm-2 control-label">Required Attendance count</label>
         <div class="col-sm-10">
-          <input name="reqAtten" type="number" class="form-control" id="inputAtten" placeholder="0">
+          <input name="reqAtten" type="number" class="form-control" id="inputAtten" placeholder="0" min="0" required>
+          <div class="help-block with-errors"></div>
         </div>
       </div>
       <div class="form-group">
         <label for="inputPresent" class="col-sm-2 control-label">Required Presentation count</label>
         <div class="col-sm-10">
-          <input name="reqPresent" type="number" class="form-control" id="inputPresent" placeholder="0">
+          <input name="reqPresent" type="number" class="form-control" id="inputPresent" placeholder="0" min="0" required>
+          <div class="help-block with-errors"></div>
         </div>
       </div>
       <div class="form-group">

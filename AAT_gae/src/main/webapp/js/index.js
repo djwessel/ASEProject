@@ -1,10 +1,13 @@
 $(document).ready(function() {
   // Course Create form submit handler
-  $('#courseCreate').submit(function() {
+  $('#courseCreate').validator({ disable: false }).submit(function() {
     $.post('/rest/course', $(this).serialize()).done(function(data) {
       window.location.reload();
     }).fail(function(xhr) {
-      alert("Unable to create course");
+      if (xhr.status === 409)
+        alert('Course with given name already exists');
+      else
+        alert('Unable to create course');
     });
 
     return false;

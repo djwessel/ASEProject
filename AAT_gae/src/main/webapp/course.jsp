@@ -34,11 +34,12 @@
     <div id="groups" class="row">Loading groups...</div>
 
     <button id="createGroupBtn" class="btn btn-default" style="display: none;">Create New Group</button>
-    <form id="groupCreate" class="form-horizontal" style="display: none;">
+    <form id="groupCreate" class="form-horizontal" style="display: none;" data-toggle="validator">
       <div class="form-group">
         <label for="inputName" class="col-sm-2 control-label">Name</label>
         <div class="col-sm-10">
-          <input name="name" type="text" class="form-control" id="inputName" placeholder="Group Name">
+          <input name="name" type="text" class="form-control" id="inputName" placeholder="Group Name" required>
+          <div class="help-block with-errors"></div>
         </div>
       </div>
       <div class="form-group">

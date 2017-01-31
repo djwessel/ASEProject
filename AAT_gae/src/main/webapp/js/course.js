@@ -34,11 +34,14 @@
     });
   
     // Form submit for creating new groups
-    $('#groupCreate').submit(function() {
+    $('#groupCreate').validator({ disable: false }).submit(function() {
       $.post('/rest/course/' + courseId + '/group', $(this).serialize()).done(function(data) {
         window.location.reload();
       }).fail(function(xhr) {
-        alert("Unable to create group");
+        if (xhr.status === 409)
+          alert('Group with given name already exists for course');
+        else
+          alert('Unable to create group');
       });
   
       return false;
