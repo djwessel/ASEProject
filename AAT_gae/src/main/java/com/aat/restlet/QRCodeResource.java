@@ -55,11 +55,11 @@ public class QRCodeResource extends ServerResource {
 		}
 		
 		sBufferToken.append(userID);
-		sBufferToken.append("/");		
+		sBufferToken.append(",");
 		sBufferToken.append(groupID);
-		sBufferToken.append("/");
+		sBufferToken.append(",");
 		sBufferToken.append(date);
-		sBufferToken.append("/");
+		sBufferToken.append(",");
 		sBufferToken.append(token.get(date));	
 							
 		return new StringRepresentation(sBufferToken.toString());

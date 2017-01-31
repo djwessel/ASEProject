@@ -24,6 +24,8 @@ public class UserLogout extends ServerResource {
 			throw new ResourceException(404, "Not found", "User does not exist", null);
 		}
 		else {
+			getResponse().getCookieSettings().add(new CookieSetting(0, "sessionToken", "INVALID", "/", null, "User session token", 0, Constants.ON_HTTPS, true));
+			getResponse().getCookieSettings().add(new CookieSetting(0, "userType", "INVALID", "/", null, "User type", 0, Constants.ON_HTTPS, false));
 			// invalidate token
 			u.setToken(null);
 			ObjectifyService.ofy().save().entity(u);

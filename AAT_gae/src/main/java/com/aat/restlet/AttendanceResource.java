@@ -61,8 +61,12 @@ public class AttendanceResource extends ServerResource {
 
 		// Check to see if Student already has attendance record for course/group
 		for (Ref<AttendanceRecord> ref: s.getGroups()) {
-			if (groupId.equals(ref.get().getParent().getId())) {
-				throw new ResourceException(409, "Conflict", "Student already signed up for group.", null);
+			AttendanceRecord ar = ref.get();
+			if (ar != null) {
+				Key<Group> parent = ar.getParent();
+				if (parent != null && groupId.equals(parent.getId()) || parent.getParent() != null && courseId.equals(parent.getParent().getId())) {
+					throw new ResourceException(409, "Conflict", "Student already signed up for group in course.", null);
+				}
 			}
 		}
 
@@ -105,6 +109,7 @@ public class AttendanceResource extends ServerResource {
 						dates = attendance.getPresentation();
 				}
 				
+				System.out.println(dates);
 				if (!dates.contains(date)){
 					dates.add(date);
 					ObjectifyService.ofy().save().entity(attendance).now();
@@ -123,14 +128,49 @@ public class AttendanceResource extends ServerResource {
 
 	@Get
 	public AttendanceRecord retrieve() {
-		// TODO: Implement
+		Long userId = Long.parseLong(getAttribute(Constants.userId), 10);
+		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
+		// Check if of type Student and if user token matches student id
+		ResourceUtil.checkToken(this, userId);
+		ResourceUtil.checkTokenPermissions(this, Student.class);
 		
-		return null;
+		return retrieveAttendanceRecord(userId, groupId);
 	}
 
 	@Delete
 	public void remove() {
-		// TODO: Implement
+		Long userId = Long.parseLong(getAttribute(Constants.userId), 10);
+		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
+		// Check if of type Student and if user token matches student id
+		ResourceUtil.checkToken(this, userId);
+		ResourceUtil.checkTokenPermissions(this, Student.class);
+
+		Ref<AttendanceRecord> ar = null;
+		Student student = (Student) ObjectifyService.ofy()
+				.load()
+				.type(User.class)
+				.id(userId)
+				.now();
+
+		List<Ref<AttendanceRecord>> refAttendances =  student.getGroups();
+		for (Ref<AttendanceRecord> refAttendance : refAttendances){
+			AttendanceRecord check = refAttendance.get();
+			if (check != null) {
+				long parentId = check.getParent().getId();
+				if (groupId == parentId){
+					ar = refAttendance;
+					break;
+				}
+			}
+		}
+
+		// This deletes the record. May want to put some more checks. 
+		ObjectifyService.ofy().delete().entity(ar.getValue()).now();
+
+		// Update User to remove record
+		refAttendances.remove(ar);
+		student.setGroups(refAttendances);
+		ObjectifyService.ofy().save().entity(student).now();
 	}
 	
 	/**
@@ -146,10 +186,13 @@ public class AttendanceResource extends ServerResource {
 		
 		List<Ref<AttendanceRecord>> refAttendances =  student.getGroups();
 		for (Ref<AttendanceRecord> refAttendance : refAttendances){	
-			long parentId = refAttendance.getValue().getParent().getId();
-			if (groupId == parentId){
-				attendanceRecord = refAttendance.getValue();
-				break;
+			AttendanceRecord ar = refAttendance.get();
+			if (ar != null) {
+				long parentId = ar.getParent().getId();
+				if (groupId == parentId){
+					attendanceRecord = ar;
+					break;
+				}
 			}
 		}
 		return attendanceRecord;

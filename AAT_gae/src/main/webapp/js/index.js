@@ -1,20 +1,37 @@
 $(document).ready(function() {
+  // Course Create form submit handler
   $('#courseCreate').submit(function() {
     $.post('/rest/course', $(this).serialize()).done(function(data) {
-      console.log("success", data);
       window.location.reload();
     }).fail(function(xhr) {
-      console.log("fail", xhr);
       alert("Unable to create course");
     });
 
     return false;
   });
 
+  // Load courses
   $.get('/rest/courses', function(data) {
-    console.log(data);
     data.forEach(function(course) {
       var cDiv = $('<a href="/course.jsp?courseId=' + course.id + '" class="course">' + course.title + '</a>').appendTo($('#courses'));
     });
   });
+
+  if (Cookies.get('user')) {
+    if (Cookies.get("userType") === "student") {
+      // Load user's groups
+      $.get('/rest/user/' + Cookies.get('user') + '/attendances', function(data) {
+        for (var course in data) {
+          var rDiv = $('<a href="/attendance.jsp?groupId=' + data[course].id + '" class="record">' + course + ' (' + data[course].name + ')</a>').appendTo($('#records'));
+        }
+      });
+    }
+    else {
+      // Show create course button
+      $('#createCourseBtn').show().click(function() {
+        $(this).hide();
+        $('#courseCreate').show();
+      })
+    }
+  }
 });
