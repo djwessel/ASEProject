@@ -1,15 +1,18 @@
 package com.aat.datastore;
 
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 /**
  * Represents a Course in the datastore. Courses are parents to Groups.
  */
 @Entity
+@Cache
 public class Course {
 	@Id private Long id;
-	private String title;
+	@Index private String title;
 	private int reqAtten;
 	private int reqPresent;
 

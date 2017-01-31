@@ -31,9 +31,13 @@ public class CourseResource extends ServerResource{
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
 	   Form params = new Form(entity);
 	  		
-	   String courseTitle =ResourceUtil.getParam(params,"title",true);
-	   int reqAtten = Integer.parseInt(ResourceUtil.getParam(params,"reqAtten",true));
-	   int reqPresent = Integer.parseInt(ResourceUtil.getParam(params,"reqPresent",true));
+	   String courseTitle = ResourceUtil.getParam(params, "title", true);
+	   int reqAtten = Integer.parseInt(ResourceUtil.getParam(params, "reqAtten", true));
+	   int reqPresent = Integer.parseInt(ResourceUtil.getParam(params, "reqPresent", true));
+
+	   if (ObjectifyService.ofy().load().type(Course.class).filter("title", courseTitle).first().now() != null) {
+	      throw new ResourceException(409, "Already Exists", "Course with given title already exists", null);
+	   }
 	   
 	   Course course = new Course(courseTitle,reqAtten,reqPresent);	
 	   ObjectifyService.ofy().save().entity(course).now();

@@ -1,6 +1,7 @@
 package com.aat.datastore;
 
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
@@ -12,6 +13,7 @@ import java.util.Date;
  * Represents a User. Users have an email and a password. Known subclasses are Students and Tutors.
  */
 @Entity
+@Cache
 public abstract class User {
 	@Id private Long id;
 	@Index private String email;
