@@ -2,7 +2,7 @@ import pifacecad
 import os
 import signal
 from display import write
-from sync import sync_data, internet_on, sync_all
+from sync import Sync 
 from QRScanner import scan
 
 def signal_handler(signal, frame):
@@ -13,6 +13,7 @@ signal.signal(signal.SIGINT, signal_handler)
 def scan_and_sync(event):
 	data = scan_code()
 	if data:
+		write("Successfully scanned")
 		sync(data)
 	else:
 		write("Error scanning, please try again")
@@ -29,9 +30,9 @@ def switch_modes(event):
 
 # Calls the sync_data method and alerts user on success or failure
 def sync(data):
-	# TODO: send mode with data
+	global present_mode
 	write("Syncing...")
-	if sync_data(data):
+	if s.sync_data(data + ',' + ('P' if present_mode else 'A')):
 		write("Successfully synced data")
 	else:
 		write("Error syncing data, please try again")
@@ -39,15 +40,11 @@ def sync(data):
 # Calls the scan method and alerts the user when scan is successful
 def scan_code():
 	write("Please display code")
-	data = scan()
-	write("Successfully scanned")
-	return data
+	return scan()
 
 write("System starting up")
 present_mode = False
-# Sync all data if internet connection. Should this be here?
-if internet_on():
-	sync_all()
+s = Sync()
 
 cad = pifacecad.PiFaceCAD()
 listener = pifacecad.SwitchEventListener(chip=cad)
