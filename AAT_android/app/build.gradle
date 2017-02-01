@@ -32,7 +32,7 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/maven/com.belerweb/pinyin4j/pom.xml'
         exclude 'META-INF/maven/com.belerweb/pinyin4j/pom.properties'
-        exclude 'META-INF/services/org.restlet.engine.converter.ConverterHel‌per'
+        exclude 'META-INF/services/org.restlet.engine.converter.ConverterHelper'
         exclude 'org/restlet/service/accept.properties'
         exclude 'org/restlet/service/accept-encoding.properties'
         exclude 'org/restlet/Component.xsd'
@@ -46,10 +46,6 @@ repositories {
     mavenCentral()
     maven {
         url "http://maven.restlet.org"
-
-    }
-    flatDir {
-        dirs 'libs'
     }
 
     flatDir {

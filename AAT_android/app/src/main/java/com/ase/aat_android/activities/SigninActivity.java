@@ -1,73 +1,77 @@
 package com.ase.aat_android.activities;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
 import com.ase.aat_android.R;
 
+import org.restlet.data.Form;
+import org.restlet.data.MediaType;
+import org.restlet.data.Method;
+import org.restlet.data.Parameter;
 import org.restlet.resource.ClientResource;
+import org.restlet.resource.ResourceException;
 
-import java.net.URI;
+import java.io.IOException;
 import java.net.URISyntaxException;
+
+import com.ase.aat_android.data.SessionData;
+import com.ase.aat_android.util.Constants;
+import com.ase.aat_android.util.EndpointsURL;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class SigninActivity extends AppCompatActivity {
-    private class SigninTask extends AsyncTask<URI, Boolean, Boolean> {
-
-        private ProgressBar loadingBar;
-
-        public  SigninTask() throws URISyntaxException {
-            initializeProgressBar();
+    private class SigninTask extends BaseAsyncTask<String, Boolean, Long> {
+        public  SigninTask(Activity activity) throws URISyntaxException {
+            super(activity, Constants.loginLoad);
         }
 
         @Override
-        protected Boolean doInBackground(URI... params) {
-            return sendRequest(params[0]);
+        protected Long doInBackground(String... params) {
+            String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.LOGIN;
+            ClientResource loginRes = new ClientResource(Method.POST, url);
+            loginRes.setRequestEntityBuffering(true);
+            loginRes.setResponseEntityBuffering(true);
+            Form loginForm = createLoginForm(params[0], params[1]);
+            Long result;
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                result = mapper.convertValue(loginRes.post(loginForm, MediaType.ALL).getText(), Long.class);
+                SessionData.updateSessionToken(loginRes.getResponse().getCookieSettings().getFirst("sessionToken"));
+                System.out.println(result);
+            } catch (ResourceException e) {
+                System.out.println(e.getMessage());
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+            return result;
+        }
+
+        private Form createLoginForm(String username, String password) {
+            Form form = new Form();
+            form.add(new Parameter(Constants.emailParamName, username));
+            form.add(new Parameter(Constants.passwordParamName, password));
+            return form;
         }
 
         @Override
-        protected void onProgressUpdate(Boolean... values) {
-            loadingBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(Boolean succeed) {
-            loadingBar.setVisibility(View.INVISIBLE);
-            if (succeed) {
-                //TODO: pass User as an argument
-                openUserActivity();
+        protected void onPostExecute(Long res) {
+            super.onPostExecute(res);
+            if (res != null) {
+                openUserActivity(res);
             } else {
                 Toast.makeText(getApplicationContext(), "Failed to login", Toast.LENGTH_LONG).show();
             }
-        }
-
-        private void initializeProgressBar() {
-            loadingBar = new ProgressBar(getApplicationContext());
-            LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            params.addRule(RelativeLayout.CENTER_IN_PARENT);
-            loadingBar.setLayoutParams(params);
-            loadingBar.setVisibility(View.INVISIBLE);
-        }
-
-        private Boolean sendRequest(URI uri) {
-            String username = usernameEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            //TODO: move hard coded strings to utility class
-            ClientResource request = new ClientResource(uri);
-            request.addQueryParameter("username", username);
-            request.addQueryParameter("password", password);
-            //TODO: should get user data and use it
-            //return (request.get() != null);
-            return false;
         }
     }
 
@@ -97,8 +101,12 @@ public class SigninActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!checkSigninFields()) {
+                    return;
+                }
                 try {
-                    new SigninTask().execute(new URI("http://ase2016-148507.appspot.com/rest/user"));
+                    new SigninTask(SigninActivity.this).execute(usernameEditText.getText().toString(),
+                                                                passwordEditText.getText().toString());
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -106,18 +114,30 @@ public class SigninActivity extends AppCompatActivity {
         });
     }
 
+    private boolean checkSigninFields() {
+        if (usernameEditText.getText().toString().isEmpty()) {
+            usernameEditText.setHighlightColor(Color.RED);
+            return false;
+        } else if (passwordEditText.getText().toString().isEmpty()) {
+            passwordEditText.setHighlightColor(Color.RED);
+            return false;
+        }
+        return true;
+    }
+
     private void setSignupButtonListener() {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: move to signup activity
+                Intent intent = new Intent(SigninActivity.this, SignupActivity.class);
+                startActivity(intent);
             }
         });
     }
 
-    // TODO: pass User as an argument to this function
-    private void openUserActivity() {
-        Intent intent = new Intent(this, AttendancesActivity.class);
+    private void openUserActivity(Long userID) {
+        Intent intent = new Intent(SigninActivity.this, UserActivity.class);
+        intent.putExtra(Constants.userIdKey, userID);
         startActivity(intent);
     }
 

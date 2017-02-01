@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:paddingRight="@dimen/padding"
         android:paddingLeft="@dimen/padding"
         android:id="@+id/linearLayout">
@@ -28,7 +28,7 @@
             android:layout_gravity="center"
             android:textSize="@dimen/text_view_text_size"
             android:text="firstname"
-            android:textStyle="italic"
+            android:textStyle="italic|bold"
             android:id="@+id/firstname_textview"/>
         <TextView
             android:layout_width="wrap_content"
@@ -36,17 +36,17 @@
             android:layout_gravity="center"
             android:textSize="@dimen/text_view_text_size"
             android:text="lastname"
-            android:textStyle="italic"
+            android:textStyle="italic|bold"
             android:id="@+id/lastname_textview"/>
     </LinearLayout>
 
-    <ExpandableListView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:id="@android:id/list"/>
+        android:layout_marginTop="30dp"
+        android:id="@+id/attendancelistview"/>
 
 
 </RelativeLayout>

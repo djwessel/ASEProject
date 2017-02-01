@@ -17,7 +17,7 @@
         android:id="@+id/msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_alignParentTop="true" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -25,19 +25,14 @@
         android:id="@+id/imageView"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/msg"
-        android:paddingTop="250px"
-        />
-
-    <ProgressBar
-        android:id="@+id/progress_qr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true" />
+        android:layout_centerInParent="true"/>
 
     <Button
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/action_requestQR"
-        android:onClick="requestQRcode" />
+        android:id="@+id/request_qr_button"
+        android:layout_marginTop="10dp"
+        android:layout_alignBottom="@+id/imageView"/>
 </RelativeLayout>

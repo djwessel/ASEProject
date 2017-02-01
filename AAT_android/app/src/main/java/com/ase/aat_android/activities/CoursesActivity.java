@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.aat.datastore.Course;
 import com.ase.aat_android.R;
 import com.ase.aat_android.util.Constants;
+import com.ase.aat_android.util.EndpointsURL;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.appindexing.Action;
@@ -87,7 +88,8 @@ public class CoursesActivity extends ListActivity {
 
         @Override
         protected ArrayList<Course> doInBackground(Boolean... params) {
-            ClientResource coursesRetRes = new ClientResource(Method.GET, Constants.AATUrl + Constants.coursesRetrieveResourceEndpoint);
+            String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_COURSES;
+            ClientResource coursesRetRes = new ClientResource(Method.GET, url);
             coursesRetRes.setResponseEntityBuffering(true);
             coursesRetRes.setRequestEntityBuffering(true);
             coursesRetRes.accept(MediaType.APPLICATION_ALL_JSON);
@@ -105,6 +107,10 @@ public class CoursesActivity extends ListActivity {
             if (courseObjects == null) {
                 return null;
             }
+            return retrieveCourses(courseObjects);
+        }
+
+        private ArrayList<Course> retrieveCourses(List<Object> courseObjects) {
             ArrayList<Course> courses = new ArrayList<Course>(courseObjects.size());
             for (Object obj : courseObjects) {
                 if (!(obj instanceof Course)) {
@@ -118,8 +124,10 @@ public class CoursesActivity extends ListActivity {
         @Override
         protected void onPostExecute(ArrayList<Course> res) {
             super.onPostExecute(res);
-            CourseListAdapter adapter = (CourseListAdapter) getListAdapter();
-            adapter.updateCourses(res);
+            if (res != null) {
+                CourseListAdapter adapter = (CourseListAdapter) getListAdapter();
+                adapter.updateCourses(res);
+            }
         }
     }
 
@@ -198,8 +206,8 @@ public class CoursesActivity extends ListActivity {
         // In that case it will be possible to put course into extras
         courseDataArray.add(0, course.getId().toString());
         courseDataArray.add(1, course.getTitle());
-        courseDataArray.add(1, String.valueOf(course.getReqAtten()));
-        courseDataArray.add(1, String.valueOf(course.getReqPresent()));
+        courseDataArray.add(2, String.valueOf(course.getReqAtten()));
+        courseDataArray.add(3, String.valueOf(course.getReqPresent()));
         intent.putStringArrayListExtra(Constants.courseKey, courseDataArray);
         startActivity(intent);
     }

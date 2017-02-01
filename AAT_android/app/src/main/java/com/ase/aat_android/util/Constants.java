@@ -6,14 +6,6 @@ package com.ase.aat_android.util;
 
 public class Constants {
 
-    //public static String AATUrl = "http://localhost:8800/rest/";
-    public static String AATUrl = "http://guestbook-149315.appspot.com/rest/";
-    public static String loginResourceEndpoint = "user/login";
-    public static String userResourceEndpoint = "user";
-    public static String coursesRetrieveResourceEndpoint = "courses";
-
-    public static String userIdAttribute = "user_id";
-
     public static String emailParamName = "email";
     public static String passwordParamName = "password";
     public static String firstnameParamName = "first";
@@ -27,9 +19,6 @@ public class Constants {
     public static String loginLoad = "Login...";
     public static String logoutLoad = "Logout...";
     public static String signupLoad = "Signing up...";
-
-    // Duplicates from gae constant.BAD!!
-    public static String loginSucceed = "login successfully";
 
     // Bundle keys
     public static String userIdKey = "userID";

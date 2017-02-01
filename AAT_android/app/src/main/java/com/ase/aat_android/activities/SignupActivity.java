@@ -19,7 +19,9 @@ import org.restlet.data.Parameter;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
+import com.ase.aat_android.data.SessionData;
 import com.ase.aat_android.util.Constants;
+import com.ase.aat_android.util.EndpointsURL;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -34,7 +36,7 @@ public class SignupActivity extends AppCompatActivity {
 
         @Override
         protected Long doInBackground(String... params) {
-            ClientResource signupRes = new ClientResource(Method.POST, Constants.AATUrl + Constants.userResourceEndpoint);
+            ClientResource signupRes = new ClientResource(Method.POST, EndpointsURL.HTTP_ADDRESS + EndpointsURL.SIGNUP);
             signupRes.setRequestEntityBuffering(true);
             signupRes.setResponseEntityBuffering(true);
             Form signupForm = createSignupForm(params[0], params[1], params[2], params[3]);
@@ -44,7 +46,7 @@ public class SignupActivity extends AppCompatActivity {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 userID = mapper.convertValue(signupRes.post(signupForm, MediaType.ALL).getText(), Long.class);
-                //userID = loginRes.post(signupForm, Long.class);
+                SessionData.updateSessionToken(signupRes.getResponse().getCookieSettings().getFirst("sessionToken"));
                 System.out.println(userID);
             } catch (ResourceException e) {
                 System.out.println(e.getMessage());

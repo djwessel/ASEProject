@@ -3,18 +3,30 @@ package com.ase.aat_android.activities;
 import android.app.Activity;
 import android.app.ExpandableListActivity;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.aat.datastore.Course;
+import com.aat.datastore.Group;
 import com.aat.datastore.Student;
 import com.ase.aat_android.data.SessionData;
 import com.ase.aat_android.R;
@@ -26,10 +38,17 @@ import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 
 import com.ase.aat_android.util.Constants;
+import com.ase.aat_android.util.EndpointUtil;
+import com.ase.aat_android.util.EndpointsURL;
+import com.ase.aat_android.util.HashMapAdapter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class UserActivity extends AppCompatActivity {
 
@@ -41,10 +60,11 @@ public class UserActivity extends AppCompatActivity {
 
         @Override
         protected com.aat.datastore.User doInBackground(Long... params) {
-            ClientResource retrieveRes = new ClientResource(Method.GET, buildUrl(params[0]));
+            String url = EndpointsURL.HTTP_ADDRESS + EndpointsURL.REQUEST_USER_DATA;
+            url = EndpointUtil.solveUrl(url, "user_id", Long.toString(params[0]));
+            ClientResource retrieveRes = new ClientResource(Method.GET, url);
             retrieveRes.setResponseEntityBuffering(true);
             retrieveRes.setRequestEntityBuffering(true);
-            //retrieveRes.setAttribute(Constants.userIdAttribute, params[0]);
             retrieveRes.accept(MediaType.APPLICATION_ALL_JSON);
 
             ObjectMapper mapper = new ObjectMapper();
@@ -69,13 +89,40 @@ public class UserActivity extends AppCompatActivity {
             SessionData.updateUser(user);
             updateUserInfo();
         }
+    }
 
-        private String buildUrl(Long attribute) {
-            StringBuilder builder = new StringBuilder(Constants.AATUrl);
-            builder.append(Constants.userResourceEndpoint);
-            builder.append("/");
-            builder.append(attribute);
-            return builder.toString();
+    private class RetrieveAttendancesGroups extends BaseAsyncTask<Long, String, HashMap<String,Group> > {
+
+        public  RetrieveAttendancesGroups(Activity activity) {
+            super(activity);
+        }
+
+        protected HashMap<String,Group> doInBackground(Long... params) {
+            ObjectMapper mapper = new ObjectMapper();
+            HashMap<String,Group> groups = new HashMap<String,Group>();
+            String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_GROUPS_STUDENT;
+            url = EndpointUtil.solveUrl(url, "user_id", Long.toString(params[0]));
+            System.out.println(url);
+            ClientResource resource = new ClientResource(url);
+            resource.setRequestEntityBuffering(true);
+            resource.accept(MediaType.APPLICATION_JSON);
+            try {
+                resource.getRequest().getCookies().add(0, SessionData.getSessionToken());
+                groups= mapper.readValue(resource.get().getText(), new TypeReference<HashMap<String,Object>>(){});
+            } catch (ResourceException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return groups;
+        }
+
+        protected void onPostExecute(final HashMap<String,Group> result) {
+            super.onPostExecute(result);
+            if (result == null) {
+                throw new RuntimeException("Error while retrieving user data");
+            }
+            updateAttendancesList(result);
         }
     }
 
@@ -86,8 +133,9 @@ public class UserActivity extends AppCompatActivity {
         }
         @Override
         protected Boolean doInBackground(Long... params) {
-            // TODO: This part asks to be in a base class
-            ClientResource logoutRes = new ClientResource(Method.DELETE, buildUrl(params[0]));
+            String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.LOGOUT;
+            url = EndpointUtil.solveUrl(url, "user_id", Long.toString(params[0]));
+            ClientResource logoutRes = new ClientResource(Method.DELETE, url);
             logoutRes.setResponseEntityBuffering(true);
             logoutRes.setRequestEntityBuffering(true);
             logoutRes.accept(MediaType.APPLICATION_ALL_JSON);
@@ -110,20 +158,55 @@ public class UserActivity extends AppCompatActivity {
             }
             openSigninActivity();
         }
+    }
 
-        private String buildUrl(Long attribute) {
-            StringBuilder builder = new StringBuilder(Constants.AATUrl);
-            builder.append(Constants.userResourceEndpoint);
-            builder.append("/");
-            builder.append(attribute);
-            builder.append("/logout");
-            return builder.toString();
+    private class AttendancesListAdaper extends BaseAdapter {
+        private final ArrayList attendances;
+        private LayoutInflater inflater;
+
+        public AttendancesListAdaper(Context context, HashMap<String,Group> attendanceMap) {
+            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            attendances = new ArrayList();
+            attendances.addAll(attendanceMap.entrySet());
+        }
+
+        public void updateAttendances(HashMap<String,Group> attendanceMap) {
+            attendances.addAll(attendanceMap.entrySet());
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            return attendances.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return attendances.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            TextView textView = (TextView) row.findViewById(android.R.id.text1);
+            textView.setTextColor(Color.BLACK);
+            Map.Entry<String, Group> item = (Map.Entry) getItem(position);
+            if (item != null) {
+                textView.setText(item.getKey());
+            }
+            return row;
         }
     }
 
     private TextView firstnameTextView;
     private TextView lastNameTextView;
-    private ListView listView;
+    private ListView attendancesListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,12 +216,18 @@ public class UserActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        retrieveUser();
+        Bundle extras = this.getIntent().getExtras();
+        if (extras == null) {
+            throw new RuntimeException("Error while retrieving user data");
+        }
+        Long id = extras.getLong(Constants.userIdKey);
+
+        attendancesListView = (ListView) findViewById(R.id.attendancelistview);
+        attendancesListView.setAdapter(new AttendancesListAdaper(getApplicationContext(), new HashMap<String, Group>()));
+        setListItemActionListener();
+        retrieveUser(id);
+        retrieveAttendances(id);
         initializeComponents();
-
-        // TODO: add list activities part
-        // TODO: add menu items: edit profile, courses, logout
-
     }
 
     @Override
@@ -167,13 +256,28 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    private void retrieveUser() {
-        Bundle extras = this.getIntent().getExtras();
-        if (extras == null) {
-            throw new RuntimeException("Error while retrieving user data");
+    private void setListItemActionListener() {
+        attendancesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map.Entry<String, Object> listItem = (Map.Entry<String, Object>) attendancesListView.getItemAtPosition(position);
+                openQRCodeActivity(listItem);
+            }
+        });
+    }
+
+    private void retrieveUser(Long userID) {
+        new RetrieveUserTask(this).execute(userID);
+    }
+
+
+    private void retrieveAttendances(Long userID) {
+        if (SessionData.getUser() != null) {
+            assert(userID == SessionData.getUser().getId());
+            new RetrieveAttendancesGroups(this).execute(SessionData.getUser().getId());
+        } else {
+            new RetrieveAttendancesGroups(this).execute(userID);
         }
-        Long id = extras.getLong(Constants.userIdKey);
-        new RetrieveUserTask(this).execute(id);
     }
 
     private void initializeComponents() {
@@ -197,6 +301,11 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+
+    private void updateAttendancesList(HashMap<String, Group> result) {
+        ((AttendancesListAdaper) attendancesListView.getAdapter()).updateAttendances(result);
+    }
+
     private void openSigninActivity() {
         Intent intent = new Intent(this, SigninActivity.class);
         startActivity(intent);
@@ -204,6 +313,16 @@ public class UserActivity extends AppCompatActivity {
 
     private void openCoursesActivity() {
         Intent intent = new Intent(this, CoursesActivity.class);
+        startActivity(intent);
+    }
+
+
+    private void openQRCodeActivity(Map.Entry<String, Object> attendanceItem) {
+        Intent intent = new Intent(this, QRCodeActivity.class);
+        LinkedHashMap<String, Object> value = (LinkedHashMap<String, Object>) attendanceItem.getValue();
+        intent.putExtra("selected_group_name", value.get("name").toString());
+        intent.putExtra("selected_group_id", value.get("id").toString());
+        intent.putExtra("selected_course_name", attendanceItem.getKey());
         startActivity(intent);
     }
 
