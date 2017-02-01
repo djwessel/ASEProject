@@ -43,7 +43,7 @@
           <ul class="nav navbar-nav navbar-right">
             <li><p id="userWelcome" class="navbar-text"></p></li>
             <li><button id="logout" class="btn btn-default navbar-btn" style="display: none;">Logout</button></li>
-            <li><button id="loginModalBtn" class="btn btn-default navbar-btn" style="display: none;" data-toggle="modal" data-target="#loginModal">Login</button></li>
+            <li><button id="loginModalBtn" class="btn btn-primary navbar-btn" style="display: none;" data-toggle="modal" data-target="#loginModal">Login</button></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->

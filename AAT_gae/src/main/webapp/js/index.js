@@ -16,7 +16,7 @@ $(document).ready(function() {
   // Load courses
   $.get('/rest/courses', function(data) {
     data.forEach(function(course) {
-      var cDiv = $('<a href="/course.jsp?courseId=' + course.id + '" class="course">' + course.title + '</a>').appendTo($('#courses'));
+      var cRow = $('<tr><td><a href="/course.jsp?courseId=' + course.id + '">' + course.title + '</a></td></tr>').appendTo('#courses');
     });
   });
 
@@ -25,16 +25,15 @@ $(document).ready(function() {
       // Load user's groups
       $.get('/rest/user/' + Cookies.get('user') + '/attendances', function(data) {
         for (var course in data) {
-          var rDiv = $('<a href="/attendance.jsp?groupId=' + data[course].id + '" class="record">' + course + ' (' + data[course].name + ')</a>').appendTo($('#records'));
+          var rRow = $('<tr></tr>').appendTo('#records');
+          $('<td>' + course + '</td>').appendTo(rRow);
+          $('<td><a href="/attendance.jsp?groupId=' + data[course].id + '" class="record">' + data[course].name + '</a></td>').appendTo(rRow);
         }
       });
     }
     else {
       // Show create course button
-      $('#createCourseBtn').show().click(function() {
-        $(this).hide();
-        $('#courseCreate').show();
-      })
+      $('#createCourseBtn').show();
     }
   }
 });

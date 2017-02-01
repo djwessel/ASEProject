@@ -4,10 +4,10 @@ $(document).ready(function() {
   $('#calendar').fullCalendar({ aspectRatio: 3 });
 
   $.get('/rest/user/' + Cookies.get('user') + '/group/' + groupId + '/attendance', function(data) {
-    $('#attenCount').text('Attendance Count: ' + data.attendance.length)
-    $('#presentCount').text('Presentation Count: ' + data.presentation.length)
+    $('#attenCount').text('Attendance Count: ' + data.attendance.length);
+    $('#presentCount').text('Presentation Count: ' + data.presentation.length);
 
-    var events = []
+    var events = [];
     data.attendance.forEach(function(date) {
       events.push({
         title: 'Attended',
