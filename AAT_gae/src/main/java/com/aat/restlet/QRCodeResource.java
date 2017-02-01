@@ -97,9 +97,8 @@ public class QRCodeResource extends ServerResource {
 			AttendanceRecord ar = refAttendance.getValue();
 			if (ar!=null){
 				Key<Group> keygroup = ar.getParent();
-				Group group = ObjectifyService.ofy().load().key(keygroup).now();
 				long storedGroupId = keygroup.getId();
-				long storedCourseId = group.getParent().getId();
+				long storedCourseId = keygroup.getParent().getId();
 				
 				if (groupId == storedGroupId && courseId == storedCourseId){
 					attendanceRecord = ar;
