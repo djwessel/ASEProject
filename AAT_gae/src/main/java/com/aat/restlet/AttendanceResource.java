@@ -89,12 +89,13 @@ public class AttendanceResource extends ServerResource {
 		Form params = new Form(entity);
 		Long studentId = Long.parseLong(getAttribute(Constants.userId), 10);
 		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
+		Long courseId = Long.parseLong(getAttribute(Constants.courseId), 10);
 		String flagMode = ResourceUtil.getParam(params, Constants.flagMode, true);
 		String dateWeek = ResourceUtil.getParam(params, Constants.dateWeek, true);
 		String token = ResourceUtil.getParam(params, Constants.token, true);
 		
 		Date date;
-		AttendanceRecord attendance = retrieveAttendanceRecord(studentId,groupId);
+		AttendanceRecord attendance = retrieveAttendanceRecord(studentId,courseId,groupId);
 		String storedToken = attendance.getAttendaceToken().get(dateWeek);
 		
 		if (storedToken!=null && storedToken.equals(token)){
@@ -130,11 +131,13 @@ public class AttendanceResource extends ServerResource {
 	public AttendanceRecord retrieve() {
 		Long userId = Long.parseLong(getAttribute(Constants.userId), 10);
 		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
+		Long courseId = Long.parseLong(getAttribute(Constants.courseId), 10);
+		
 		// Check if of type Student and if user token matches student id
 		ResourceUtil.checkToken(this, userId);
 		ResourceUtil.checkTokenPermissions(this, Student.class);
 		
-		return retrieveAttendanceRecord(userId, groupId);
+		return retrieveAttendanceRecord(userId, courseId, groupId);
 	}
 
 	@Delete
@@ -176,7 +179,7 @@ public class AttendanceResource extends ServerResource {
 	/**
 	 * Get attendance record for a specific group for a student
 	 * */
-	private AttendanceRecord retrieveAttendanceRecord(Long userId, Long groupId){
+	private AttendanceRecord retrieveAttendanceRecord(Long userId, Long courseId, Long groupId){
 		AttendanceRecord attendanceRecord = null;
 		Student student = (Student) ObjectifyService.ofy()
 				.load()
@@ -186,10 +189,14 @@ public class AttendanceResource extends ServerResource {
 		
 		List<Ref<AttendanceRecord>> refAttendances =  student.getGroups();
 		for (Ref<AttendanceRecord> refAttendance : refAttendances){	
-			AttendanceRecord ar = refAttendance.get();
-			if (ar != null) {
-				long parentId = ar.getParent().getId();
-				if (groupId == parentId){
+			AttendanceRecord ar = refAttendance.getValue();
+			if (ar!=null){
+				Key<Group> keygroup = ar.getParent();
+				Group group = ObjectifyService.ofy().load().key(keygroup).now();
+				long storedGroupId = keygroup.getId();
+				long storedCourseId = group.getParent().getId();
+				
+				if (groupId == storedGroupId && courseId == storedCourseId){
 					attendanceRecord = ar;
 					break;
 				}
