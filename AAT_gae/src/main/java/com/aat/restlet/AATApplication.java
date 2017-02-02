@@ -50,9 +50,9 @@ public class AATApplication extends Application {
 		router.attach("/user/{" + Constants.userId + "}", UserResource.class);
 		router.attach("/user/{" + Constants.userId + "}/logout", UserLogout.class);
 		router.attach("/user/{" + Constants.userId + "}/attendances", GroupsAttendancesResource.class);
-		router.attach("/user/{" + Constants.userId + "}/group/{" + Constants.groupId + "}", QRCodeResource.class);
+		router.attach("/user/{" + Constants.userId + "}/course/{"+Constants.courseId +"}/group/{" + Constants.groupId + "}", QRCodeResource.class);
 		//Endpoint for update AttendanceRecord
-		router.attach("/user/{" + Constants.userId + "}/group/{" + Constants.groupId + "}/attendance", AttendanceResource.class);
+		router.attach("/user/{" + Constants.userId + "}/course/{"+Constants.courseId +"}/group/{" + Constants.groupId + "}/attendance", AttendanceResource.class);
 		
 		return router;
 
