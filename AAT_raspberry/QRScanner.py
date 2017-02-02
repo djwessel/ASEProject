@@ -9,4 +9,3 @@ def scan():
 		if (qr.data != u'NULL') :
 			break
 	return qr.data
-

@@ -1,44 +1,108 @@
-$(document).ready(function() {
+(function() {
   var courseId = QueryString.courseId;
-  var groupId = QueryString.groupId;
-
-  $.get('/rest/course/' + courseId, function(data) {
-    $('#title').text(data.title)
-    $('#courseInfo').empty()
-      .append($('<div>Required Attendance count: ' + data.reqAtten + '</div>'))
-      .append($('<div>Required Presentation count: ' + data.reqPresent + '</div>'));
-  }).fail(function() {
-    $('body').text('COURSE DOES NOT EXIST');
-  });
-
-  $.get('/rest/course/' + courseId + '/groups', function(data) {
-    var groupsDiv = $('#groups').empty();
-    data.forEach(function(group) {
-      var groupDiv = $('<div class="group">' + group.name + '</div>').appendTo(groupsDiv);
-      if (Cookies.get('user')) {
-        $('<button>Signup</button>').click(function() {
-          $.post('/rest/course/' + courseId + '/group/' + group.id + '/attendance', {user: Cookies.get('user')}, function() {
-            alert('success');
-          }).fail(function() {
-            alert('fail');
+  
+  $(document).ready(function() {
+    // Load information about course
+    $.get('/rest/course/' + courseId, function(data) {
+      $('#title').text(data.title)
+      $('#courseInfo').empty()
+        .append($('<div>Required Attendance count: ' + data.reqAtten + '</div>'))
+        .append($('<div>Required Presentation count: ' + data.reqPresent + '</div>'));
+    }).fail(function() {
+      $('body').text('Course does not exist');
+    });
+  
+    // Load groups of course
+    $.get('/rest/course/' + courseId + '/groups', function(data) {
+      var groupsDiv = $('#groups').empty();
+      if (Cookies.get('user') && Cookies.get('userType') === 'student') {
+        $.get('/rest/user/' + Cookies.get('user') + '/attendances', function(userGroups) {
+          data.forEach(function(group) {
+            createGroup(group, groupsDiv, userGroups);
           });
-        }).appendTo(groupDiv);
+        });    
+      }
+      else {
+        data.forEach(function(group) {
+          createGroup(group, groupsDiv, null);
+        });
+      }
+  
+      if (data.length == 0) {
+        groupsDiv.text('No groups found for given course');
       }
     });
-    if (data.length == 0) {
-      groupsDiv.text('No groups found for given course');
+  
+    // Form submit for creating new groups
+    $('#groupCreate').submit(function() {
+      $.post('/rest/course/' + courseId + '/group', $(this).serialize()).done(function(data) {
+        window.location.reload();
+      }).fail(function(xhr) {
+        alert("Unable to create group");
+      });
+  
+      return false;
+    });
+  
+    if (Cookies.get('user')) {
+      if (Cookies.get("userType") === "tutor") {
+        $('#createGroupBtn').show().click(function() {
+          $(this).hide();
+          $('#groupCreate').show();
+        })
+      }
     }
   });
-
-  $('#groupCreate').submit(function() {
-    $.post('/rest/course/' + courseId + '/group', $(this).serialize()).done(function(data) {
-      console.log("success", data);
-      window.location.reload();
-    }).fail(function(xhr) {
-      console.log("fail", xhr);
-      alert("Unable to create group");
+  
+  function createGroup(group, groupsDiv, userGroups) {
+    var groupDiv = $('<div class="group">' + group.name + '</div>').data('group-id', group.id).appendTo(groupsDiv);
+    
+    if (userGroups) {
+      signedUp = false;
+      for (var course in userGroups)
+        if (userGroups[course].id === group.id)
+          signedUp = true;
+      // If student hasnt already signed up for a group, add signup button
+      if (signedUp) {
+        groupDiv.addClass('signed-up');
+      }
+      else {
+        $('<button class="btn btn-default">Signup</button>').click(function() {
+          if ($('.group.signed-up').length) {
+            if (confirm('You are currently signed up for a different group in this course.' 
+              + 'Are you sure you want to switch groups?\n' 
+              + ' WARNING: Switching groups will delete ALL stored attendance information for previous group.')) {
+              changeGroup(group);
+            }
+          }
+          else {
+            signUp(group);
+          }
+        }).appendTo(groupDiv);
+      }
+    }
+  }
+  
+  function changeGroup(group) {
+    $.ajax({
+      url: '/rest/user/' + Cookies.get('user') + '/group/' + $('.group.signed-up').data('group-id') + '/attendance',
+      type: 'DELETE',
+      dataType: 'text',
+      success: function(data) {
+        signUp(group);
+      },
+      error: function(xhr) {
+        alert('Unable to change groups. Please try again.');
+        console.log('fail', xhr);
+      }
     });
-
-    return false;
-  });
-});
+  }
+  
+  function signUp(group) {
+    $.post('/rest/course/' + courseId + '/group/' + group.id + '/attendance', {user: Cookies.get('user')}, function() {
+      window.location.reload();
+    }).fail(function() {
+      alert('Unable to sign up for group. Please try again.');
+    });
+  }
+})();

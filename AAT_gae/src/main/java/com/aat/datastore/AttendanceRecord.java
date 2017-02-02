@@ -24,7 +24,7 @@ public class AttendanceRecord {
 	@JsonIgnore private Ref<Student> student;
 	private ArrayList<Date> attendanceList = new ArrayList<Date>();
 	private ArrayList<Date> presentationList = new ArrayList<Date>();
-	private HashMap<String, String> attendaceToken = new HashMap<String, String>();
+	@JsonIgnore private HashMap<String, String> attendaceToken = new HashMap<String, String>();
 	
 	
 	public AttendanceRecord() {

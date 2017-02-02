@@ -1,4 +1,4 @@
-package com.aat.restlet;
+	package com.aat.restlet;
 
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
@@ -9,15 +9,16 @@ import java.util.List;
 
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
-import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
 import com.aat.datastore.AttendanceRecord;
+import com.aat.datastore.Group;
 import com.aat.datastore.Student;
 import com.aat.datastore.User;
-import com.aat.utils.ResourceUtil;
 import com.aat.utils.Constants;
+import com.aat.utils.ResourceUtil;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Ref;
 
@@ -33,6 +34,7 @@ public class QRCodeResource extends ServerResource {
 							
 		Long userID = Long.parseLong(getAttribute(Constants.userId), 10);
 		Long groupID = Long.parseLong(getAttribute(Constants.groupId), 10);
+		Long courseID = Long.parseLong(getAttribute(Constants.courseId), 10);
 		// Check if session token matches userID
 		ResourceUtil.checkToken(this, userID);
 
@@ -43,10 +45,10 @@ public class QRCodeResource extends ServerResource {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		String date = dateFormat.format(calendar.getTime());
 		
-		AttendanceRecord attendance = getAttendance(userID, groupID);
+		AttendanceRecord attendance = getAttendance(userID, courseID, groupID);
 		HashMap<String,String> token = attendance.getAttendaceToken();
-		
-		if (token.get(date) == null){
+		String storedToken = token.get(date); 
+		if (storedToken == null){
 			SecureRandom random = new SecureRandom();
 			byte bytes[] = new byte[20];
 			random.nextBytes(bytes);
@@ -55,12 +57,14 @@ public class QRCodeResource extends ServerResource {
 		}
 		
 		sBufferToken.append(userID);
-		sBufferToken.append("/");		
+		sBufferToken.append(",");
+		sBufferToken.append(courseID);
+		sBufferToken.append(",");
 		sBufferToken.append(groupID);
-		sBufferToken.append("/");
+		sBufferToken.append(",");
 		sBufferToken.append(date);
-		sBufferToken.append("/");
-		sBufferToken.append(token.get(date));	
+		sBufferToken.append(",");
+		sBufferToken.append(storedToken);	
 							
 		return new StringRepresentation(sBufferToken.toString());
 	}
@@ -76,8 +80,11 @@ public class QRCodeResource extends ServerResource {
 	
 	/**
 	 * Get attendance record for a specific group for a student
+	 * @param userId
+	 * @param courseId
+	 * @param groupId
 	 * */
-	private AttendanceRecord getAttendance (Long userId, Long groupId ){
+	private AttendanceRecord getAttendance (Long userId, Long courseId, Long groupId ){
 		AttendanceRecord attendanceRecord = null;
 		Student student = (Student) ObjectifyService.ofy()
 				.load()
@@ -87,10 +94,16 @@ public class QRCodeResource extends ServerResource {
 		
 		List<Ref<AttendanceRecord>> refAttendances =  student.getGroups();
 		for (Ref<AttendanceRecord> refAttendance : refAttendances){	
-			long parentId = refAttendance.getValue().getParent().getId();
-			if (groupId == parentId){
-				attendanceRecord = refAttendance.getValue();
-				break;
+			AttendanceRecord ar = refAttendance.getValue();
+			if (ar!=null){
+				Key<Group> keygroup = ar.getParent();
+				long storedGroupId = keygroup.getId();
+				long storedCourseId = keygroup.getParent().getId();
+				
+				if (groupId == storedGroupId && courseId == storedCourseId){
+					attendanceRecord = ar;
+					break;
+				}
 			}
 		}
 		return attendanceRecord;

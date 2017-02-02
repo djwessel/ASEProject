@@ -10,6 +10,7 @@ import org.restlet.representation.Representation;
 import org.restlet.engine.util.Base64;
 
 import com.aat.datastore.User;
+import com.aat.datastore.Student;
 import com.aat.utils.ResourceUtil;
 import com.googlecode.objectify.ObjectifyService;
 
@@ -29,6 +30,10 @@ public class UserLogin extends ServerResource {
 		String password = ResourceUtil.getParam(params, "password", true);
 		User u = retrieveUser(email);
 
+		if (u == null) {
+			throw new ResourceException(401, "Incorrect Credentials", "Email or password incorrect", null);
+		}
+
 		// encrypt password and then compare
 		Base64 enc = new Base64();
 		byte[] salt = enc.decode(u.getSalt());
@@ -36,7 +41,7 @@ public class UserLogin extends ServerResource {
 		password = enc.encode(hash, false);
 
 		// Compare message digests
-		if (u == null || !MessageDigest.isEqual(hash, enc.decode(u.getPassword()))) {
+		if (!MessageDigest.isEqual(hash, enc.decode(u.getPassword()))) {
 			throw new ResourceException(401, "Incorrect Credentials", "Email or password incorrect", null);
 		}
 		else {
@@ -53,8 +58,10 @@ public class UserLogin extends ServerResource {
 			u.setTimeout(c.getTime());
 			// Save User to datastore
 			ObjectifyService.ofy().save().entity(u);
+			String userType = (u instanceof Student) ? "student" : "tutor";
 			// Set Request cookies to session token
 			getResponse().getCookieSettings().add(new CookieSetting(0, "sessionToken", token, "/", null, "User session token", Constants.TIMEOUT_SECONDS, Constants.ON_HTTPS, true));
+			getResponse().getCookieSettings().add(new CookieSetting(0, "userType", userType, "/", null, "User type", Constants.TIMEOUT_SECONDS, Constants.ON_HTTPS, false));
 			// Finish request
 	   		return u.getId();
 		}

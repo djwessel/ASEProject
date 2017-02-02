@@ -61,8 +61,12 @@ public class AttendanceResource extends ServerResource {
 
 		// Check to see if Student already has attendance record for course/group
 		for (Ref<AttendanceRecord> ref: s.getGroups()) {
-			if (groupId.equals(ref.get().getParent().getId())) {
-				throw new ResourceException(409, "Conflict", "Student already signed up for group.", null);
+			AttendanceRecord ar = ref.get();
+			if (ar != null) {
+				Key<Group> parent = ar.getParent();
+				if (parent != null && groupId.equals(parent.getId()) || parent.getParent() != null && courseId.equals(parent.getParent().getId())) {
+					throw new ResourceException(409, "Conflict", "Student already signed up for group in course.", null);
+				}
 			}
 		}
 
@@ -85,12 +89,13 @@ public class AttendanceResource extends ServerResource {
 		Form params = new Form(entity);
 		Long studentId = Long.parseLong(getAttribute(Constants.userId), 10);
 		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
+		Long courseId = Long.parseLong(getAttribute(Constants.courseId), 10);
 		String flagMode = ResourceUtil.getParam(params, Constants.flagMode, true);
 		String dateWeek = ResourceUtil.getParam(params, Constants.dateWeek, true);
 		String token = ResourceUtil.getParam(params, Constants.token, true);
 		
 		Date date;
-		AttendanceRecord attendance = retrieveAttendanceRecord(studentId,groupId);
+		AttendanceRecord attendance = retrieveAttendanceRecord(studentId,courseId,groupId);
 		String storedToken = attendance.getAttendaceToken().get(dateWeek);
 		
 		if (storedToken!=null && storedToken.equals(token)){
@@ -105,6 +110,7 @@ public class AttendanceResource extends ServerResource {
 						dates = attendance.getPresentation();
 				}
 				
+				System.out.println(dates);
 				if (!dates.contains(date)){
 					dates.add(date);
 					ObjectifyService.ofy().save().entity(attendance).now();
@@ -123,20 +129,57 @@ public class AttendanceResource extends ServerResource {
 
 	@Get
 	public AttendanceRecord retrieve() {
-		// TODO: Implement
+		Long userId = Long.parseLong(getAttribute(Constants.userId), 10);
+		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
+		Long courseId = Long.parseLong(getAttribute(Constants.courseId), 10);
 		
-		return null;
+		// Check if of type Student and if user token matches student id
+		ResourceUtil.checkToken(this, userId);
+		ResourceUtil.checkTokenPermissions(this, Student.class);
+		
+		return retrieveAttendanceRecord(userId, courseId, groupId);
 	}
 
 	@Delete
 	public void remove() {
-		// TODO: Implement
+		Long userId = Long.parseLong(getAttribute(Constants.userId), 10);
+		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
+		// Check if of type Student and if user token matches student id
+		ResourceUtil.checkToken(this, userId);
+		ResourceUtil.checkTokenPermissions(this, Student.class);
+
+		Ref<AttendanceRecord> ar = null;
+		Student student = (Student) ObjectifyService.ofy()
+				.load()
+				.type(User.class)
+				.id(userId)
+				.now();
+
+		List<Ref<AttendanceRecord>> refAttendances =  student.getGroups();
+		for (Ref<AttendanceRecord> refAttendance : refAttendances){
+			AttendanceRecord check = refAttendance.get();
+			if (check != null) {
+				long parentId = check.getParent().getId();
+				if (groupId == parentId){
+					ar = refAttendance;
+					break;
+				}
+			}
+		}
+
+		// This deletes the record. May want to put some more checks. 
+		ObjectifyService.ofy().delete().entity(ar.getValue()).now();
+
+		// Update User to remove record
+		refAttendances.remove(ar);
+		student.setGroups(refAttendances);
+		ObjectifyService.ofy().save().entity(student).now();
 	}
 	
 	/**
 	 * Get attendance record for a specific group for a student
 	 * */
-	private AttendanceRecord retrieveAttendanceRecord(Long userId, Long groupId){
+	private AttendanceRecord retrieveAttendanceRecord(Long userId, Long courseId, Long groupId){
 		AttendanceRecord attendanceRecord = null;
 		Student student = (Student) ObjectifyService.ofy()
 				.load()
@@ -146,10 +189,16 @@ public class AttendanceResource extends ServerResource {
 		
 		List<Ref<AttendanceRecord>> refAttendances =  student.getGroups();
 		for (Ref<AttendanceRecord> refAttendance : refAttendances){	
-			long parentId = refAttendance.getValue().getParent().getId();
-			if (groupId == parentId){
-				attendanceRecord = refAttendance.getValue();
-				break;
+			AttendanceRecord ar = refAttendance.getValue();
+			if (ar!=null){
+				Key<Group> keygroup = ar.getParent();
+				long storedGroupId = keygroup.getId();
+				long storedCourseId = keygroup.getParent().getId();
+				
+				if (groupId == storedGroupId && courseId == storedCourseId){
+					attendanceRecord = ar;
+					break;
+				}
 			}
 		}
 		return attendanceRecord;

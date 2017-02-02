@@ -34,5 +34,6 @@ public class Student extends User {
 	 * Getters and Setters
 	 */
 	public List<Ref<AttendanceRecord>> getGroups() { return groups; }
+	public void setGroups(List<Ref<AttendanceRecord>> groups) { this.groups = groups; }
 	public void addGroup(AttendanceRecord ar) { groups.add(Ref.create(Key.create(ar))); }
 }
