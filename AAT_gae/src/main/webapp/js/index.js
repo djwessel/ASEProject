@@ -24,11 +24,11 @@ $(document).ready(function() {
     if (Cookies.get("userType") === "student") {
       // Load user's groups
       $.get('/rest/user/' + Cookies.get('user') + '/attendances', function(data) {
-        for (var course in data) {
+       data.forEach(function(data) { 
           var rRow = $('<tr></tr>').appendTo('#records');
-          $('<td>' + course + '</td>').appendTo(rRow);
-          $('<td><a href="/attendance.jsp?groupId=' + data[course].id + '" class="record">' + data[course].name + '</a></td>').appendTo(rRow);
-        }
+          $('<td>' + data.courseName + '</td>').appendTo(rRow);
+          $('<td><a href="/attendance.jsp?groupId=' + data.group.id + '&courseId=' + data.courseId + '" class="record">' + data.group.name + '</a></td>').appendTo(rRow);
+        });
       });
     }
     else {

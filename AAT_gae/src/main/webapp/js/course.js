@@ -59,14 +59,10 @@
     
     
     if (userGroups) {
-      signedUp = false;
-      for (var course in userGroups)
-        if (userGroups[course].id === group.id)
-          signedUp = true;
       // If student hasnt already signed up for a group, add signup button
-      if (signedUp) {
+      if (userGroups.reduce(function(a, b) { return a || b.group.id === group.id }, false)) {
         groupRow.addClass('signed-up info');
-        statusCell.text('Registered');
+        statusCell.empty().append($('<a href="/attendance.jsp?groupId=' + group.id + '&courseId=' + courseId + '">Registered</a>'));
       }
       else {
         $('<button class="btn btn-default">Signup</button>').click(function() {
@@ -87,7 +83,7 @@
   
   function changeGroup(group) {
     $.ajax({
-      url: '/rest/user/' + Cookies.get('user') + '/group/' + $('.group.signed-up').data('group-id') + '/attendance',
+      url: '/rest/user/' + Cookies.get('user') + '/course/' + courseId + '/group/' + $('.group.signed-up').data('group-id') + '/attendance',
       type: 'DELETE',
       dataType: 'text',
       success: function(data) {

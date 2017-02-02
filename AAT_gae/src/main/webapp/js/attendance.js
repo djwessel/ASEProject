@@ -1,11 +1,20 @@
 $(document).ready(function() {
   var groupId = QueryString.groupId;
+  var courseId = QueryString.courseId;
 
   $('#calendar').fullCalendar({ aspectRatio: 3 });
 
-  $.get('/rest/user/' + Cookies.get('user') + '/group/' + groupId + '/attendance', function(data) {
-    $('#attenCount').text('Attendance Count: ' + data.attendance.length);
-    $('#presentCount').text('Presentation Count: ' + data.presentation.length);
+  $.get('/rest/course/' + courseId, function(data) {
+    $('#title').text(data.title);
+    $('#reqAtten').text(data.reqAtten);
+    $('#reqPresent').text(data.reqPresent);
+  }).fail(function() {
+    $('body').text('Attendance Record does not exist');
+  });
+
+  $.get('/rest/user/' + Cookies.get('user') + '/course/' + courseId + '/group/' + groupId + '/attendance', function(data) {
+    $('#attenCount').text(data.attendance.length);
+    $('#presentCount').text(data.presentation.length);
 
     var events = [];
     data.attendance.forEach(function(date) {
@@ -24,6 +33,8 @@ $(document).ready(function() {
       });
     });
     $('#calendar').fullCalendar('addEventSource',  events);
+  }).fail(function() {
+    $('bodý').text('Attendance Record does not exist');
   });
 
 });
