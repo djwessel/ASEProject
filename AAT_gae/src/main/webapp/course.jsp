@@ -22,7 +22,7 @@
     <h1 id="title">Loading course title...</h1>
     <div id="courseInfo">Loading course info...</div>
     <c:if test="${cookie.userType.value == 'tutor'}">
-      <button id="createGroupBtn" class="btn btn-default">Create Attendance Report</button>
+      <button id="createReportBtn" class="btn btn-default">Create Attendance Report</button>
     </c:if>
     <h3>Groups</h3>
     <table class="table table-hover">

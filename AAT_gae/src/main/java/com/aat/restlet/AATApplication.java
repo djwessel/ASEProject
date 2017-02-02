@@ -41,6 +41,7 @@ public class AATApplication extends Application {
 		router.attach("/course/{" + Constants.courseId + "}/group/{" + Constants.groupId + "}", GroupResource.class);
 		router.attach("/course", CourseResource.class);
 		router.attach("/course/{" + Constants.courseId + "}", CourseResource.class);
+		router.attach("/course/{" + Constants.courseId + "}/report", ReportResource.class);
 		router.attach("/course/{" + Constants.courseId + "}/groups", GroupsResource.class);
 		router.attach("/course/{" + Constants.courseId + "}/group/{" + Constants.groupId + "}/attendance", AttendanceResource.class);
 		router.attach("/course/{" + Constants.courseId + "}/group/{" + Constants.groupId + "}/attendance/{" + Constants.attendanceId + "}", AttendanceResource.class);

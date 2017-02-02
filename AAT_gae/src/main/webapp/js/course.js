@@ -46,6 +46,12 @@
   
       return false;
     });
+
+    $('#createReportBtn').click(function() {
+      $.get('/rest/course/' + courseId + '/report', function(data) {
+        console.lot(data);
+      });
+    })
   
   });
   
