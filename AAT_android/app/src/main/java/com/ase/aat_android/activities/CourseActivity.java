@@ -153,6 +153,7 @@ public class CourseActivity extends ListActivity {
                     Toast.makeText(getApplicationContext(), failureMessage, Toast.LENGTH_LONG).show();
                 } else {
                     SessionData.getUserAttendances().clear();
+                    updateGroupsList();
                     Toast.makeText(getApplicationContext(), "Registered", Toast.LENGTH_LONG).show();
                 }
             }
@@ -193,7 +194,7 @@ public class CourseActivity extends ListActivity {
                     Toast.makeText(getApplicationContext(), "Failed to de-register, you lucky", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "De-registered", Toast.LENGTH_LONG).show();
-                    updateUserAttendances();
+                    updateGroupsList();
                 }
             }
         }
@@ -350,7 +351,7 @@ public class CourseActivity extends ListActivity {
     }
 
 
-    private void updateUserAttendances() {
+    private void updateGroupsList() {
         ((GroupListAdapter) getListAdapter()).notifyDataSetChanged();
         SessionData.getUserAttendances().remove(course.getTitle());
     }

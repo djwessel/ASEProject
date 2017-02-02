@@ -92,8 +92,7 @@ public class UserActivity extends AppCompatActivity {
             HashMap<String,Group> groups = new HashMap<String,Group>();
             String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_GROUPS_STUDENT;
             url = EndpointUtil.solveUrl(url, "user_id", Long.toString(params[0]));
-            System.out.println(url);
-            ClientResource resource = new ClientResource(url);
+            ClientResource resource = new ClientResource(Method.GET, url);
             resource.setRequestEntityBuffering(true);
             resource.accept(MediaType.APPLICATION_JSON);
             try {
