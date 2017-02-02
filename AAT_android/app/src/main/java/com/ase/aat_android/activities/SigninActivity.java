@@ -3,6 +3,7 @@ package com.ase.aat_android.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +22,7 @@ import org.restlet.resource.ResourceException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.ExecutionException;
 
 import com.ase.aat_android.data.SessionData;
 import com.ase.aat_android.util.Constants;
@@ -29,52 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class SigninActivity extends AppCompatActivity {
-    private class SigninTask extends BaseAsyncTask<String, Boolean, Long> {
-        public  SigninTask(Activity activity) throws URISyntaxException {
-            super(activity, Constants.loginLoad);
-        }
-
-        @Override
-        protected Long doInBackground(String... params) {
-            String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.LOGIN;
-            ClientResource loginRes = new ClientResource(Method.POST, url);
-            loginRes.setRequestEntityBuffering(true);
-            loginRes.setResponseEntityBuffering(true);
-            Form loginForm = createLoginForm(params[0], params[1]);
-            Long result;
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                result = mapper.convertValue(loginRes.post(loginForm, MediaType.ALL).getText(), Long.class);
-                SessionData.updateSessionToken(loginRes.getResponse().getCookieSettings().getFirst("sessionToken"));
-                System.out.println(result);
-            } catch (ResourceException e) {
-                System.out.println(e.getMessage());
-                return null;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-            return result;
-        }
-
-        private Form createLoginForm(String username, String password) {
-            Form form = new Form();
-            form.add(new Parameter(Constants.emailParamName, username));
-            form.add(new Parameter(Constants.passwordParamName, password));
-            return form;
-        }
-
-        @Override
-        protected void onPostExecute(Long res) {
-            super.onPostExecute(res);
-            if (res != null) {
-                openUserActivity(res);
-            } else {
-                Toast.makeText(getApplicationContext(), "Failed to login", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
@@ -105,9 +61,29 @@ public class SigninActivity extends AppCompatActivity {
                     return;
                 }
                 try {
-                    new SigninTask(SigninActivity.this).execute(usernameEditText.getText().toString(),
-                                                                passwordEditText.getText().toString());
+                    final SigninTask task = new SigninTask(SigninActivity.this);
+                    task.setCallback(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                openUserActivity(task.get());
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    task.execute(usernameEditText.getText().toString(),
+                                 passwordEditText.getText().toString());
+                    if (task.get() != null) {
+                        openUserActivity(task.get());
+                    }
                 } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
             }

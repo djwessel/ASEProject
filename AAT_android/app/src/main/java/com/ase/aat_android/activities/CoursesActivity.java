@@ -14,8 +14,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.aat.datastore.Course;
 import com.ase.aat_android.R;
+import com.ase.aat_android.data.Course;
 import com.ase.aat_android.util.Constants;
 import com.ase.aat_android.util.EndpointsURL;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -97,7 +97,7 @@ public class CoursesActivity extends ListActivity {
             ObjectMapper mapper = new ObjectMapper();
             List<Object> courseObjects = null;
             try {
-                courseObjects = mapper.readValue(coursesRetRes.get().getText(), new TypeReference<List<Course>>() {
+                courseObjects = mapper.readValue(coursesRetRes.get().getText(), new TypeReference<List<com.aat.datastore.Course>>() {
                 });
             } catch (ResourceException e) {
                 e.printStackTrace();
@@ -113,10 +113,10 @@ public class CoursesActivity extends ListActivity {
         private ArrayList<Course> retrieveCourses(List<Object> courseObjects) {
             ArrayList<Course> courses = new ArrayList<Course>(courseObjects.size());
             for (Object obj : courseObjects) {
-                if (!(obj instanceof Course)) {
+                if (!(obj instanceof com.aat.datastore.Course)) {
                     throw new RuntimeException("Wrong object from server");
                 }
-                courses.add((Course) obj);
+                courses.add(new Course((com.aat.datastore.Course) obj));
             }
             return courses;
         }
@@ -201,14 +201,9 @@ public class CoursesActivity extends ListActivity {
 
     private void openCourseActivity(final Course course) {
         Intent intent = new Intent(this, CourseActivity.class);
-        ArrayList<String> courseDataArray = new ArrayList<String>();
-        // TODO: make Course class of datastore serializable or create Course's serializable wrapper in android side
-        // In that case it will be possible to put course into extras
-        courseDataArray.add(0, course.getId().toString());
-        courseDataArray.add(1, course.getTitle());
-        courseDataArray.add(2, String.valueOf(course.getReqAtten()));
-        courseDataArray.add(3, String.valueOf(course.getReqPresent()));
-        intent.putStringArrayListExtra(Constants.courseKey, courseDataArray);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constants.courseKey, course);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 

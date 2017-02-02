@@ -1,14 +1,10 @@
 package com.ase.aat_android.activities;
 
 import android.app.Activity;
-import android.app.ExpandableListActivity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -19,13 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.aat.datastore.Course;
 import com.aat.datastore.Group;
 import com.aat.datastore.Student;
 import com.ase.aat_android.data.SessionData;
@@ -34,13 +26,11 @@ import com.ase.aat_android.R;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.resource.ClientResource;
-import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 
 import com.ase.aat_android.util.Constants;
 import com.ase.aat_android.util.EndpointUtil;
 import com.ase.aat_android.util.EndpointsURL;
-import com.ase.aat_android.util.HashMapAdapter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -123,6 +113,7 @@ public class UserActivity extends AppCompatActivity {
                 throw new RuntimeException("Error while retrieving user data");
             }
             updateAttendancesList(result);
+            SessionData.updateAttendances(result);
         }
     }
 
@@ -172,8 +163,17 @@ public class UserActivity extends AppCompatActivity {
         }
 
         public void updateAttendances(HashMap<String,Group> attendanceMap) {
+            attendances.clear();
             attendances.addAll(attendanceMap.entrySet());
             notifyDataSetChanged();
+        }
+
+        public void update() {
+            if (!SessionData.getUserAttendances().isEmpty()) {
+                attendances.clear();
+                attendances.addAll(SessionData.getUserAttendances().entrySet());
+                notifyDataSetChanged();
+            }
         }
 
         @Override
@@ -228,6 +228,16 @@ public class UserActivity extends AppCompatActivity {
         retrieveUser(id);
         retrieveAttendances(id);
         initializeComponents();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (SessionData.getUserAttendances().isEmpty()) {
+            retrieveAttendances(SessionData.getUser().getId());
+        } else {
+            ((AttendancesListAdaper) attendancesListView.getAdapter()).update();
+        }
     }
 
     @Override

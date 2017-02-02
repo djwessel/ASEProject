@@ -14,7 +14,7 @@
     tools:showIn="@layout/activity_user">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
@@ -27,17 +27,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="@dimen/text_view_text_size"
-            android:text="firstname"
             android:textStyle="italic|bold"
-            android:id="@+id/firstname_textview"/>
+            android:id="@+id/firstname_textview"
+            android:layout_alignParentLeft="true"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="@dimen/text_view_text_size"
-            android:text="lastname"
+            android:layout_marginLeft="50dp"
             android:textStyle="italic|bold"
-            android:id="@+id/lastname_textview"/>
+            android:id="@+id/lastname_textview"
+            android:layout_alignParentLeft="false"/>
     </LinearLayout>
 
     <ListView

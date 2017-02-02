@@ -3,6 +3,7 @@ package com.ase.aat_android.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -25,6 +26,8 @@ import com.ase.aat_android.util.EndpointsURL;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.concurrent.ExecutionException;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -40,14 +43,10 @@ public class SignupActivity extends AppCompatActivity {
             signupRes.setRequestEntityBuffering(true);
             signupRes.setResponseEntityBuffering(true);
             Form signupForm = createSignupForm(params[0], params[1], params[2], params[3]);
-            System.out.println(signupRes.toString());
-            System.out.println(signupForm.toString());
             Long userID;
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 userID = mapper.convertValue(signupRes.post(signupForm, MediaType.ALL).getText(), Long.class);
-                SessionData.updateSessionToken(signupRes.getResponse().getCookieSettings().getFirst("sessionToken"));
-                System.out.println(userID);
             } catch (ResourceException e) {
                 System.out.println(e.getMessage());
                 return null;
@@ -64,7 +63,7 @@ public class SignupActivity extends AppCompatActivity {
             if (res == null) {
                 Toast.makeText(getApplicationContext(), "Failed to signup", Toast.LENGTH_LONG).show();
             } else {
-                openUsetActivity(res);
+                login();
             }
 
         }
@@ -142,9 +141,25 @@ public class SignupActivity extends AppCompatActivity {
         return requiredFieldsFilled;
     }
 
-    private void openUsetActivity(Long userID) {
+    private void login() {
+        try {
+            SigninTask signinTask = new SigninTask(SignupActivity.this);
+            signinTask.execute(emailEditText.getText().toString(),
+                               passwordEditText.getText().toString());
+            if (signinTask.get() != null) {
+                openUserActivity(signinTask.get());
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openUserActivity(Long userID) {
         Intent intent = new Intent(SignupActivity.this, UserActivity.class);
-        // TODO: set actual id
         intent.putExtra(Constants.userIdKey, userID);
         startActivity(intent);
     }

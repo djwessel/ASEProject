@@ -4,9 +4,9 @@
     <string name="title_activity_course">Course</string>
     <string name="title_activity_signin">Signin</string>
     <string name="title_activity_signup">Signup</string>
-    <string name="title_activity_courses">CoursesActivity</string>
+    <string name="title_activity_courses">Courses</string>
     <string name="title_activity_attendances">Your Attendances</string>
-    <string name="title_activity_user">UserActivity</string>
+    <string name="title_activity_user">Profile</string>
 
     <string name="login">Login</string>
     <string name="signup">Sign up</string>
