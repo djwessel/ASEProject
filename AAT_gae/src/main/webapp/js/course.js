@@ -47,9 +47,6 @@
       return false;
     });
   
-    if (Cookies.get('user') && Cookies.get("userType") === "tutor") {
-      $('#createGroupBtn').show();
-    }
   });
   
   function createGroup(group, groupsTable, userGroups) {

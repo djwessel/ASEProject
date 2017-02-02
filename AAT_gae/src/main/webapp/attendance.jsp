@@ -1,6 +1,7 @@
 <%
   String groupId = request.getParameter("groupId");
-  if (groupId == null || groupId == "") {
+  String courseId = request.getParameter("courseId");
+  if (groupId == null || groupId.equals("") || courseId == null || courseId.equals("")) {
     response.sendError(404);
   }
 %>

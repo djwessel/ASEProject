@@ -20,20 +20,14 @@ $(document).ready(function() {
     });
   });
 
-  if (Cookies.get('user')) {
-    if (Cookies.get("userType") === "student") {
-      // Load user's groups
-      $.get('/rest/user/' + Cookies.get('user') + '/attendances', function(data) {
-       data.forEach(function(data) { 
-          var rRow = $('<tr></tr>').appendTo('#records');
-          $('<td>' + data.courseName + '</td>').appendTo(rRow);
-          $('<td><a href="/attendance.jsp?groupId=' + data.group.id + '&courseId=' + data.courseId + '" class="record">' + data.group.name + '</a></td>').appendTo(rRow);
-        });
+  if (Cookies.get('user') && Cookies.get("userType") === "student") {
+    // Load user's groups
+    $.get('/rest/user/' + Cookies.get('user') + '/attendances', function(data) {
+      data.forEach(function(data) { 
+        var rRow = $('<tr></tr>').appendTo('#records');
+        $('<td>' + data.courseName + '</td>').appendTo(rRow);
+        $('<td><a href="/attendance.jsp?groupId=' + data.group.id + '&courseId=' + data.courseId + '" class="record">' + data.group.name + '</a></td>').appendTo(rRow);
       });
-    }
-    else {
-      // Show create course button
-      $('#createCourseBtn').show();
-    }
+    });
   }
 });
