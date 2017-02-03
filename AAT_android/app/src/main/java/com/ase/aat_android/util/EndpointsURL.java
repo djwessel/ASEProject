@@ -7,7 +7,7 @@ package com.ase.aat_android.util;
 public class EndpointsURL {
 
     /* Address server where application is deployed */
-    public final static String HTTP_ADDRESS="https://skillful-hope-148521.appspot.com";
+    public final static String HTTP_ADDRESS="https://guestbook-tutorial-148615.appspot.com";
     //public final static String HTTP_ADDRESS="https://guestbook-149315.appspot.com";
 
     /* Endpoint to request a QR token given user_id and group_id */
