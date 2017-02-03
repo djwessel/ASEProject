@@ -216,7 +216,6 @@ public class UserActivity extends AppCompatActivity {
             return row;
         }
     }
-
     private TextView firstnameTextView;
     private TextView lastNameTextView;
     private ListView attendancesListView;
@@ -241,6 +240,9 @@ public class UserActivity extends AppCompatActivity {
         retrieveUser(id);
         retrieveAttendances(id);
         initializeComponents();
+
+
+
     }
 
     @Override
@@ -252,6 +254,7 @@ public class UserActivity extends AppCompatActivity {
             ((AttendancesListAdaper) attendancesListView.getAdapter()).update();
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

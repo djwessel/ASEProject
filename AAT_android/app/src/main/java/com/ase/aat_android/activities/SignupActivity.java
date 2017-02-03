@@ -161,6 +161,7 @@ public class SignupActivity extends AppCompatActivity {
         Intent intent = new Intent(SignupActivity.this, UserActivity.class);
         intent.putExtra(Constants.userIdKey, userID);
         startActivity(intent);
+        finish();
     }
 
 }

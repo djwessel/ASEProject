@@ -109,6 +109,7 @@ public class SigninActivity extends AppCompatActivity {
         Intent intent = new Intent(SigninActivity.this, UserActivity.class);
         intent.putExtra(Constants.userIdKey, userID);
         startActivity(intent);
+        finish();
     }
 
 
