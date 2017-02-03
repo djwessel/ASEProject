@@ -13,19 +13,44 @@
     tools:context="com.ase.aat_android.activities.CourseActivity"
     tools:showIn="@layout/activity_course">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:textStyle="italic|bold"
-        android:id="@+id/coursename_textview"
-        android:text="Course name"
-        android:layout_alignParentLeft="true"/>
+        android:padding="@dimen/padding"
+        android:id="@+id/course_info_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textStyle="italic|bold"
+            android:id="@+id/coursename_textview"
+            android:text="Course name"
+            android:layout_alignParentLeft="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/req_attendancenum_textview"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/req_presentnum_textview"/>
+        </LinearLayout>
+
+    </LinearLayout>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@android:id/list"
-        android:paddingTop="25dp"/>
+        android:layout_below="@+id/course_info_layout"
+        android:padding="@dimen/padding"/>
 
 </RelativeLayout>
