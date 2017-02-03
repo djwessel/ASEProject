@@ -51,22 +51,26 @@ public class ResourceUtil {
 		return user;
 	}
 
-	public static void checkToken(Resource r, Long userId) {
+	public static User checkToken(Resource r, Long userId) {
 		User check = getUserByToken(r);
 
 		if (!check.getId().equals(userId)) {
 			throw new ResourceException(403, "Incorrect Permissions", "You do not have access to given resource", null);
 		}
 		// TODO: update timeout on cookie and in user?
+
+		return check;
 	}
 
-	public static void checkTokenPermissions(Resource r, Class userType) {
+	public static User checkTokenPermissions(Resource r, Class userType) {
 		User check = getUserByToken(r);
 
 		if (!userType.isInstance(check)) {
 			throw new ResourceException(403, "Incorrect Permissions", "You do not have access to given resource", null);
 		}
 		// TODO: update timeout on cookie and in user?
+
+		return check;
 	}
 
 	public static byte[] hash(String password, byte[] salt) {

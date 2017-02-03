@@ -11,10 +11,13 @@ import com.aat.utils.Constants;
 import com.aat.pojos.StudentAttendancePOJO;
 import com.aat.datastore.Course;
 import com.aat.datastore.AttendanceRecord;
+import com.aat.datastore.User;
 import com.aat.datastore.Student;
 import com.aat.datastore.Tutor;
+import com.aat.utils.Sendgrid;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Key;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -32,7 +35,7 @@ public class ReportResource extends ServerResource {
 	@Get
 	public List<StudentAttendancePOJO> retrieve() {
 		// Check if of type Tutor
-		ResourceUtil.checkTokenPermissions(this, Tutor.class);
+		User tutor = ResourceUtil.checkTokenPermissions(this, Tutor.class);
 	   	Long courseId = Long.parseLong(getAttribute(Constants.courseId), 10);
 
 		Course c = retrieveCourse(courseId);
@@ -56,7 +59,28 @@ public class ReportResource extends ServerResource {
 		}
 
 		// TODO: Send email to those in bonusStudents
-		String fromEmail = "admin@guestbook-tutorial-148615.appspotmail.com";
+		// set credentials
+		for (StudentAttendancePOJO s : bonusStudents) {
+			String message = "Congrats, you qualify for the bonus for the following course: " + c.getTitle();
+			sendMail(s.getStudent().getEmail(), c.getTitle() + " Bonus Notificaiton", message);
+		}
+
+		String report = "<table><thead><tr><th>First Name</th><th>Last Name</th><th>Email</th><th>Attendance Count</th><th>Presentation Count</th><th>Recieves Bonus</th></tr></thead><tbody>";
+		for (StudentAttendancePOJO s : students) {
+			report += "<tr>";
+			report += "<td>" + s.getStudent().getFirstName() + "</td>";
+			report += "<td>" + s.getStudent().getLastName() + "</td>";
+			report += "<td>" + s.getStudent().getEmail() + "</td>";
+			report += "<td>" + s.getNumAttend() + "</td>";
+			report += "<td>" + s.getNumPresent() + "</td>";
+			report += "<td>" + s.getBonus() + "</td>";
+
+			report += "</tr>";
+		}
+		report += "</tbody></table>";
+
+		sendMail(tutor.getEmail(), c.getTitle() + " Course Report", report);
+		/*String fromEmail = "admin@guestbook-tutorial-148615.appspotmail.com";
 		Properties props = new Properties();
 		Session session = Session.getDefaultInstance(props, null);
 
@@ -73,9 +97,24 @@ public class ReportResource extends ServerResource {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 		return students;
+	}
+
+	private void sendMail(String email, String subject, String message) {
+		String fromEmail = "admin@guestbook-tutorial-148615.appspotmail.com";
+		try {
+			Sendgrid mail = new Sendgrid("djwessel", "");
+
+			// set email data
+			mail.setTo(email).setFrom(fromEmail).setSubject(subject).setText(message).setHtml(message);
+
+			// send your message
+			mail.send();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 		
 	private List<AttendanceRecord> retrieveRecords(Long courseId) {
