@@ -30,7 +30,7 @@ import com.googlecode.objectify.Ref;
 public class QRCodeResource extends ServerResource {
 	
 	@Post
-	public Representation create(){
+	public Representation create(Representation entity){
 							
 		Long userID = Long.parseLong(getAttribute(Constants.userId), 10);
 		Long groupID = Long.parseLong(getAttribute(Constants.groupId), 10);
@@ -52,7 +52,8 @@ public class QRCodeResource extends ServerResource {
 			SecureRandom random = new SecureRandom();
 			byte bytes[] = new byte[20];
 			random.nextBytes(bytes);
-			token.put(date, bytes.toString());
+                        storedToken = bytes.toString();
+			token.put(date, storedToken);
 			saveTokens(token, attendance);
 		}
 		

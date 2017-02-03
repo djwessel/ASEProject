@@ -83,6 +83,12 @@
             <version>${appengine.sdk.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-labs</artifactId>
+            <version>${appengine.sdk.version}</version>
+            <!-- <scope>test</scope> -->
+        </dependency>
         
         <!-- REST dependencies -->
         <dependency>

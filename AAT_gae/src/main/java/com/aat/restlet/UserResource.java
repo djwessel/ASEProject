@@ -25,13 +25,16 @@ public class UserResource extends ServerResource {
 	
 	@Post
 	public Representation create(Representation entity) {
-		// TODO: add check to see if username already taken?
 		Form params = new Form(entity);
 		String type = ResourceUtil.getParam(params, "type", true).toLowerCase();
 		String email = ResourceUtil.getParam(params, "email", true);
 		String password = ResourceUtil.getParam(params, "password", true);
 		String first = ResourceUtil.getParam(params, "first", true);
 		String last = ResourceUtil.getParam(params, "last", true);
+
+		if (ObjectifyService.ofy().load().type(User.class).filter("email", email).first().now() != null) {
+			throw new ResourceException(409, "Already Exists", "User with given email aready exists", null);
+		}
 
 		// Create Salt
 		SecureRandom random = new SecureRandom();
@@ -52,7 +55,7 @@ public class UserResource extends ServerResource {
 			u = new Tutor(email, password, salt, first, last, pin);
 		}
 		else {
-			throw new ResourceException(404, "Incorrect parameter", "User typw is incorrect", null);
+			throw new ResourceException(404, "Incorrect parameter", "User type is incorrect", null);
 		}
 		ObjectifyService.ofy().save().entity(u).now();
 

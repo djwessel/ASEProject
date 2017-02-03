@@ -1,17 +1,19 @@
 $(document).ready(function() {
-  $('#userSignup').submit(function() {
+  $('#userSignup').validator({ disable: false }).submit(function() {
     var formData = $(this).serialize();
     $.post('/rest/user', formData).done(function(data) {
       login(formData);
     }).fail(function(xhr) {
-      console.log("fail", xhr);
-      alert("Sign up failed");
+      if (xhr.status === 409)
+        alert('User with email already exists.');
+      else
+        alert('Unable to signup.');
     });
 
     return false;
   });
 
-  $('#userLogin').submit(function() {
+  $('#userLogin').validator({ disable: false }).submit(function() {
     login($(this).serialize());
 
     return false;
@@ -61,7 +63,7 @@ $(document).ready(function() {
 
 function login(data) {
     $.post('/rest/user/login', data).done(function(data) {
-      Cookies.set('user', data);
+      Cookies.set('user', data, { expires: 1/24 });
       window.location.reload();
     }).fail(function(xhr) {
       console.log("fail", xhr);

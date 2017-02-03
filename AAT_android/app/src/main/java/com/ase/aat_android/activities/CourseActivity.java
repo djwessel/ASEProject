@@ -22,7 +22,6 @@ import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
-import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
@@ -30,21 +29,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.ase.aat_android.data.Course;
-import com.ase.aat_android.data.Group;
+import com.ase.aat_android.data.CoursePojo;
+import com.ase.aat_android.data.GroupPojo;
 import com.ase.aat_android.data.SessionData;
 import com.ase.aat_android.util.Constants;
 import com.ase.aat_android.util.EndpointUtil;
 import com.ase.aat_android.util.EndpointsURL;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.api.datastore.Link;
 
 public class CourseActivity extends ListActivity {
 
-    private class RetrieveGroupsTask extends BaseAsyncTask<Long, Boolean, ArrayList<Group>> {
+    private class RetrieveGroupsTask extends BaseAsyncTask<Long, Boolean, ArrayList<GroupPojo>> {
 
         private Long courseID;
 
@@ -53,7 +50,7 @@ public class CourseActivity extends ListActivity {
         }
 
         @Override
-        protected ArrayList<Group> doInBackground(Long... params) {
+        protected ArrayList<GroupPojo> doInBackground(Long... params) {
             courseID = params[0];
             String url = EndpointsURL.HTTP_ADDRESS + EndpointsURL.REQUEST_COURSE_GROUPS;
             url = EndpointUtil.solveUrl(url, "course_id", Long.toString(params[0]));
@@ -77,18 +74,18 @@ public class CourseActivity extends ListActivity {
             return retrieveGroups(groupObjects);
         }
 
-        private ArrayList<Group> retrieveGroups(List<Object> groupObjects) {
-            ArrayList<Group> groups = new ArrayList<Group>(groupObjects.size());
+        private ArrayList<GroupPojo> retrieveGroups(List<Object> groupObjects) {
+            ArrayList<GroupPojo> groups = new ArrayList<GroupPojo>(groupObjects.size());
             for (Object obj : groupObjects) {
                 LinkedHashMap<String, Object> mapEntry = (LinkedHashMap<String, Object>) obj;
-                groups.add(new Group(courseID, mapEntry));
+                groups.add(new GroupPojo(courseID, mapEntry));
             }
             return groups;
         }
 
 
         @Override
-        protected void onPostExecute(ArrayList<Group> groups) {
+        protected void onPostExecute(ArrayList<GroupPojo> groups) {
             super.onPostExecute(groups);
             if (groups != null) {
                 GroupListAdapter adapter = (GroupListAdapter) getListAdapter();
@@ -98,21 +95,6 @@ public class CourseActivity extends ListActivity {
 
     }
 
-    private class RetrieveUserGroupsTask extends  BaseAsyncTask<Long, Boolean, ArrayList<Group>> {
-        public RetrieveUserGroupsTask(Activity activity) {
-            super(activity);
-        }
-
-        @Override
-        protected ArrayList<Group> doInBackground(Long... params) {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Group> o) {
-            super.onPostExecute(o);
-        }
-    }
     private class GroupListAdapter extends BaseAdapter {
 
         private class RegisterTask extends BaseAsyncTask<Long, Boolean, String> {
@@ -196,16 +178,16 @@ public class CourseActivity extends ListActivity {
         }
 
         private LayoutInflater inflater;
-        private ArrayList<Group> groups;
+        private ArrayList<GroupPojo> groups;
 
         private int row_items_padding = 15;
 
         public GroupListAdapter(Context context) {
-            groups = new ArrayList<Group>();
+            groups = new ArrayList<GroupPojo>();
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
-        public void updateGroups(ArrayList<Group> newGroups) {
+        public void updateGroups(ArrayList<GroupPojo> newGroups) {
             groups = newGroups;
             notifyDataSetChanged();
         }
@@ -228,7 +210,7 @@ public class CourseActivity extends ListActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = inflater.inflate(R.layout.group_list_item, null);
-            Group item = (Group) getItem(position);
+            GroupPojo item = (GroupPojo) getItem(position);
             TextView groupNameTextView = (TextView) rowView.findViewById(R.id.groupname_textview);
             groupNameTextView.setTextColor(Color.BLACK);
             groupNameTextView.setText(item.getName());
@@ -241,10 +223,9 @@ public class CourseActivity extends ListActivity {
             deregisterButton.setPadding(row_items_padding, row_items_padding, row_items_padding, row_items_padding);
             deregisterButton.setEnabled(false);
 
-            Object groupObj =  SessionData.getUserAttendances().get(course.getTitle());
-            if (groupObj != null) {
-               LinkedHashMap<String, Object> group = (LinkedHashMap) groupObj;
-               if (group.get("id").equals(item.getID())) {
+            GroupPojo group =  SessionData.getRegisteredGroup(course.getTitle());
+            if (group != null) {
+               if (group.getID().equals(item.getID())) {
                    groupNameTextView.setTypeface(null, Typeface.BOLD_ITALIC);
                    registerButton.setEnabled(false);
                    deregisterButton.setEnabled(true);
@@ -256,7 +237,7 @@ public class CourseActivity extends ListActivity {
             return rowView;
         }
 
-        private void setClickListenerToRegisterButton(ImageButton button, final Group group) {
+        private void setClickListenerToRegisterButton(ImageButton button, final GroupPojo group) {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -265,7 +246,7 @@ public class CourseActivity extends ListActivity {
             });
         }
 
-        private void setClickListenerToUnregisterButton(ImageButton button, final Group group) {
+        private void setClickListenerToUnregisterButton(ImageButton button, final GroupPojo group) {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -274,7 +255,7 @@ public class CourseActivity extends ListActivity {
             });
         }
 
-        private void createWarningDialog(final Group group) {
+        private void createWarningDialog(final GroupPojo group) {
             final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(CourseActivity.this);
             dialogBuilder.setTitle("Warning!");
             StringBuilder messageBuilder = new StringBuilder();
@@ -309,7 +290,7 @@ public class CourseActivity extends ListActivity {
     private TextView requiredAttendancesTextView;
     private TextView requiredPresentationsTextView;
 
-    private Course course;
+    private CoursePojo course;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,7 +300,6 @@ public class CourseActivity extends ListActivity {
         retrieveCourseFromExtras();
         updateTextViews();
         retrieveCourseGroups();
-        retrieveGroupsForUser();
 
         setListAdapter(new GroupListAdapter(getApplicationContext()));
     }
@@ -335,17 +315,12 @@ public class CourseActivity extends ListActivity {
 
     private void retrieveCourseFromExtras() {
         Bundle extras = getIntent().getExtras();
-        course = (Course) extras.getSerializable(Constants.courseKey);
+        course = (CoursePojo) extras.getSerializable(Constants.courseKey);
     }
 
     private void retrieveCourseGroups() {
         new RetrieveGroupsTask(CourseActivity.this).execute(course.getID());
     }
-
-    private void retrieveGroupsForUser() {
-        new RetrieveUserGroupsTask(CourseActivity.this).execute(course.getID());
-    }
-
 
     private void updateGroupsList() {
         ((GroupListAdapter) getListAdapter()).notifyDataSetChanged();

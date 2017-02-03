@@ -4,23 +4,23 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 
 /**
- * Wrapper class for datastore Group.
+ * Wrapper class for datastore GroupPojo.
  *
  * Created by anahitik on 02.02.17.
  */
 
-public class Group implements Serializable {
+public class GroupPojo implements Serializable {
     private Long parentID;
     private Long ID;
     private String name;
 
-    public Group(Long parentID, Long ID, String name) {
+    public GroupPojo(Long parentID, Long ID, String name) {
         this.parentID = parentID;
         this.ID = ID;
         this.name = name;
     }
 
-    public Group(Long parentID, LinkedHashMap<String, Object> entry) {
+    public GroupPojo(Long parentID, LinkedHashMap<String, Object> entry) {
         this.parentID = parentID;
         this.ID = (Long) entry.get("id");
         this.name = (String) entry.get("name");

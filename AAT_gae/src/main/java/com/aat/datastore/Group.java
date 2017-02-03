@@ -3,6 +3,7 @@ package com.aat.datastore;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Parent;
@@ -13,10 +14,11 @@ import java.security.InvalidParameterException;
  * Represents a Group. Groups are children to Courses and parents to AttendanceRecords.
  */
 @Entity
+@Cache
 public class Group {
 	@Parent Key<Course> course;
 	@Id private Long id;
-	private String name;
+	@Index private String name;
 
 	public Group() {
 

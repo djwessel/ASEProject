@@ -1,6 +1,7 @@
 <%
   String groupId = request.getParameter("groupId");
-  if (groupId == null || groupId == "") {
+  String courseId = request.getParameter("courseId");
+  if (groupId == null || groupId.equals("") || courseId == null || courseId.equals("")) {
     response.sendError(404);
   }
 %>
@@ -21,9 +22,9 @@
     <li class="active">Attendance Information</li>
   </jsp:attribute>
   <jsp:body>
-    <h1>Loading Course Title...</h1>
-    <p id="attenCount">Loading Attendance Count...</p>
-    <p id="presentCount">Loading Presentation Count...</p>
+    <h1 id="title">Loading Course Title...</h1>
+    <p>Attendance Count: <span id="attenCount"></span> / <span id="reqAtten"></span></p>
+    <p>Presentation Count: <span id="presentCount"></span> / <span id="reqPresent"></span></p>
     <div id="calendar"></div>
   </jsp:body>
 </t:page>

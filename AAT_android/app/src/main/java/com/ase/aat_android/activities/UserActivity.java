@@ -18,8 +18,9 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.aat.datastore.Group;
 import com.aat.datastore.Student;
+import com.aat.pojos.CourseGroupPOJO;
+import com.ase.aat_android.data.GroupPojo;
 import com.ase.aat_android.data.SessionData;
 import com.ase.aat_android.R;
 
@@ -33,11 +34,13 @@ import com.ase.aat_android.util.EndpointUtil;
 import com.ase.aat_android.util.EndpointsURL;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.appengine.api.datastore.Link;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserActivity extends AppCompatActivity {
@@ -81,32 +84,44 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    private class RetrieveAttendancesGroups extends BaseAsyncTask<Long, String, HashMap<String,Group> > {
+    private class RetrieveAttendancesGroups extends BaseAsyncTask<Long, String, HashMap<String, GroupPojo> > {
 
         public  RetrieveAttendancesGroups(Activity activity) {
             super(activity);
         }
 
-        protected HashMap<String,Group> doInBackground(Long... params) {
+        protected HashMap<String, GroupPojo> doInBackground(Long... params) {
             ObjectMapper mapper = new ObjectMapper();
-            HashMap<String,Group> groups = new HashMap<String,Group>();
             String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_GROUPS_STUDENT;
             url = EndpointUtil.solveUrl(url, "user_id", Long.toString(params[0]));
             ClientResource resource = new ClientResource(Method.GET, url);
             resource.setRequestEntityBuffering(true);
             resource.accept(MediaType.APPLICATION_JSON);
+            List<CourseGroupPOJO> groups = null;
             try {
                 resource.getRequest().getCookies().add(0, SessionData.getSessionToken());
-                groups= mapper.readValue(resource.get().getText(), new TypeReference<HashMap<String,Object>>(){});
+                groups= mapper.readValue(resource.get().getText(), new TypeReference<List<Object>>(){});
             } catch (ResourceException e) {
                 failureMessage = e.getMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return groups;
+            return retrieveAttendancesInfo(groups);
         }
 
-        protected void onPostExecute(final HashMap<String,Group> result) {
+        private HashMap<String,GroupPojo> retrieveAttendancesInfo(List<CourseGroupPOJO> groups) {
+            HashMap<String, GroupPojo> res = new HashMap<>();
+            for (Object obj : groups) {
+                LinkedHashMap<String, Object> pojo = (LinkedHashMap) obj;
+                LinkedHashMap<String, Object> groupEntry = (LinkedHashMap) pojo.get("group");
+                GroupPojo group = new GroupPojo((Long) pojo.get("courseId"),
+                                                (Long) groupEntry.get("id"), (String) groupEntry.get("name"));
+                res.put((String) pojo.get("courseName"), group);
+            }
+            return res;
+        }
+
+        protected void onPostExecute(final HashMap<String, GroupPojo> result) {
             super.onPostExecute(result);
             if (result != null) {
                 updateAttendancesList(result);
@@ -154,14 +169,13 @@ public class UserActivity extends AppCompatActivity {
         private final ArrayList attendances;
         private LayoutInflater inflater;
 
-        public AttendancesListAdaper(Context context, HashMap<String,Group> attendanceMap) {
+        public AttendancesListAdaper(Context context, List<CourseGroupPOJO> attendanceMap) {
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
             attendances = new ArrayList();
-            attendances.addAll(attendanceMap.entrySet());
+            attendances.addAll(attendanceMap);
         }
 
-        public void updateAttendances(HashMap<String,Group> attendanceMap) {
+        public void updateAttendances(HashMap<String, GroupPojo> attendanceMap) {
             attendances.clear();
             attendances.addAll(attendanceMap.entrySet());
             notifyDataSetChanged();
@@ -195,7 +209,7 @@ public class UserActivity extends AppCompatActivity {
             View row = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
             TextView textView = (TextView) row.findViewById(android.R.id.text1);
             textView.setTextColor(Color.BLACK);
-            Map.Entry<String, Group> item = (Map.Entry) getItem(position);
+            Map.Entry<String, GroupPojo> item = (Map.Entry) getItem(position);
             if (item != null) {
                 textView.setText(item.getKey());
             }
@@ -222,7 +236,7 @@ public class UserActivity extends AppCompatActivity {
         Long id = extras.getLong(Constants.userIdKey);
 
         attendancesListView = (ListView) findViewById(R.id.attendancelistview);
-        attendancesListView.setAdapter(new AttendancesListAdaper(getApplicationContext(), new HashMap<String, Group>()));
+        attendancesListView.setAdapter(new AttendancesListAdaper(getApplicationContext(), new ArrayList<CourseGroupPOJO>()));
         setListItemActionListener();
         retrieveUser(id);
         retrieveAttendances(id);
@@ -232,7 +246,7 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (SessionData.getUserAttendances().isEmpty()) {
+        if (SessionData.getUserAttendances() != null && SessionData.getUserAttendances().isEmpty()) {
             retrieveAttendances(SessionData.getUser().getId());
         } else {
             ((AttendancesListAdaper) attendancesListView.getAdapter()).update();
@@ -268,7 +282,7 @@ public class UserActivity extends AppCompatActivity {
         attendancesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map.Entry<String, Object> listItem = (Map.Entry<String, Object>) attendancesListView.getItemAtPosition(position);
+                Map.Entry<String, GroupPojo> listItem = (Map.Entry<String, GroupPojo>) attendancesListView.getItemAtPosition(position);
                 openQRCodeActivity(listItem);
             }
         });
@@ -310,7 +324,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
 
-    private void updateAttendancesList(HashMap<String, Group> result) {
+    private void updateAttendancesList(HashMap<String, GroupPojo> result) {
         ((AttendancesListAdaper) attendancesListView.getAdapter()).updateAttendances(result);
     }
 
@@ -325,12 +339,12 @@ public class UserActivity extends AppCompatActivity {
     }
 
 
-    private void openQRCodeActivity(Map.Entry<String, Object> attendanceItem) {
+    private void openQRCodeActivity(Map.Entry<String, GroupPojo> attendanceItem) {
         Intent intent = new Intent(this, QRCodeActivity.class);
-        LinkedHashMap<String, Object> value = (LinkedHashMap<String, Object>) attendanceItem.getValue();
-        intent.putExtra("selected_group_name", value.get("name").toString());
-        intent.putExtra("selected_group_id", value.get("id").toString());
         intent.putExtra("selected_course_name", attendanceItem.getKey());
+        Bundle groupBundle = new Bundle();
+        groupBundle.putSerializable("selected_group", attendanceItem.getValue());
+        intent.putExtras(groupBundle);
         startActivity(intent);
     }
 

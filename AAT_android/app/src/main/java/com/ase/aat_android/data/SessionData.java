@@ -1,8 +1,5 @@
 package com.ase.aat_android.data;
 
-import com.aat.datastore.*;
-import com.aat.datastore.Group;
-
 import org.restlet.data.Cookie;
 
 import java.util.HashMap;
@@ -20,7 +17,7 @@ public class SessionData {
     private static Cookie sessionToken;
 
     /// Caching user attendances
-    private static HashMap<String, com.aat.datastore.Group> userAttendances;
+    private static HashMap<String, GroupPojo> userAttendances;
 
     public static void updateSessionToken(Cookie token) {
         sessionToken = token;
@@ -30,7 +27,7 @@ public class SessionData {
         user = currentUser;
     }
 
-    public static void updateAttendances(HashMap<String, Group> attendances) {
+    public static void updateAttendances(HashMap<String, GroupPojo> attendances) {
         userAttendances = attendances;
     }
     public  static com.aat.datastore.User getUser() {
@@ -41,10 +38,13 @@ public class SessionData {
         return sessionToken;
     }
 
-    public static HashMap<String, Group> getUserAttendances() {
+    public static HashMap<String, GroupPojo> getUserAttendances() {
         return userAttendances;
     }
 
+    public static GroupPojo getRegisteredGroup(String courseName) {
+        return userAttendances.get(courseName);
+    }
     public static void clear() {
         user = null;
         sessionToken = null;

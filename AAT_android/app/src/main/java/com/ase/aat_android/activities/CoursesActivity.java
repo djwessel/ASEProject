@@ -5,7 +5,6 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,20 +15,15 @@ import android.widget.TextView;
 
 import com.aat.datastore.Course;
 import com.ase.aat_android.R;
+import com.ase.aat_android.data.CoursePojo;
 import com.ase.aat_android.util.Constants;
 import com.ase.aat_android.util.EndpointsURL;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.RuntimeExecutionException;
 
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.resource.ClientResource;
-import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 
 import java.io.IOException;
@@ -144,7 +138,7 @@ public class CoursesActivity extends ListActivity {
     private void openCourseActivity(final Course course) {
         Intent intent = new Intent(this, CourseActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Constants.courseKey, new com.ase.aat_android.data.Course(course));
+        bundle.putSerializable(Constants.courseKey, new CoursePojo(course));
         intent.putExtras(bundle);
         startActivity(intent);
     }
