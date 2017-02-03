@@ -23,4 +23,5 @@ public class EndpointsURL {
     public final static String REQUEST_COURSES = "/rest/courses";
     public final static String REQUEST_COURSE_GROUPS = "/rest/course/{course_id}/groups";
     public final static String CREATE_ATTENDANCE = "/rest/course/{course_id}/group/{group_id}/attendance";
+    public final static String DELETE_ATTENDANCE = "/rest/user/{user_id}/course/{course_id}/group/{group_id}/attendance";
 }
