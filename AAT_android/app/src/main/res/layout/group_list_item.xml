@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:id="@+id/groupname_textview"
         android:textSize="15dp"
-        android:textStyle="italic"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:text="Groupname"/>

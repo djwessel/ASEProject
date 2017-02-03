@@ -144,6 +144,7 @@ public class AttendanceResource extends ServerResource {
 	public void remove() {
 		Long userId = Long.parseLong(getAttribute(Constants.userId), 10);
 		Long groupId = Long.parseLong(getAttribute(Constants.groupId), 10);
+		Long courseId = Long.parseLong(getAttribute(Constants.courseId), 10);
 		// Check if of type Student and if user token matches student id
 		ResourceUtil.checkToken(this, userId);
 		ResourceUtil.checkTokenPermissions(this, Student.class);
@@ -160,13 +161,17 @@ public class AttendanceResource extends ServerResource {
 			AttendanceRecord check = refAttendance.get();
 			if (check != null) {
 				long parentId = check.getParent().getId();
-				if (groupId == parentId){
+				long parentCourseId = check.getParent().getParent().getId();
+				if (groupId == parentId && courseId == parentCourseId) {
 					ar = refAttendance;
 					break;
 				}
 			}
 		}
 
+                if (ar == null) {
+                    throw new ResourceException(404, "Not Found", "Attendance with given criterions not found", null);
+                }
 		// This deletes the record. May want to put some more checks. 
 		ObjectifyService.ofy().delete().entity(ar.getValue()).now();
 

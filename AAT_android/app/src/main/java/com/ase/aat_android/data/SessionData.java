@@ -1,6 +1,11 @@
 package com.ase.aat_android.data;
 
+import com.aat.datastore.*;
+import com.aat.datastore.Group;
+
 import org.restlet.data.Cookie;
+
+import java.util.HashMap;
 
 /**
  * Singleton class for storing restlet SessionData data object
@@ -8,8 +13,14 @@ import org.restlet.data.Cookie;
  */
 
 public class SessionData {
+    /// Store currently loged in user
     private static com.aat.datastore.User user;
+
+    /// Store sessionToken associated with currently loged in user.
     private static Cookie sessionToken;
+
+    /// Caching user attendances
+    private static HashMap<String, com.aat.datastore.Group> userAttendances;
 
     public static void updateSessionToken(Cookie token) {
         sessionToken = token;
@@ -19,6 +30,9 @@ public class SessionData {
         user = currentUser;
     }
 
+    public static void updateAttendances(HashMap<String, Group> attendances) {
+        userAttendances = attendances;
+    }
     public  static com.aat.datastore.User getUser() {
         return user;
     }
@@ -27,8 +41,13 @@ public class SessionData {
         return sessionToken;
     }
 
+    public static HashMap<String, Group> getUserAttendances() {
+        return userAttendances;
+    }
+
     public static void clear() {
         user = null;
         sessionToken = null;
+        userAttendances.clear();
     }
 }
