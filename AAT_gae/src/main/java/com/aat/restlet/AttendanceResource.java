@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.restlet.data.Form;
 import org.restlet.representation.Representation;
@@ -64,7 +66,7 @@ public class AttendanceResource extends ServerResource {
 			AttendanceRecord ar = ref.get();
 			if (ar != null) {
 				Key<Group> parent = ar.getParent();
-				if (parent != null && groupId.equals(parent.getId()) || parent.getParent() != null && courseId.equals(parent.getParent().getId())) {
+				if (parent != null && groupId.equals(parent.getId()) && parent.getParent() != null && courseId.equals(parent.getParent().getId())) {
 					throw new ResourceException(409, "Conflict", "Student already signed up for group in course.", null);
 				}
 			}
@@ -97,11 +99,12 @@ public class AttendanceResource extends ServerResource {
 		Date date;
 		AttendanceRecord attendance = retrieveAttendanceRecord(studentId,courseId,groupId);
 		String storedToken = attendance.getAttendaceToken().get(dateWeek);
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		
 		if (storedToken!=null && storedToken.equals(token)){
 			List <Date> dates = null;
 			try {
-				date = new SimpleDateFormat("dd-MM-yyyy").parse(dateWeek);
+				date = sdf.parse(dateWeek);
 				
 				if (flagMode.equals("A")){
 						dates = attendance.getAttendance();
@@ -118,6 +121,13 @@ public class AttendanceResource extends ServerResource {
 			
 			} catch (ParseException e) {
 				throw new ResourceException(409, "Conflict", "Date format of the week is not valid.", null);
+			}
+			// Check if date is from the same week
+			Calendar calendar = GregorianCalendar.getInstance();
+			calendar.setFirstDayOfWeek(Calendar.SUNDAY);;
+			calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+			if (!dateWeek.equals(sdf.format(calendar.getTime()))) {
+				throw new ResourceException(409, "Conflict", "Date of token is not from this week", null);
 			}
 			
 		}else{

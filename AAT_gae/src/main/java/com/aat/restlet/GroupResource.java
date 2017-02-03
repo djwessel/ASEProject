@@ -5,6 +5,7 @@ import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
+import org.restlet.resource.ResourceException;
 import org.restlet.data.Form;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -30,6 +31,11 @@ public class GroupResource extends ServerResource {
 		String groupName = ResourceUtil.getParam(new Form(entity), "name", true);
 		assert(groupName != null);
 		
+		if (ObjectifyService.ofy().load().type(Group.class)
+				.ancestor(Key.create(Course.class, Long.parseLong(courseId, 10)))
+				.filter("name", groupName).first().now() != null) {
+			throw new ResourceException(409, "Already Exists", "Group with given title already exists for given course", null);
+		}
 		Group group = new Group(Long.parseLong(courseId, 10), groupName);
 		ObjectifyService.ofy().save().entity(group).now();
 		

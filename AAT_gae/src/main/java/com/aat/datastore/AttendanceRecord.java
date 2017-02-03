@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
 
@@ -17,6 +18,7 @@ import com.googlecode.objectify.annotation.Parent;
  * Represents AttendanceRecord. AttendanceRecords are children to a Group and contain attendance and presentation information for a given student.
  */
 @Entity
+@Cache
 public class AttendanceRecord {
 	@Parent private Key<Group> group;
 	@Id private Long id;
