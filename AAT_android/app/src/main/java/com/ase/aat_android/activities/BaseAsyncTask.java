@@ -23,13 +23,13 @@ public abstract class BaseAsyncTask<Params, Progress, Result> extends AsyncTask<
     public BaseAsyncTask(Activity activity) {
         loadingMessage = Constants.loading;
         this.activity = activity;
-        initializeProgressBar(activity);
+        initializeProgressBar();
     }
 
     public BaseAsyncTask(Activity activity, String message) {
         loadingMessage = message;
         this.activity = activity;
-        initializeProgressBar(activity);
+        initializeProgressBar();
     }
 
     @Override
@@ -54,8 +54,7 @@ public abstract class BaseAsyncTask<Params, Progress, Result> extends AsyncTask<
         }
     }
 
-    private void initializeProgressBar(Activity activity) {
-
+    private void initializeProgressBar() {
         loadingDialog = new ProgressDialog(activity);
         loadingDialog.setMessage(loadingMessage);
         loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,8 +51,8 @@ public class QRCodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+       /* Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
 
         displayTextView = (TextView)findViewById(R.id.msg);
         imageView = (ImageView)findViewById(R.id.imageView);
@@ -79,13 +80,6 @@ public class QRCodeActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_qrcode, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_logout) {
@@ -107,11 +101,16 @@ public class QRCodeActivity extends AppCompatActivity {
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 
         BitMatrix bitMatrix;
-        int QRcodeWidth = 700 ;
-        int [] pixels = new int [QRcodeWidth*QRcodeWidth];
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+
+        int QRcodeWidth = imageView.getWidth();
+        int QRcodeHeight = imageView.getHeight();
+
+        int [] pixels = new int [QRcodeWidth*QRcodeHeight];
 
         try{
-            bitMatrix = new MultiFormatWriter().encode(data, BarcodeFormat.DATA_MATRIX.QR_CODE,QRcodeWidth,QRcodeWidth,hintMap);
+            bitMatrix = new MultiFormatWriter().encode(data, BarcodeFormat.DATA_MATRIX.QR_CODE,QRcodeWidth,QRcodeHeight,hintMap);
         }catch(WriterException e){
             return null;
         }
@@ -119,7 +118,7 @@ public class QRCodeActivity extends AppCompatActivity {
         for (int y = 0; y < QRcodeWidth; y++){
             int offset = y * QRcodeWidth;
             for (int x = 0; x < QRcodeWidth; x++){
-                pixels[offset + x] = bitMatrix.get(x,y)? getResources().getColor(R.color.black):getResources().getColor(R.color.white);;
+                pixels[offset + x] = bitMatrix.get(x,y)? getResources().getColor(R.color.white):getResources().getColor(R.color.black);;
             }
         }
 

@@ -149,7 +149,7 @@ public class CourseActivity extends ListActivity {
 
             @Override
             protected Boolean doInBackground(Long... params) {
-                String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.CREATE_ATTENDANCE;
+                String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.DELETE_ATTENDANCE;
                 url = EndpointUtil.solveUrl(url, "course_id", Long.toString(params[0]));
                 url = EndpointUtil.solveUrl(url, "group_id", Long.toString(params[1]));
                 url = EndpointUtil.solveUrl(url, "user_id", Long.toString(SessionData.getUser().getId()));

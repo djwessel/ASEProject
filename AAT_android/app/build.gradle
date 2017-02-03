@@ -71,8 +71,8 @@ dependencies {
             [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.3.2'],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.3.2']
     )
-    compile files('/home/anahitik/ASE/ASEProject/AAT_android/libs/aat_datastore.jar')
     compile files("libs/com.aat.interfaces.restlet.jar")
     compile files('libs/com.aat.datastore.jar')
+    compile files('libs/com.aat.pojo.jar')
 }
 
