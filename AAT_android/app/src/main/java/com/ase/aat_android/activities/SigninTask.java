@@ -26,12 +26,10 @@ import java.util.concurrent.Callable;
  */
 
 public class SigninTask extends BaseAsyncTask<String, Boolean, Long> {
-    private Activity activity;
     private Runnable callback;
 
     public  SigninTask(Activity activity) throws URISyntaxException {
         super(activity, Constants.loginLoad);
-        this.activity = activity;
     }
 
     public void setCallback(Runnable runnable) {
@@ -50,9 +48,8 @@ public class SigninTask extends BaseAsyncTask<String, Boolean, Long> {
             ObjectMapper mapper = new ObjectMapper();
             result = mapper.convertValue(loginRes.post(loginForm, MediaType.ALL).getText(), Long.class);
             SessionData.updateSessionToken(loginRes.getResponse().getCookieSettings().getFirst("sessionToken"));
-            System.out.println(result);
         } catch (ResourceException e) {
-            System.out.println(e.getMessage());
+            failureMessage = e.getMessage();
             return null;
         } catch (IOException e) {
             e.printStackTrace();
@@ -71,9 +68,7 @@ public class SigninTask extends BaseAsyncTask<String, Boolean, Long> {
     @Override
     protected void onPostExecute(Long res) {
         super.onPostExecute(res);
-        if (res == null) {
-            Toast.makeText(activity.getApplicationContext(), "Failed to login", Toast.LENGTH_LONG).show();
-        } else if (callback != null) {
+        if (res != null && callback != null) {
             callback.run();
         }
     }

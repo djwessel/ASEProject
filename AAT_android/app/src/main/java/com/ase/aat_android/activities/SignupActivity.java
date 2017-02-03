@@ -48,7 +48,7 @@ public class SignupActivity extends AppCompatActivity {
                 ObjectMapper mapper = new ObjectMapper();
                 userID = mapper.convertValue(signupRes.post(signupForm, MediaType.ALL).getText(), Long.class);
             } catch (ResourceException e) {
-                System.out.println(e.getMessage());
+                failureMessage = e.getMessage();
                 return null;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -60,12 +60,9 @@ public class SignupActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Long res) {
             super.onPostExecute(res);
-            if (res == null) {
-                Toast.makeText(getApplicationContext(), "Failed to signup", Toast.LENGTH_LONG).show();
-            } else {
+            if (res != null) {
                 login();
             }
-
         }
 
         private Form createSignupForm(String firstName, String lastName, String email, String password) {
@@ -89,9 +86,6 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
-
         initializeComponents();
         setupListeners();
 

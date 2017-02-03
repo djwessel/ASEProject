@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class SigninActivity extends AppCompatActivity {
+
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
@@ -53,7 +54,7 @@ public class SigninActivity extends AppCompatActivity {
         signupButton = (Button) findViewById(R.id.signup_button);
     }
 
-    private void setLoginButtonListener(){
+    private void setLoginButtonListener() {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

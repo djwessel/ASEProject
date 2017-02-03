@@ -13,9 +13,14 @@ import java.util.HashMap;
  */
 
 public class SessionData {
+    /// Store currently loged in user
     private static com.aat.datastore.User user;
-    private static HashMap<String, com.aat.datastore.Group> userAttendances;
+
+    /// Store sessionToken associated with currently loged in user.
     private static Cookie sessionToken;
+
+    /// Caching user attendances
+    private static HashMap<String, com.aat.datastore.Group> userAttendances;
 
     public static void updateSessionToken(Cookie token) {
         sessionToken = token;
@@ -28,7 +33,6 @@ public class SessionData {
     public static void updateAttendances(HashMap<String, Group> attendances) {
         userAttendances = attendances;
     }
-
     public  static com.aat.datastore.User getUser() {
         return user;
     }

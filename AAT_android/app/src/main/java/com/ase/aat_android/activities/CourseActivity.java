@@ -67,7 +67,7 @@ public class CourseActivity extends ListActivity {
             try {
                groupObjects = mapper.readValue(groupsRetrieveRes.get().getText(), new TypeReference<List<Object>>() {});
             } catch (ResourceException e) {
-                e.printStackTrace();
+                failureMessage = e.getMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -149,9 +149,7 @@ public class CourseActivity extends ListActivity {
             @Override
             protected void onPostExecute(String res) {
                 super.onPostExecute(res);
-                if (res == null && failureMessage != null) {
-                    Toast.makeText(getApplicationContext(), failureMessage, Toast.LENGTH_LONG).show();
-                } else {
+                if (res != null) {
                     SessionData.getUserAttendances().clear();
                     updateGroupsList();
                     Toast.makeText(getApplicationContext(), "Registered", Toast.LENGTH_LONG).show();
@@ -190,9 +188,7 @@ public class CourseActivity extends ListActivity {
             @Override
             protected void onPostExecute(Boolean result) {
                 super.onPostExecute(result);
-                if (!result) {
-                    Toast.makeText(getApplicationContext(), "Failed to de-register, you lucky", Toast.LENGTH_LONG).show();
-                } else {
+                if (result) {
                     Toast.makeText(getApplicationContext(), "De-registered", Toast.LENGTH_LONG).show();
                     updateGroupsList();
                 }

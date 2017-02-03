@@ -65,7 +65,7 @@ public class UserActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ResourceException e) {
-                e.printStackTrace();
+                failureMessage = e.getMessage();
             }
             return user;
         }
@@ -73,11 +73,11 @@ public class UserActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(com.aat.datastore.User user) {
             super.onPostExecute(user);
-            if (user == null) {
-                throw new RuntimeException("Error while retrieving user data");
+            if (user != null) {
+                SessionData.updateUser(user);
+                updateUserInfo();
             }
-            SessionData.updateUser(user);
-            updateUserInfo();
+
         }
     }
 
@@ -99,7 +99,7 @@ public class UserActivity extends AppCompatActivity {
                 resource.getRequest().getCookies().add(0, SessionData.getSessionToken());
                 groups= mapper.readValue(resource.get().getText(), new TypeReference<HashMap<String,Object>>(){});
             } catch (ResourceException e) {
-                e.printStackTrace();
+                failureMessage = e.getMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -108,11 +108,11 @@ public class UserActivity extends AppCompatActivity {
 
         protected void onPostExecute(final HashMap<String,Group> result) {
             super.onPostExecute(result);
-            if (result == null) {
-                throw new RuntimeException("Error while retrieving user data");
+            if (result != null) {
+                updateAttendancesList(result);
+                SessionData.updateAttendances(result);
             }
-            updateAttendancesList(result);
-            SessionData.updateAttendances(result);
+
         }
     }
 
@@ -258,7 +258,6 @@ public class UserActivity extends AppCompatActivity {
                 return true;
             case R.id.logout_item:
                 new LogoutTask(this).execute(SessionData.getUser().getId());
-                //TODO: logout, open signin activity
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

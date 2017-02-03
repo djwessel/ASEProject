@@ -144,7 +144,7 @@ public class QRCodeActivity extends AppCompatActivity {
                 resource.getRequest().getCookies().add(0, SessionData.getSessionToken());
                 token = resource.get().getText();
             } catch (ResourceException e) {
-                e.printStackTrace();
+                failureMessage = e.getMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -153,7 +153,9 @@ public class QRCodeActivity extends AppCompatActivity {
 
         protected void onPostExecute(Bitmap result) {
             super.onPostExecute(result);
-            imageView.setImageBitmap(result);
+            if (result != null) {
+                imageView.setImageBitmap(result);
+            }
         }
 
     }

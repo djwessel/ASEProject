@@ -14,8 +14,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.aat.datastore.Course;
 import com.ase.aat_android.R;
-import com.ase.aat_android.data.Course;
 import com.ase.aat_android.util.Constants;
 import com.ase.aat_android.util.EndpointsURL;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -37,14 +37,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoursesActivity extends ListActivity {
-    private class RetrieveCoursesTask extends BaseAsyncTask<Boolean, Boolean, ArrayList<Course>> {
+    private class RetrieveCoursesTask extends BaseAsyncTask<Boolean, Boolean, List<Course>> {
 
         public RetrieveCoursesTask(Activity activity) {
             super(activity);
         }
 
         @Override
-        protected ArrayList<Course> doInBackground(Boolean... params) {
+        protected List<Course> doInBackground(Boolean... params) {
             String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_COURSES;
             ClientResource coursesRetRes = new ClientResource(Method.GET, url);
             coursesRetRes.setResponseEntityBuffering(true);
@@ -52,10 +52,9 @@ public class CoursesActivity extends ListActivity {
             coursesRetRes.accept(MediaType.APPLICATION_ALL_JSON);
 
             ObjectMapper mapper = new ObjectMapper();
-            List<Object> courseObjects = null;
+            List<Course> courseObjects = null;
             try {
-                courseObjects = mapper.readValue(coursesRetRes.get().getText(), new TypeReference<List<com.aat.datastore.Course>>() {
-                });
+                courseObjects = mapper.readValue(coursesRetRes.get().getText(), new TypeReference<List<Course>>() {});
             } catch (ResourceException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -64,22 +63,11 @@ public class CoursesActivity extends ListActivity {
             if (courseObjects == null) {
                 return null;
             }
-            return retrieveCourses(courseObjects);
-        }
-
-        private ArrayList<Course> retrieveCourses(List<Object> courseObjects) {
-            ArrayList<Course> courses = new ArrayList<Course>(courseObjects.size());
-            for (Object obj : courseObjects) {
-                if (!(obj instanceof com.aat.datastore.Course)) {
-                    throw new RuntimeException("Wrong object from server");
-                }
-                courses.add(new Course((com.aat.datastore.Course) obj));
-            }
-            return courses;
+            return courseObjects;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Course> res) {
+        protected void onPostExecute(List<Course> res) {
             super.onPostExecute(res);
             if (res != null) {
                 CourseListAdapter adapter = (CourseListAdapter) getListAdapter();
@@ -98,8 +86,8 @@ public class CoursesActivity extends ListActivity {
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
-        public void updateCourses(ArrayList<Course> newcourses) {
-            courses = newcourses;
+        public void updateCourses(List<Course> newcourses) {
+            courses.addAll(newcourses);
             notifyDataSetChanged();
         }
 
@@ -156,7 +144,7 @@ public class CoursesActivity extends ListActivity {
     private void openCourseActivity(final Course course) {
         Intent intent = new Intent(this, CourseActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Constants.courseKey, course);
+        bundle.putSerializable(Constants.courseKey, new com.ase.aat_android.data.Course(course));
         intent.putExtras(bundle);
         startActivity(intent);
     }
