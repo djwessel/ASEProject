@@ -49,7 +49,7 @@ public abstract class BaseAsyncTask<Params, Progress, Result> extends AsyncTask<
     @Override
     protected void onPostExecute(Result o) {
         loadingDialog.dismiss();
-        if (o == null || (o instanceof Boolean && ((Boolean) o) == false)) {
+        if (o == null || (o instanceof Boolean && ((Boolean) o) == false) && !failureMessage.isEmpty()) {
             Toast.makeText(activity.getApplicationContext(), failureMessage, Toast.LENGTH_LONG).show();
         }
     }

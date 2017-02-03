@@ -16,7 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.aat.datastore.Group;
 import com.ase.aat_android.R;
+import com.ase.aat_android.data.GroupPojo;
 import com.ase.aat_android.data.SessionData;
 import com.ase.aat_android.util.EndpointUtil;
 import com.ase.aat_android.util.EndpointsURL;
@@ -27,6 +29,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import org.restlet.data.Form;
 import org.restlet.data.Method;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
@@ -55,15 +58,16 @@ public class QRCodeActivity extends AppCompatActivity {
         requestQRButton = (Button) findViewById(R.id.request_qr_button);
 
         Intent intent = getIntent();
-        String groupName = intent.getStringExtra("selected_group_name");
-        String groupId = intent.getStringExtra("selected_group_id");
         String courseName = intent.getStringExtra("selected_course_name");
+        GroupPojo group = (GroupPojo) intent.getExtras().getSerializable("selected_group");
         String userId = SessionData.getUser().getId().toString();
 
         url = EndpointUtil.solveUrl(url,"user_id",userId);
-        url = EndpointUtil.solveUrl(url,"group_id",groupId);
+        url = EndpointUtil.solveUrl(url,"group_id", group.getID().toString());
+        url = EndpointUtil.solveUrl(url, "course_id", group.getParentID().toString());
+
         displayTextView.setText("You have signed up for the course "+courseName +
-                                " and its correspondient group: "+groupName+"."+
+                                " and its correspondient group: "+group.getName()+"."+
                                 " To register your attendance for this week request your QR code.");
 
         requestQRButton.setOnClickListener(new View.OnClickListener() {
@@ -139,10 +143,10 @@ public class QRCodeActivity extends AppCompatActivity {
             String token = "";
             ClientResource resource;
             try {
-                resource = new ClientResource(Method.GET, urls[0]);
+                resource = new ClientResource(urls[0]);
                 resource.setRequestEntityBuffering(true);
                 resource.getRequest().getCookies().add(0, SessionData.getSessionToken());
-                token = resource.get().getText();
+                token = resource.post(new Form()).getText();
             } catch (ResourceException e) {
                 failureMessage = e.getMessage();
             } catch (IOException e) {

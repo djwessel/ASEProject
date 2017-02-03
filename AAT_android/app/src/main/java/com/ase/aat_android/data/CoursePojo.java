@@ -8,14 +8,14 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
- * Wrapper class for datastore Course
+ * Wrapper class for datastore CoursePojo
  * Created by anahitik on 02.02.17.
  */
 
-public class Course implements Serializable{
+public class CoursePojo implements Serializable{
     com.aat.datastore.Course course;
 
-    public Course(com.aat.datastore.Course course) {
+    public CoursePojo(com.aat.datastore.Course course) {
         this.course = course;
     }
 
