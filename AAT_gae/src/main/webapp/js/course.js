@@ -73,7 +73,7 @@
 
     $('#createReportBtn').click(function() {
       $.get('/rest/course/' + courseId + '/report', function(data) {
-        var reportTableBody = $('#reportTable').show().find('tbody');
+        var reportTableBody = $('#reportTable').show().find('tbody').empty();
         data.forEach(function(record) {
           var reportRow = $('<tr></tr>').appendTo(reportTable);
           $('<td></td>').text(record.student.firstName).appendTo(reportRow);
@@ -96,7 +96,7 @@
     
     if (userGroups) {
       // If student hasnt already signed up for a group, add signup button
-      if (userGroups.reduce(function(a, b) { return a || b.group.id === group.id }, false)) {
+      if (userGroups.reduce(function(a, b) { return a || b.courseId == courseId && b.group.id === group.id }, false)) {
         groupRow.addClass('signed-up info');
         statusCell.empty().append($('<a href="/attendance.jsp?groupId=' + group.id + '&courseId=' + courseId + '">Registered</a>'));
       }

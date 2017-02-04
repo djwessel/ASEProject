@@ -60,8 +60,10 @@ public class UserLogin extends ServerResource {
 			ObjectifyService.ofy().save().entity(u);
 			String userType = (u instanceof Student) ? "student" : "tutor";
 			// Set Request cookies to session token
-			getResponse().getCookieSettings().add(new CookieSetting(0, "sessionToken", token, "/", null, "User session token", Constants.TIMEOUT_SECONDS, Constants.ON_HTTPS, true));
-			getResponse().getCookieSettings().add(new CookieSetting(0, "userType", userType, "/", null, "User type", Constants.TIMEOUT_SECONDS, Constants.ON_HTTPS, false));
+			boolean https = System.getenv("ON_HTTPS") != null && System.getenv("ON_HTTPS").equals("TRUE");
+			https = false;
+			getResponse().getCookieSettings().add(new CookieSetting(0, "sessionToken", token, "/", null, "User session token", Constants.TIMEOUT_SECONDS, https, true));
+			getResponse().getCookieSettings().add(new CookieSetting(0, "userType", userType, "/", null, "User type", Constants.TIMEOUT_SECONDS, https, false));
 			// Finish request
 	   		return u.getId();
 		}

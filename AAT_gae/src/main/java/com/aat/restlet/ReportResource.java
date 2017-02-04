@@ -1,6 +1,5 @@
 package com.aat.restlet;
 
-
 import java.util.List;
 import java.util.ArrayList;
 import org.restlet.resource.Get;
@@ -50,7 +49,7 @@ public class ReportResource extends ServerResource {
 			if (s != null) {
 				int numAttend = ar.getAttendance().size();
 				int numPresent = ar.getPresentation().size();
-				boolean bonus = numAttend == reqAttend && numPresent == reqPresent;
+				boolean bonus = numAttend >= reqAttend && numPresent >= reqPresent;
 				StudentAttendancePOJO sa = new StudentAttendancePOJO(s, numAttend, numPresent, bonus);
 				if (bonus)
 					bonusStudents.add(sa);
@@ -58,14 +57,13 @@ public class ReportResource extends ServerResource {
 			}
 		}
 
-		// TODO: Send email to those in bonusStudents
-		// set credentials
 		for (StudentAttendancePOJO s : bonusStudents) {
 			String message = "Congrats, you qualify for the bonus for the following course: " + c.getTitle();
 			sendMail(s.getStudent().getEmail(), c.getTitle() + " Bonus Notificaiton", message);
 		}
 
-		String report = "<table><thead><tr><th>First Name</th><th>Last Name</th><th>Email</th><th>Attendance Count</th><th>Presentation Count</th><th>Recieves Bonus</th></tr></thead><tbody>";
+		String report = "<table><thead><tr><th>First Name</th><th>Last Name</th><th>Email</th>"
+			+ "<th>Attendance Count</th><th>Presentation Count</th><th>Recieves Bonus</th></tr></thead><tbody>";
 		for (StudentAttendancePOJO s : students) {
 			report += "<tr>";
 			report += "<td>" + s.getStudent().getFirstName() + "</td>";
@@ -80,24 +78,6 @@ public class ReportResource extends ServerResource {
 		report += "</tbody></table>";
 
 		sendMail(tutor.getEmail(), c.getTitle() + " Course Report", report);
-		/*String fromEmail = "admin@guestbook-tutorial-148615.appspotmail.com";
-		Properties props = new Properties();
-		Session session = Session.getDefaultInstance(props, null);
-
-		try {
-			Message msg = new MimeMessage(session);
-			msg.setFrom(new InternetAddress(fromEmail, "AAT Admin"));
-			msg.addRecipient(Message.RecipientType.TO, new InternetAddress("djwesselmail@gmail.com", "Mr. Wessel"));
-			msg.setSubject("This is a test email...");
-			msg.setText("This is the body of the test...");
-			Transport.send(msg);
-		} catch (AddressException e) {
-			e.printStackTrace();
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}*/
 
 		return students;
 	}
@@ -105,7 +85,8 @@ public class ReportResource extends ServerResource {
 	private void sendMail(String email, String subject, String message) {
 		String fromEmail = "admin@guestbook-tutorial-148615.appspotmail.com";
 		try {
-			Sendgrid mail = new Sendgrid("djwessel", "");
+			// set credentials
+			Sendgrid mail = new Sendgrid(System.getenv("SENDGRID_API_KEY"));
 
 			// set email data
 			mail.setTo(email).setFrom(fromEmail).setSubject(subject).setText(message).setHtml(message);

@@ -544,8 +544,6 @@ public class Sendgrid {
         if (this.username != null) {
             params.put("api_user", this.username);
             params.put("api_key", this.password);
-        } else {
-            params.put("api_key", this.apikey);
         }
         params.put("subject", this.getSubject());
         if(this.getHtml() != null) {
@@ -653,6 +651,9 @@ public class Sendgrid {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
+            if (this.apikey != null) {
+                connection.setRequestProperty("Authorization", "Bearer " + this.apikey);
+            }
 
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
             writer.write(requestParams.toString());
