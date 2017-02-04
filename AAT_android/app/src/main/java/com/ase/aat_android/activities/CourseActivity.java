@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.ase.aat_android.R;
 
 import org.restlet.data.Form;
-import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
 import org.restlet.resource.ClientResource;
@@ -43,22 +42,15 @@ public class CourseActivity extends ListActivity {
 
     private class RetrieveGroupsTask extends BaseAsyncTask<Long, Boolean, ArrayList<GroupPojo>> {
 
-        private Long courseID;
-
         public RetrieveGroupsTask(Activity activity) {
             super(activity);
         }
 
         @Override
         protected ArrayList<GroupPojo> doInBackground(Long... params) {
-            courseID = params[0];
             String url = EndpointsURL.HTTP_ADDRESS + EndpointsURL.REQUEST_COURSE_GROUPS;
-            url = EndpointUtil.solveUrl(url, "course_id", Long.toString(params[0]));
-            ClientResource groupsRetrieveRes = new ClientResource(Method.GET, url);
-            groupsRetrieveRes.setResponseEntityBuffering(true);
-            groupsRetrieveRes.setRequestEntityBuffering(true);
-            groupsRetrieveRes.accept(MediaType.APPLICATION_ALL_JSON);
-
+            url = EndpointUtil.solveUrl(url, EndpointsURL.course_id, Long.toString(params[0]));
+            ClientResource groupsRetrieveRes = createClientResource(Method.GET, url, false);
             ObjectMapper mapper = new ObjectMapper();
             List<Object> groupObjects = null;
             try {
@@ -74,16 +66,6 @@ public class CourseActivity extends ListActivity {
             return retrieveGroups(groupObjects);
         }
 
-        private ArrayList<GroupPojo> retrieveGroups(List<Object> groupObjects) {
-            ArrayList<GroupPojo> groups = new ArrayList<GroupPojo>(groupObjects.size());
-            for (Object obj : groupObjects) {
-                LinkedHashMap<String, Object> mapEntry = (LinkedHashMap<String, Object>) obj;
-                groups.add(new GroupPojo(courseID, mapEntry));
-            }
-            return groups;
-        }
-
-
         @Override
         protected void onPostExecute(ArrayList<GroupPojo> groups) {
             super.onPostExecute(groups);
@@ -93,6 +75,14 @@ public class CourseActivity extends ListActivity {
             }
         }
 
+        private ArrayList<GroupPojo> retrieveGroups(List<Object> groupObjects) {
+            ArrayList<GroupPojo> groups = new ArrayList<GroupPojo>(groupObjects.size());
+            for (Object obj : groupObjects) {
+                LinkedHashMap<String, Object> mapEntry = (LinkedHashMap<String, Object>) obj;
+                groups.add(new GroupPojo(course.getID(), mapEntry));
+            }
+            return groups;
+        }
     }
 
     private class GroupListAdapter extends BaseAdapter {
@@ -102,23 +92,19 @@ public class CourseActivity extends ListActivity {
             private String failureMessage;
 
             public RegisterTask(Activity activity) {
-                super(activity, "Registering");
+                super(activity, Constants.registerLoad);
             }
 
             @Override
             protected String doInBackground(Long... params) {
                 String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.CREATE_ATTENDANCE;
-                url = EndpointUtil.solveUrl(url, "course_id", Long.toString(params[0]));
-                url = EndpointUtil.solveUrl(url, "group_id", Long.toString(params[1]));
-                ClientResource registerRes = new ClientResource(Method.POST, url);
-                registerRes.setResponseEntityBuffering(true);
-                registerRes.setRequestEntityBuffering(true);
-                registerRes.accept(MediaType.APPLICATION_ALL_JSON);
+                url = EndpointUtil.solveUrl(url, EndpointsURL.course_id, Long.toString(params[0]));
+                url = EndpointUtil.solveUrl(url, EndpointsURL.group_id, Long.toString(params[1]));
+                ClientResource registerRes = createClientResource(Method.POST, url, true);
                 Form form = new Form();
-                form.add(0, new Parameter("user", Long.toString(SessionData.getUser().getId())));
+                form.add(0, new Parameter(EndpointsURL.user, Long.toString(SessionData.getUser().getId())));
                 String result = null;
                 try {
-                    registerRes.getRequest().getCookies().add(0, SessionData.getSessionToken());
                     result = registerRes.post(form).getText();
                 } catch (ResourceException e) {
                     failureMessage = e.getMessage();
@@ -134,31 +120,24 @@ public class CourseActivity extends ListActivity {
                 if (res != null) {
                     SessionData.getUserAttendances().clear();
                     updateGroupsList();
-                    Toast.makeText(getApplicationContext(), "Registered", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), Constants.registered, Toast.LENGTH_LONG).show();
                 }
             }
         }
 
         private class DeregisterTask extends BaseAsyncTask<Long, Boolean, Boolean> {
-
-            private String failureMessage;
-
             public DeregisterTask(Activity activity) {
-                super(activity, "De-register");
+                super(activity, Constants.deregisterLoad);
             }
 
             @Override
             protected Boolean doInBackground(Long... params) {
                 String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.DELETE_ATTENDANCE;
-                url = EndpointUtil.solveUrl(url, "course_id", Long.toString(params[0]));
-                url = EndpointUtil.solveUrl(url, "group_id", Long.toString(params[1]));
-                url = EndpointUtil.solveUrl(url, "user_id", Long.toString(SessionData.getUser().getId()));
-                ClientResource deregisterRes = new ClientResource(Method.DELETE, url);
-                deregisterRes.setResponseEntityBuffering(true);
-                deregisterRes.setRequestEntityBuffering(true);
-                deregisterRes.accept(MediaType.APPLICATION_ALL_JSON);
+                url = EndpointUtil.solveUrl(url, EndpointsURL.course_id, Long.toString(params[0]));
+                url = EndpointUtil.solveUrl(url, EndpointsURL.group_id, Long.toString(params[1]));
+                url = EndpointUtil.solveUrl(url, EndpointsURL.user_id, Long.toString(SessionData.getUser().getId()));
+                ClientResource deregisterRes = createClientResource(Method.DELETE, url, true);
                 try {
-                    deregisterRes.getRequest().getCookies().add(0, SessionData.getSessionToken());
                     deregisterRes.delete();
                 } catch (ResourceException e) {
                     failureMessage = e.getMessage();
@@ -171,7 +150,7 @@ public class CourseActivity extends ListActivity {
             protected void onPostExecute(Boolean result) {
                 super.onPostExecute(result);
                 if (result) {
-                    Toast.makeText(getApplicationContext(), "De-registered", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), Constants.deregistered, Toast.LENGTH_LONG).show();
                     updateGroupsList();
                 }
             }
@@ -179,8 +158,7 @@ public class CourseActivity extends ListActivity {
 
         private LayoutInflater inflater;
         private ArrayList<GroupPojo> groups;
-
-        private int row_items_padding = 15;
+        private GroupPojo userGroup;
 
         public GroupListAdapter(Context context) {
             groups = new ArrayList<GroupPojo>();
@@ -189,6 +167,12 @@ public class CourseActivity extends ListActivity {
 
         public void updateGroups(ArrayList<GroupPojo> newGroups) {
             groups = newGroups;
+            userGroup =  SessionData.getRegisteredGroup(course.getTitle());
+            notifyDataSetChanged();
+        }
+
+        public void updateUserGroup(GroupPojo group) {
+            userGroup = group;
             notifyDataSetChanged();
         }
 
@@ -212,23 +196,18 @@ public class CourseActivity extends ListActivity {
             View rowView = inflater.inflate(R.layout.group_list_item, null);
             GroupPojo item = (GroupPojo) getItem(position);
             TextView groupNameTextView = (TextView) rowView.findViewById(R.id.groupname_textview);
-            groupNameTextView.setTextColor(Color.BLACK);
             groupNameTextView.setText(item.getName());
-            groupNameTextView.setTextSize(20);
-            groupNameTextView.setPadding(row_items_padding, row_items_padding, row_items_padding, row_items_padding);
+            groupNameTextView.setTextColor(Color.BLACK);
 
             ImageButton registerButton = (ImageButton) rowView.findViewById(R.id.register_button);
             ImageButton deregisterButton = (ImageButton) rowView.findViewById(R.id.unregister_button);
-            registerButton.setPadding(row_items_padding, row_items_padding, row_items_padding, row_items_padding);
-            deregisterButton.setPadding(row_items_padding, row_items_padding, row_items_padding, row_items_padding);
             deregisterButton.setEnabled(false);
 
-            GroupPojo group =  SessionData.getRegisteredGroup(course.getTitle());
-            if (group != null) {
-               if (group.getID().equals(item.getID())) {
-                   groupNameTextView.setTypeface(null, Typeface.BOLD_ITALIC);
-                   registerButton.setEnabled(false);
-                   deregisterButton.setEnabled(true);
+            if (userGroup != null) {
+                if (userGroup.getID().equals(item.getID())) {
+                    groupNameTextView.setTypeface(null, Typeface.BOLD_ITALIC);
+                    registerButton.setEnabled(false);
+                    deregisterButton.setEnabled(true);
                 }
             }
             setClickListenerToRegisterButton(registerButton, item);
@@ -308,9 +287,9 @@ public class CourseActivity extends ListActivity {
         courseNameTextView = (TextView) findViewById(R.id.coursename_textview);
         courseNameTextView.setText(course.getTitle());
         requiredAttendancesTextView = (TextView) findViewById(R.id.req_attendancenum_textview);
-        requiredAttendancesTextView.setText("Required Attendances: " + course.getRequiredAttendances());
+        requiredAttendancesTextView.append(Integer.toString(course.getRequiredAttendances()));
         requiredPresentationsTextView = (TextView) findViewById(R.id.req_presentnum_textview);
-        requiredPresentationsTextView.setText("Required Presentations: " + course.getRequiredPresentation());
+        requiredPresentationsTextView.append(Integer.toString(course.getRequiredPresentation()));
     }
 
     private void retrieveCourseFromExtras() {
@@ -323,10 +302,8 @@ public class CourseActivity extends ListActivity {
     }
 
     private void updateGroupsList() {
-        ((GroupListAdapter) getListAdapter()).notifyDataSetChanged();
         SessionData.getUserAttendances().remove(course.getTitle());
+        ((GroupListAdapter) getListAdapter()).notifyDataSetChanged();
     }
-
-
 
 }

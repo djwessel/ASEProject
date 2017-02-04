@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoursesActivity extends ListActivity {
+
     private class RetrieveCoursesTask extends BaseAsyncTask<Boolean, Boolean, List<Course>> {
 
         public RetrieveCoursesTask(Activity activity) {
@@ -40,10 +41,7 @@ public class CoursesActivity extends ListActivity {
         @Override
         protected List<Course> doInBackground(Boolean... params) {
             String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_COURSES;
-            ClientResource coursesRetRes = new ClientResource(Method.GET, url);
-            coursesRetRes.setResponseEntityBuffering(true);
-            coursesRetRes.setRequestEntityBuffering(true);
-            coursesRetRes.accept(MediaType.APPLICATION_ALL_JSON);
+            ClientResource coursesRetRes = createClientResource(Method.GET, url, false);
 
             ObjectMapper mapper = new ObjectMapper();
             List<Course> courseObjects = null;
@@ -142,7 +140,6 @@ public class CoursesActivity extends ListActivity {
         intent.putExtras(bundle);
         startActivity(intent);
     }
-
 
     private void retrieveCourses() {
         new RetrieveCoursesTask(this).execute();

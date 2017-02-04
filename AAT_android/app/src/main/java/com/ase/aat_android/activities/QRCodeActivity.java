@@ -21,6 +21,7 @@ import com.aat.datastore.Group;
 import com.ase.aat_android.R;
 import com.ase.aat_android.data.GroupPojo;
 import com.ase.aat_android.data.SessionData;
+import com.ase.aat_android.util.Constants;
 import com.ase.aat_android.util.EndpointUtil;
 import com.ase.aat_android.util.EndpointsURL;
 import com.google.zxing.BarcodeFormat;
@@ -43,7 +44,6 @@ import java.util.concurrent.ExecutionException;
 public class QRCodeActivity extends AppCompatActivity {
 
     private TextView displayTextView;
-    private String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_QR_CODE;
     private ImageView imageView;
     private Button requestQRButton;
 
@@ -51,30 +51,25 @@ public class QRCodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
-       /* Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
 
         displayTextView = (TextView)findViewById(R.id.msg);
         imageView = (ImageView)findViewById(R.id.imageView);
         requestQRButton = (Button) findViewById(R.id.request_qr_button);
 
+
         Intent intent = getIntent();
-        String courseName = intent.getStringExtra("selected_course_name");
-        GroupPojo group = (GroupPojo) intent.getExtras().getSerializable("selected_group");
-        String userId = SessionData.getUser().getId().toString();
+        String courseName = intent.getStringExtra(Constants.courseKey);
+        final GroupPojo group = (GroupPojo) intent.getExtras().getSerializable(Constants.groupKey);
+        final Long userId = SessionData.getUser().getId();
 
-        url = EndpointUtil.solveUrl(url,"user_id",userId);
-        url = EndpointUtil.solveUrl(url,"group_id", group.getID().toString());
-        url = EndpointUtil.solveUrl(url, "course_id", group.getParentID().toString());
-
-        displayTextView.setText("You have signed up for the course "+courseName +
-                                " and its correspondient group: "+group.getName()+"."+
+        displayTextView.setText("You have signed up for the course " + courseName +
+                                " and its correspondient group: " + group.getName() + "." +
                                 " To register your attendance for this week request your QR code.");
 
         requestQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new RequestToken(QRCodeActivity.this).execute(url,"" , "");
+                new RequestToken(QRCodeActivity.this).execute(userId, group.getParentID(), group.getID());
             }
         });
     }
@@ -131,25 +126,30 @@ public class QRCodeActivity extends AppCompatActivity {
     /**
      * Private class to call service
      * */
-    private class RequestToken extends BaseAsyncTask<String, String, Bitmap > {
+    private class RequestToken extends BaseAsyncTask<Long, String, Bitmap > {
 
 
         public RequestToken(Activity activity) {
             super(activity);;
         }
 
-        protected Bitmap doInBackground(String... urls) {
+        protected Bitmap doInBackground(Long... params) {
+            String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_QR_CODE;
+            url = EndpointUtil.solveUrl(url, EndpointsURL.user_id, params[0].toString());
+            url = EndpointUtil.solveUrl(url, EndpointsURL.course_id, params[1].toString());
+            url = EndpointUtil.solveUrl(url, EndpointsURL.group_id, params[2].toString());
+
             String token = "";
-            ClientResource resource;
+            ClientResource resource = createClientResource(Method.POST, url, true);
             try {
-                resource = new ClientResource(urls[0]);
-                resource.setRequestEntityBuffering(true);
-                resource.getRequest().getCookies().add(0, SessionData.getSessionToken());
                 token = resource.post(new Form()).getText();
             } catch (ResourceException e) {
                 failureMessage = e.getMessage();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            if (token.isEmpty()) {
+                return null;
             }
             return textToImageEncode(token);
         }
@@ -160,6 +160,5 @@ public class QRCodeActivity extends AppCompatActivity {
                 imageView.setImageBitmap(result);
             }
         }
-
     }
 }

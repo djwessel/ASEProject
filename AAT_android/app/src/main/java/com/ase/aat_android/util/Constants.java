@@ -19,8 +19,27 @@ public class Constants {
     public static String loginLoad = "Login...";
     public static String logoutLoad = "Logout...";
     public static String signupLoad = "Signing up...";
+    public static  String registerLoad = "Registering...";
+    public static  String deregisterLoad = "De-registering...";
+
+    // Request completed messages
+    public static String registered = "Successfully registered";
+    public static String deregistered = "Successfully de-registered";
 
     // Bundle keys
     public static String userIdKey = "userID";
     public static String courseKey = "course";
+    public static String groupKey = "group";
+
+    // HashMap keys for objects retrieved from datastore
+    // Maybe it would be better to have this constants from gae side. It will decrease duplication
+    // and may prevent possible inconsistency.
+    public static String group = "group";
+    public static String courseId = "courseId";
+    public static String id = "id";
+    public  static String name = "name";
+    public  static String courseName = "courseName";
+
+    public static String sessionToken = "sessionToken";
+
 }

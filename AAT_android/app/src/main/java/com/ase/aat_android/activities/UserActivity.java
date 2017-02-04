@@ -35,6 +35,7 @@ import com.ase.aat_android.util.EndpointsURL;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.api.datastore.Link;
+import com.google.appengine.api.datastore.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,16 +55,12 @@ public class UserActivity extends AppCompatActivity {
         @Override
         protected com.aat.datastore.User doInBackground(Long... params) {
             String url = EndpointsURL.HTTP_ADDRESS + EndpointsURL.REQUEST_USER_DATA;
-            url = EndpointUtil.solveUrl(url, "user_id", Long.toString(params[0]));
-            ClientResource retrieveRes = new ClientResource(Method.GET, url);
-            retrieveRes.setResponseEntityBuffering(true);
-            retrieveRes.setRequestEntityBuffering(true);
-            retrieveRes.accept(MediaType.APPLICATION_ALL_JSON);
+            url = EndpointUtil.solveUrl(url, EndpointsURL.user_id, Long.toString(params[0]));
+            ClientResource retrieveRes = createClientResource(Method.GET, url, true);
 
             ObjectMapper mapper = new ObjectMapper();
             Student user = null;
             try {
-                retrieveRes.getRequest().getCookies().add(0, SessionData.getSessionToken());
                 user = mapper.readValue(retrieveRes.get().getText(), new TypeReference<Student>(){});
             } catch (IOException e) {
                 e.printStackTrace();
@@ -91,18 +88,17 @@ public class UserActivity extends AppCompatActivity {
         }
 
         protected HashMap<String, GroupPojo> doInBackground(Long... params) {
-            ObjectMapper mapper = new ObjectMapper();
             String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.REQUEST_GROUPS_STUDENT;
-            url = EndpointUtil.solveUrl(url, "user_id", Long.toString(params[0]));
-            ClientResource resource = new ClientResource(Method.GET, url);
-            resource.setRequestEntityBuffering(true);
-            resource.accept(MediaType.APPLICATION_JSON);
+            url = EndpointUtil.solveUrl(url, EndpointsURL.user_id, Long.toString(params[0]));
+            ClientResource resource = createClientResource(Method.GET, url, true);
+
+            ObjectMapper mapper = new ObjectMapper();
             List<CourseGroupPOJO> groups = null;
             try {
-                resource.getRequest().getCookies().add(0, SessionData.getSessionToken());
                 groups= mapper.readValue(resource.get().getText(), new TypeReference<List<Object>>(){});
             } catch (ResourceException e) {
                 failureMessage = e.getMessage();
+                return null;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -113,10 +109,11 @@ public class UserActivity extends AppCompatActivity {
             HashMap<String, GroupPojo> res = new HashMap<>();
             for (Object obj : groups) {
                 LinkedHashMap<String, Object> pojo = (LinkedHashMap) obj;
-                LinkedHashMap<String, Object> groupEntry = (LinkedHashMap) pojo.get("group");
-                GroupPojo group = new GroupPojo((Long) pojo.get("courseId"),
-                                                (Long) groupEntry.get("id"), (String) groupEntry.get("name"));
-                res.put((String) pojo.get("courseName"), group);
+                LinkedHashMap<String, Object> groupEntry = (LinkedHashMap) pojo.get(Constants.group);
+                GroupPojo group = new GroupPojo((Long) pojo.get(Constants.courseId),
+                                                (Long) groupEntry.get(Constants.id),
+                                                (String) groupEntry.get(Constants.name));
+                res.put((String) pojo.get(Constants.courseName), group);
             }
             return res;
         }
@@ -139,7 +136,7 @@ public class UserActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Long... params) {
             String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.LOGOUT;
-            url = EndpointUtil.solveUrl(url, "user_id", Long.toString(params[0]));
+            url = EndpointUtil.solveUrl(url, EndpointsURL.user_id, Long.toString(params[0]));
             ClientResource logoutRes = new ClientResource(Method.DELETE, url);
             logoutRes.setResponseEntityBuffering(true);
             logoutRes.setRequestEntityBuffering(true);
@@ -206,12 +203,15 @@ public class UserActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View row = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-            TextView textView = (TextView) row.findViewById(android.R.id.text1);
-            textView.setTextColor(Color.BLACK);
+            View row = inflater.inflate(android.R.layout.simple_list_item_2, parent, false);
+            TextView coursenametextView = (TextView) row.findViewById(android.R.id.text1);
+            coursenametextView.setTextColor(Color.BLACK);
+            TextView groupNameTextView = (TextView) row.findViewById(android.R.id.text2);
+            groupNameTextView.setTextColor(Color.BLACK);
             Map.Entry<String, GroupPojo> item = (Map.Entry) getItem(position);
             if (item != null) {
-                textView.setText(item.getKey());
+                coursenametextView.setText(item.getKey());
+                groupNameTextView.setText(item.getValue().getName());
             }
             return row;
         }
@@ -229,9 +229,6 @@ public class UserActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Bundle extras = this.getIntent().getExtras();
-        if (extras == null) {
-            throw new RuntimeException("Error while retrieving user data");
-        }
         Long id = extras.getLong(Constants.userIdKey);
 
         attendancesListView = (ListView) findViewById(R.id.attendancelistview);
@@ -240,18 +237,17 @@ public class UserActivity extends AppCompatActivity {
         retrieveUser(id);
         retrieveAttendances(id);
         initializeComponents();
-
-
-
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (SessionData.getUserAttendances() != null && SessionData.getUserAttendances().isEmpty()) {
-            retrieveAttendances(SessionData.getUser().getId());
-        } else {
-            ((AttendancesListAdaper) attendancesListView.getAdapter()).update();
+        if (SessionData.getUserAttendances() != null) {
+            if (SessionData.getUserAttendances().isEmpty()) {
+                retrieveAttendances(SessionData.getUser().getId());
+            } else {
+                ((AttendancesListAdaper) attendancesListView.getAdapter()).update();
+            }
         }
     }
 
@@ -267,9 +263,6 @@ public class UserActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.profile_item:
-                // TODO: open profile activity
-                return true;
             case R.id.courses_item:
                 openCoursesActivity();
                 return true;
@@ -344,9 +337,9 @@ public class UserActivity extends AppCompatActivity {
 
     private void openQRCodeActivity(Map.Entry<String, GroupPojo> attendanceItem) {
         Intent intent = new Intent(this, QRCodeActivity.class);
-        intent.putExtra("selected_course_name", attendanceItem.getKey());
+        intent.putExtra(Constants.courseKey, attendanceItem.getKey());
         Bundle groupBundle = new Bundle();
-        groupBundle.putSerializable("selected_group", attendanceItem.getValue());
+        groupBundle.putSerializable(Constants.groupKey, attendanceItem.getValue());
         intent.putExtras(groupBundle);
         startActivity(intent);
     }

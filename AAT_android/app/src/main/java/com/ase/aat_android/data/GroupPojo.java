@@ -1,5 +1,7 @@
 package com.ase.aat_android.data;
 
+import com.ase.aat_android.util.Constants;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 
@@ -22,8 +24,8 @@ public class GroupPojo implements Serializable {
 
     public GroupPojo(Long parentID, LinkedHashMap<String, Object> entry) {
         this.parentID = parentID;
-        this.ID = (Long) entry.get("id");
-        this.name = (String) entry.get("name");
+        this.ID = (Long) entry.get(Constants.id);
+        this.name = (String) entry.get(Constants.name);
     }
 
     public Long getParentID() {
@@ -36,12 +38,5 @@ public class GroupPojo implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        // Not always the case
-        com.aat.datastore.Group g = (com.aat.datastore.Group) obj;
-        return g.getId() == ID && g.getName() == name;
     }
 }

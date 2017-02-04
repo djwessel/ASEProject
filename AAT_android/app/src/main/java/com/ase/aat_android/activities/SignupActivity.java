@@ -39,9 +39,8 @@ public class SignupActivity extends AppCompatActivity {
 
         @Override
         protected Long doInBackground(String... params) {
-            ClientResource signupRes = new ClientResource(Method.POST, EndpointsURL.HTTP_ADDRESS + EndpointsURL.SIGNUP);
-            signupRes.setRequestEntityBuffering(true);
-            signupRes.setResponseEntityBuffering(true);
+            ClientResource signupRes = createClientResource(
+                                Method.POST, EndpointsURL.HTTP_ADDRESS + EndpointsURL.SIGNUP, false);
             Form signupForm = createSignupForm(params[0], params[1], params[2], params[3]);
             Long userID;
             try {
