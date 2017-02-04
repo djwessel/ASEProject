@@ -43,7 +43,7 @@ public class GroupResource extends ServerResource {
 	}
 	
 	@Put
-	public void update()
+	public void update(Representation entity)
 	{
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
@@ -55,7 +55,7 @@ public class GroupResource extends ServerResource {
 		ResourceUtil.checkAttributeValue(Constants.groupId, groupId, true);
 		assert(groupId != null);
 		
-		String newName = ResourceUtil.getParam(getQuery(), "name", true);
+		String newName = ResourceUtil.getParam(new Form(entity), "name", true);
 		assert(newName != null);
 		
 		Group group = retrieveGroup(courseId, groupId);

@@ -2,6 +2,10 @@ $(document).ready(function() {
   var groupId = QueryString.groupId;
   var courseId = QueryString.courseId;
 
+  if (Cookies.get('userType') !== 'student') {
+    window.location.replace('/course.jsp?courseId=' + courseId);
+  }
+
   $('#calendar').fullCalendar({ aspectRatio: 3 });
 
   $.get('/rest/course/' + courseId, function(data) {

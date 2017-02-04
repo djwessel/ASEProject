@@ -56,14 +56,14 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="inputAtten" class="col-sm-2 control-label">Required Attendance count</label>
+                  <label for="inputAtten" class="col-sm-2 control-label">Required Attendance Count</label>
                   <div class="col-sm-10">
                     <input name="reqAtten" type="number" class="form-control" id="inputAtten" placeholder="0" min="0" required>
                     <div class="help-block with-errors"></div>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="inputPresent" class="col-sm-2 control-label">Required Presentation count</label>
+                  <label for="inputPresent" class="col-sm-2 control-label">Required Presentation Count</label>
                   <div class="col-sm-10">
                     <input name="reqPresent" type="number" class="form-control" id="inputPresent" placeholder="0" min="0" required>
                     <div class="help-block with-errors"></div>

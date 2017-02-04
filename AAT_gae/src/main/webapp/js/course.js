@@ -8,8 +8,32 @@
       $('#courseInfo').empty()
         .append($('<div>Required Attendance count: ' + data.reqAtten + '</div>'))
         .append($('<div>Required Presentation count: ' + data.reqPresent + '</div>'));
+
+      $('#inputTitle').val(data.title);
+      $('#inputAtten').val(data.reqAtten);
+      $('#inputPresent').val(data.reqPresent);
     }).fail(function() {
       $('body').text('Course does not exist');
+    });
+
+    // Form submit for editing course
+    $('#courseEdit').validator({ disable: false }).submit(function() {
+        $.ajax({
+          url: '/rest/course/' + courseId,
+          type: 'PUT',
+          data: $(this).serialize(),
+          success: function(data) {
+            window.location.reload();
+          },
+          error: function(xhr) {
+            if (xhr.status === 409)
+              alert('Course with given name already exists');
+            else
+              alert('Unable to update course details');
+          }
+        });
+
+      return false;
     });
   
     // Load groups of course
@@ -49,7 +73,16 @@
 
     $('#createReportBtn').click(function() {
       $.get('/rest/course/' + courseId + '/report', function(data) {
-        console.log(data);
+        var reportTableBody = $('#reportTable').show().find('tbody');
+        data.forEach(function(record) {
+          var reportRow = $('<tr></tr>').appendTo(reportTable);
+          $('<td></td>').text(record.student.firstName).appendTo(reportRow);
+          $('<td></td>').text(record.student.lastName).appendTo(reportRow);
+          $('<td></td>').text(record.student.email).appendTo(reportRow);
+          $('<td></td>').text(record.numAttend).appendTo(reportRow);
+          $('<td></td>').text(record.numPresent).appendTo(reportRow);
+          $('<td></td>').text(record.bonus ? 'Yes' : 'No').appendTo(reportRow);
+        });
       });
     })
   
@@ -57,7 +90,7 @@
   
   function createGroup(group, groupsTable, userGroups) {
     var groupRow = $('<tr class="group">' + group.name + '</tr>').data('group-id', group.id).appendTo(groupsTable);
-    $('<td>' + group.name + '</td>').appendTo(groupRow);
+    var groupName = $('<td class="group-name">' + group.name + '</td>').appendTo(groupRow);
     var statusCell = $('<td>-</td>').appendTo(groupRow);
     
     
@@ -81,6 +114,34 @@
           }
         }).appendTo(statusCell.empty());
       }
+    }
+    else if (Cookies.get('userType') === 'tutor'){
+      var editName = $('<form class="form-inline">'
+          + '<div class="form-group"><input name="name" class="form-control" placeholder="New Group Name"></div>'
+          + '<button type="submit" class="btn btn-default">Update Group</button>'
+        + '</form>').submit(function() {
+
+        $.ajax({
+          url: '/rest/course/' + courseId + '/group/' + group.id, 
+          type: 'PUT',
+          data: $(this).serialize(),
+          success: function(data) {
+            window.location.reload();
+          },
+          error: function(xhr) {
+            if (xhr.status === 409)
+              alert('Group with given name already exists for course');
+            else
+              alert('Unable to update group');
+          }
+        });
+
+        return false;
+      }).hide();
+      $('<button class="btn"><span class="glyphicon glyphicon-pencil"></span></button>').click(function() {
+        editName.show();
+      }).appendTo(groupName);
+      editName.appendTo(groupName);
     }
   }
   
