@@ -8,7 +8,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
- * Wrapper class for datastore CoursePojo
+ * Wrapper class for datastore Course class
+ * This class gives a convenient way to pass Course data among activities.
+ *
  * Created by anahitik on 02.02.17.
  */
 

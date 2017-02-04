@@ -77,14 +77,7 @@ public class SigninActivity extends AppCompatActivity {
                     });
                     task.execute(usernameEditText.getText().toString(),
                                  passwordEditText.getText().toString());
-                    if (task.get() != null) {
-                        openUserActivity(task.get());
-                    }
                 } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
             }
@@ -116,6 +109,7 @@ public class SigninActivity extends AppCompatActivity {
         Intent intent = new Intent(SigninActivity.this, UserActivity.class);
         intent.putExtra(Constants.userIdKey, userID);
         startActivity(intent);
+        finish();
     }
 
 

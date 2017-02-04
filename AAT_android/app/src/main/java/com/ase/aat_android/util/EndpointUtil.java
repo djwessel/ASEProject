@@ -7,7 +7,7 @@ package com.ase.aat_android.util;
 public class EndpointUtil {
 
     public static String solveUrl (String url, String parameter, String value){
-        url = url.replace("{"+parameter+"}",value);
+        url = url.replace(parameter, value);
         return url;
     }
 }

@@ -17,7 +17,6 @@ import org.restlet.resource.ResourceException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.concurrent.Callable;
 
 /**
  * The only reason why this class is not private like other tasks,
@@ -39,15 +38,13 @@ public class SigninTask extends BaseAsyncTask<String, Boolean, Long> {
     @Override
     protected Long doInBackground(String... params) {
         String url = EndpointsURL.HTTP_ADDRESS+ EndpointsURL.LOGIN;
-        ClientResource loginRes = new ClientResource(Method.POST, url);
-        loginRes.setRequestEntityBuffering(true);
-        loginRes.setResponseEntityBuffering(true);
+        ClientResource loginRes = createClientResource(Method.POST, url, false);
         Form loginForm = createLoginForm(params[0], params[1]);
         Long result;
         try {
             ObjectMapper mapper = new ObjectMapper();
             result = mapper.convertValue(loginRes.post(loginForm, MediaType.ALL).getText(), Long.class);
-            SessionData.updateSessionToken(loginRes.getResponse().getCookieSettings().getFirst("sessionToken"));
+            SessionData.updateSessionToken(loginRes.getResponse().getCookieSettings().getFirst(Constants.sessionToken));
         } catch (ResourceException e) {
             failureMessage = e.getMessage();
             return null;

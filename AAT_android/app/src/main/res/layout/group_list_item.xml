@@ -9,6 +9,8 @@
         android:layout_height="match_parent"
         android:id="@+id/groupname_textview"
         android:textSize="15dp"
+        android:textColor="@color/black"
+        android:padding="15dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:text="Groupname"/>
@@ -17,11 +19,13 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+        android:padding="15dp"
         android:layout_alignParentRight="true">
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingRight="15dp"
             android:background="@android:drawable/ic_input_add"
             android:id="@+id/register_button"/>
 

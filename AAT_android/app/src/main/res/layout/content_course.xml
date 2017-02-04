@@ -37,11 +37,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/req_attendancenum_textview"/>
+                android:id="@+id/req_attendancenum_textview"
+                android:text="@string/required_attendanced"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/req_presentnum_textview"/>
+                android:id="@+id/req_presentnum_textview"
+                android:text="@string/required_presentations"/>
         </LinearLayout>
 
     </LinearLayout>

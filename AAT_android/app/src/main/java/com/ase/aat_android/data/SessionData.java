@@ -5,7 +5,9 @@ import org.restlet.data.Cookie;
 import java.util.HashMap;
 
 /**
- * Singleton class for storing restlet SessionData data object
+ * Stores session related data.
+ * Cached user data.
+ *
  * Created by anahitik on 15.01.17.
  */
 
@@ -43,6 +45,9 @@ public class SessionData {
     }
 
     public static GroupPojo getRegisteredGroup(String courseName) {
+        if (userAttendances == null || userAttendances.isEmpty()) {
+            return null;
+        }
         return userAttendances.get(courseName);
     }
     public static void clear() {

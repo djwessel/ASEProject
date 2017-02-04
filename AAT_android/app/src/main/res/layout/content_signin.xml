@@ -33,6 +33,7 @@
             android:paddingLeft="@dimen/padding"
             android:paddingRight="@dimen/padding"
             android:hint="@string/username_hint"
+            android:inputType="textEmailAddress"
             android:id="@+id/login_username_edittext"/>
         <EditText
             android:layout_width="match_parent"

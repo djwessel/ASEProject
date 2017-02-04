@@ -20,10 +20,12 @@
         android:layout_alignParentTop="true" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:id="@+id/imageView"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="25dp"
         android:layout_below="@id/msg"
         android:layout_centerInParent="true"/>
 
@@ -33,6 +35,6 @@
         android:layout_height="wrap_content"
         android:text="@string/action_requestQR"
         android:id="@+id/request_qr_button"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_alignBottom="@+id/imageView"/>
 </RelativeLayout>

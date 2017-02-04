@@ -39,9 +39,8 @@ public class SignupActivity extends AppCompatActivity {
 
         @Override
         protected Long doInBackground(String... params) {
-            ClientResource signupRes = new ClientResource(Method.POST, EndpointsURL.HTTP_ADDRESS + EndpointsURL.SIGNUP);
-            signupRes.setRequestEntityBuffering(true);
-            signupRes.setResponseEntityBuffering(true);
+            ClientResource signupRes = createClientResource(
+                                Method.POST, EndpointsURL.HTTP_ADDRESS + EndpointsURL.SIGNUP, false);
             Form signupForm = createSignupForm(params[0], params[1], params[2], params[3]);
             Long userID;
             try {
@@ -137,17 +136,22 @@ public class SignupActivity extends AppCompatActivity {
 
     private void login() {
         try {
-            SigninTask signinTask = new SigninTask(SignupActivity.this);
+            final SigninTask signinTask = new SigninTask(SignupActivity.this);
+            signinTask.setCallback(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        openUserActivity(signinTask.get());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             signinTask.execute(emailEditText.getText().toString(),
                                passwordEditText.getText().toString());
-            if (signinTask.get() != null) {
-                openUserActivity(signinTask.get());
-            }
         } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
             e.printStackTrace();
         }
     }
@@ -156,6 +160,7 @@ public class SignupActivity extends AppCompatActivity {
         Intent intent = new Intent(SignupActivity.this, UserActivity.class);
         intent.putExtra(Constants.userIdKey, userID);
         startActivity(intent);
+        finish();
     }
 
 }

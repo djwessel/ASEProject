@@ -5,9 +5,12 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.ase.aat_android.data.SessionData;
 import com.ase.aat_android.util.Constants;
 import com.google.appengine.repackaged.com.google.common.base.Flag;
 
+import org.restlet.data.MediaType;
+import org.restlet.data.Method;
 import org.restlet.resource.ClientResource;
 
 /**
@@ -23,13 +26,13 @@ public abstract class BaseAsyncTask<Params, Progress, Result> extends AsyncTask<
     public BaseAsyncTask(Activity activity) {
         loadingMessage = Constants.loading;
         this.activity = activity;
-        initializeProgressBar(activity);
+        initializeProgressBar();
     }
 
     public BaseAsyncTask(Activity activity, String message) {
         loadingMessage = message;
         this.activity = activity;
-        initializeProgressBar(activity);
+        initializeProgressBar();
     }
 
     @Override
@@ -49,13 +52,26 @@ public abstract class BaseAsyncTask<Params, Progress, Result> extends AsyncTask<
     @Override
     protected void onPostExecute(Result o) {
         loadingDialog.dismiss();
-        if (o == null || (o instanceof Boolean && ((Boolean) o) == false) && !failureMessage.isEmpty()) {
+        if (o == null || (o instanceof Boolean && ((Boolean) o) == false)) {
+            if (failureMessage == null || failureMessage.isEmpty()) {
+                failureMessage = "Failed";
+            }
             Toast.makeText(activity.getApplicationContext(), failureMessage, Toast.LENGTH_LONG).show();
         }
     }
 
-    private void initializeProgressBar(Activity activity) {
+    protected static ClientResource createClientResource(Method method, String url, boolean auth) {
+        ClientResource resourse = new ClientResource(method, url);
+        resourse.setResponseEntityBuffering(true);
+        resourse.setRequestEntityBuffering(true);
+        resourse.accept(MediaType.APPLICATION_ALL_JSON);
+        if (auth) {
+            resourse.getRequest().getCookies().add(0, SessionData.getSessionToken());
+        }
+        return resourse;
+    }
 
+    private void initializeProgressBar() {
         loadingDialog = new ProgressDialog(activity);
         loadingDialog.setMessage(loadingMessage);
         loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);

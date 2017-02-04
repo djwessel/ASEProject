@@ -24,5 +24,7 @@
     <string name="attendances">View Attendances</string>
     <string name="action_requestQR">Request QR</string>
     <string name="text_no_attendences">You are not register for any courses</string>
+    <string name="required_attendanced">Required attendances: </string>
+    <string name="required_presentations">Required presentations: </string>
 
 </resources>
