@@ -1,6 +1,7 @@
 (function() {
   var isLoggingIn = false;
   $(document).ready(function() {
+    // Sign up user submit handler
     $('#userSignup').validator({ disable: false }).submit(function() {
       var formData = $(this).serialize();
       $.post('/rest/user', formData).done(function(data) {
@@ -14,13 +15,15 @@
   
       return false;
     });
-  
+
+    // Log in user submit handler
     $('#userLogin').validator({ disable: false }).submit(function() {
       login($(this).serialize());
   
       return false;
     });
-  
+
+    // Logout button
     $('#logout').click(function() {
       $.ajax({
         url: '/rest/user/' + Cookies.get('user') + '/logout',
@@ -35,7 +38,8 @@
         }
       });
     });
-  
+
+    // If user signed in, display user name and the logout button, otherwise display the login button
     if (Cookies.get('user')) {
       $.get('/rest/user/' + Cookies.get('user')).done(function(data) {
         console.log(data);
@@ -50,7 +54,8 @@
         $('#userLogin').hide();
       });
     }
-  
+
+    // Buttons for user login modal dialog
     $('#newUserBtn').click(function() { 
       $(this).parent().hide();
       $('#loginModalLabel').text('New User');
@@ -62,7 +67,8 @@
       $('#userLogin').show();
     });
   });
-  
+
+  // Logs in user
   function login(data) {
     if (!isLoggingIn) {
       isLoggingIn = true;

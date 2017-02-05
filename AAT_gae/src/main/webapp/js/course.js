@@ -71,6 +71,7 @@
       return false;
     });
 
+    // Sends report through email and displays report.
     $('#createReportBtn').click(function() {
       $.get('/rest/course/' + courseId + '/report', function(data) {
         var reportTableBody = $('#reportTable').show().find('tbody').empty();
@@ -88,6 +89,7 @@
   
   });
   
+  // Creates a new group row.
   function createGroup(group, groupsTable, userGroups) {
     var groupRow = $('<tr class="group">' + group.name + '</tr>').data('group-id', group.id).appendTo(groupsTable);
     var groupName = $('<td class="group-name">' + group.name + '</td>').appendTo(groupRow);
@@ -116,6 +118,7 @@
       }
     }
     else if (Cookies.get('userType') === 'tutor'){
+      // Add edit icons for tutors to edit group name
       var editName = $('<form class="form-inline">'
           + '<div class="form-group"><input name="name" class="form-control" placeholder="New Group Name"></div>'
           + '<button type="submit" class="btn btn-default">Update Group</button>'
@@ -145,6 +148,7 @@
     }
   }
   
+  // Changes groups. Will first delete old AR and then sign up for a new AR
   function changeGroup(group) {
     $.ajax({
       url: '/rest/user/' + Cookies.get('user') + '/course/' + courseId + '/group/' + $('.group.signed-up').data('group-id') + '/attendance',
@@ -160,6 +164,7 @@
     });
   }
   
+  // Signs up for a new AR
   function signUp(group) {
     $.post('/rest/course/' + courseId + '/group/' + group.id + '/attendance', {user: Cookies.get('user')}, function() {
       window.location.reload();

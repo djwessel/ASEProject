@@ -21,6 +21,7 @@
   <jsp:body>
     <h1 id="title">Loading course title...</h1>
     <div id="courseInfo">Loading course info...</div>
+    <!-- Tutor Edit Course Details -->
     <c:if test="${cookie.userType.value == 'tutor'}">
       <button id="editCourseBtn" class="btn btn-primary" data-toggle="modal" data-target="#courseModal">Edit Course Details</button>
       <!-- Course Modal -->
@@ -64,6 +65,7 @@
           </div>
         </div>
       </div>
+      <!-- Tutor Create Report -->
       <button id="createReportBtn" class="btn btn-default">Create Attendance Report</button>
       <table id="reportTable" class="table table-condensed" style="display: none;">
         <thead>
@@ -80,6 +82,7 @@
         </tbody>
       </table>
     </c:if>
+    <!-- All Groups -->
     <h3>Groups</h3>
     <table class="table table-hover">
       <thead>
@@ -91,6 +94,7 @@
       <tbody id="groups"></tbody>
     </table>
 
+    <!-- Tutor Create New Group -->
     <c:if test="${cookie.userType.value == 'tutor'}">
       <button id="createGroupBtn" class="btn btn-primary" data-toggle="modal" data-target="#groupModal">Create New Group</button>
       <!-- Group Modal -->

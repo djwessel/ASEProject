@@ -11,7 +11,7 @@
   <jsp:attribute name="breadcrumbs">
   </jsp:attribute>
   <jsp:body>
-    <!!-- Student Registered Groups -->
+    <!-- Student Registered Groups -->
     <c:if test="${cookie.userType.value == 'student'}">
       <h3>Your registered groups</h3>
       <table class="table table-hover">
@@ -25,6 +25,7 @@
       </table>
     </c:if>
 
+    <!-- All Courses -->
     <h3>All courses</h3>
     <table class="table table-hover">
       <thead>

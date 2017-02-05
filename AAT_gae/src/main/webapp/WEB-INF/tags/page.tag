@@ -21,6 +21,7 @@
     <jsp:invoke fragment="head"/>
   </head>
   <body>
+    <!-- Nav Bar -->
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -62,6 +63,7 @@
                 <button id="newUserBtn" class="btn btn-default btn-block">New User</button>
                 <button id="existUserBtn" class="btn btn-default btn-block">Existing User</button>
               </div>
+              <!-- Create User Form -->
               <form id="userSignup" class="form-horizontal" style="display: none;" data-toggle="validator">
                 <div class="form-group">
                   <label for="inputEmail1" class="col-sm-2 control-label">Email</label>
@@ -102,6 +104,7 @@
                   </div>
                 </div>
               </form>
+              <!-- Login Form -->
               <form id="userLogin" class="form-horizontal" style="display: none;"  data-toggle="validator">
                 <div class="form-group">
                   <label for="inputEmail2" class="col-sm-2 control-label">Email</label>
