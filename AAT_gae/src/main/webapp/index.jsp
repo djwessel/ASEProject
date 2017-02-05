@@ -11,7 +11,7 @@
   <jsp:attribute name="breadcrumbs">
   </jsp:attribute>
   <jsp:body>
-    <!!-- Student Registered Groups -->
+    <!-- Student Registered Groups -->
     <c:if test="${cookie.userType.value == 'student'}">
       <h3>Your registered groups</h3>
       <table class="table table-hover">
@@ -25,6 +25,7 @@
       </table>
     </c:if>
 
+    <!-- All Courses -->
     <h3>All courses</h3>
     <table class="table table-hover">
       <thead>
@@ -56,14 +57,14 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="inputAtten" class="col-sm-2 control-label">Required Attendance count</label>
+                  <label for="inputAtten" class="col-sm-2 control-label">Required Attendance Count</label>
                   <div class="col-sm-10">
                     <input name="reqAtten" type="number" class="form-control" id="inputAtten" placeholder="0" min="0" required>
                     <div class="help-block with-errors"></div>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="inputPresent" class="col-sm-2 control-label">Required Presentation count</label>
+                  <label for="inputPresent" class="col-sm-2 control-label">Required Presentation Count</label>
                   <div class="col-sm-10">
                     <input name="reqPresent" type="number" class="form-control" id="inputPresent" placeholder="0" min="0" required>
                     <div class="help-block with-errors"></div>

@@ -66,7 +66,7 @@ public class AttendanceResource extends ServerResource {
 			AttendanceRecord ar = ref.get();
 			if (ar != null) {
 				Key<Group> parent = ar.getParent();
-				if (parent != null && groupId.equals(parent.getId()) && parent.getParent() != null && courseId.equals(parent.getParent().getId())) {
+				if (parent != null && parent.getParent() != null && courseId.equals(parent.getParent().getId())) {
 					throw new ResourceException(409, "Conflict", "Student already signed up for group in course.", null);
 				}
 			}

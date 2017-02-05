@@ -1,3 +1,4 @@
+// Util for getting all url query strings and turning it into a JSON object
 var QueryString = function () {
   // This function is anonymous, is executed immediately and 
   // the return value is assigned to QueryString!

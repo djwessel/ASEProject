@@ -46,14 +46,14 @@ public class CourseResource extends ServerResource{
 	}
    
    @Put
-   public void update(){
+   public void update(Representation entity){
 		// Check if of type Tutor
 		ResourceUtil.checkTokenPermissions(this, Tutor.class);
 	   String courseId = getAttribute(Constants.courseId);
 	   Course course = retrieveCourse(courseId);
 	   
-	   Form params = getQuery();
-	   String courseTitle =ResourceUtil.getParam(params,"title",false);
+	   Form params = new Form(entity);
+	   String courseTitle = ResourceUtil.getParam(params,"title",false);
 	   String reqAttendance = ResourceUtil.getParam(params,"reqAtten",false);
 	   
 	   int reqAtten;

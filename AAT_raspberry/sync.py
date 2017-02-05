@@ -89,5 +89,5 @@ class Sync:
 		print 'loggin in'
 		# Credentials currently hard coded. However they can be set as environment vars
 		# and then retreived using os.environ
-		r = requests.post(self.__urlHost + self.__loginEndpoint, data={'email':'tutor@tutor.com', 'password':'tutor'}) 
+		r = requests.post(self.__urlHost + self.__loginEndpoint, data={'email':'pi@tum.de', 'password':'tutor'}) 
 		self.cookies = r.cookies

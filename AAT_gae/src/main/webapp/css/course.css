@@ -1,3 +1,11 @@
 .group.signed-in {
 	background: #337ab7;
 }
+
+.group-name button, .group-name form {
+	margin-left: 5px;
+}
+
+.group-name form {
+	display: inline;
+}
