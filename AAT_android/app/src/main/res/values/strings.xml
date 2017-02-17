@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">AAT</string>
+    <string name="app_full_name">Automatic Attendence Tool</string>
+    <string name="title_activity_course">Course</string>
+    <string name="title_activity_signin">Signin</string>
+    <string name="title_activity_signup">Signup</string>
+    <string name="title_activity_courses">Courses</string>
+    <string name="title_activity_attendances">Your Attendances</string>
+    <string name="title_activity_user">Profile</string>
+
+    <string name="login">Login</string>
+    <string name="signup">Sign up</string>
+    <string name="username_hint">User name</string>
+    <string name="password_hint">Password</string>
+    <string name="firstname_hint">First Name</string>
+    <string name="lastname_hint">Last Name</string>
+    <string name="email_hint">Email</string>
+    <string name="student_type">Student</string>
+    <string name="profile_item">Profile</string>
+    <string name="courses_item">Courses</string>
+    <string name="logout_item">Logout</string>
+    <string name="logout">Logout</string>
+    <string name="courses">View Courses</string>
+    <string name="attendances">View Attendances</string>
+    <string name="action_requestQR">Request QR</string>
+    <string name="text_no_attendences">You are not register for any courses</string>
+    <string name="required_attendanced">Required attendances: </string>
+    <string name="required_presentations">Required presentations: </string>
+
+</resources>
